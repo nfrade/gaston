@@ -30,7 +30,6 @@ var gulp = require('gulp'),
     var processArgs = process.argv,
     i = processArgs.length;
     while(i--){
-      console.log('>>>>',i);
       if (~processArgs.indexOf('-port') || ~processArgs.indexOf('-p:'))
         port = Number(processArgs.slice(3));
       if (~processArgs.indexOf('-livereload') || ~processArgs.indexOf('-lr'))
