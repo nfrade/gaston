@@ -6,7 +6,7 @@ var gulp = require('gulp'),
 	browserify = require('browserify'),
 	through = require('through'),
 
-	lessFiles = [];
+	lessAndCssFiles = [];
 
 module.exports = function (indexFile,cssBuildFileName,buildFolder) {
 	browserify(indexFile).deps()
@@ -16,21 +16,22 @@ module.exports = function (indexFile,cssBuildFileName,buildFolder) {
 				lessFile;
 
 			for(i in deps){
-				if(~i.indexOf('.less')){
+				if(~i.indexOf('.less') || ~i.indexOf('.css')){
 					lessFile = deps[i];
-					lessFiles.push(lessFile);
+					lessAndCssFiles.push(lessFile);
 					gulp.src(lessFile)
-					.pipe(less({
-						paths: [ path.join(__dirname, 'less', 'includes') ]
-					}))
-					.pipe(rename(cssBuildFileName))
-					.pipe(filesize())
-					.pipe(gulp.dest(buildFolder));
+						.pipe(less({
+							paths: [ path.join(__dirname, 'less', 'includes') ]
+						}))
+						.pipe(rename(cssBuildFileName))
+						.pipe(filesize())
+						.pipe(gulp.dest(buildFolder));
 				}
 			}
+			
 		})
 		.on('end', function(){
-			gulp.watch(lessFiles, function(){
+			gulp.watch(lessAndCssFiles, function(){
 				module.exports(indexFile,cssBuildFileName,buildFolder);
 			});
 		});
