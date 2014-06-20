@@ -39,14 +39,17 @@ var gulp = require('gulp'),
 checkForOptions();
 
 gulp.task('webserver', function(){
-  webserver(rootFolder,port,livereload);
+  console.error('doing webserver!')
+  webserver(rootFolder,port,livereload)
 });
 
 gulp.task('compile-js', function(){
+  console.error('doing compile-js!')
   compileJs(indexFile,debug,jsBuildFileName,buildFolder);
 });
 
 gulp.task('compile-less', function(){
+  console.error('doing compile-less!')
   compileLess(indexFile,cssBuildFileName,buildFolder);
 });
 

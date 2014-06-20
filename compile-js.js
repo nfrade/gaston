@@ -13,7 +13,7 @@ var browserify = require('browserify'),
   handler = function(file, opts) { // ignores less files and remembers which js files to watch
 		var input = '';
 		log.info(file);
-		if (/\.less$/i.test(file) === false){
+		if (/\.(less)|(css)$/i.test(file) === false){
 			jsFiles.push(file);
 			return through();
 		}
