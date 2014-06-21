@@ -1,7 +1,7 @@
 gaston
 ======
 
-Gaston is your favorite handyman, carriying Vigour's evergrowing set of devtools.
+Gaston is your favorite handyman, carrying Vigour's evergrowing set of devtools.
 
 (*note: Vigour currently uses browserify and less. Gaston likes this)
 
