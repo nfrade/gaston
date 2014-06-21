@@ -1,8 +1,7 @@
 {
   "name": "gaston",
   "version": "0.0.0",
-  "description": "Dev-tools by Vigour.",
-  "main": "gulpfile.js",
+  "description": "dev handyman by Vigour.",
   "bin": {
     "gaston": "bin/cmd.js"
   },
@@ -31,7 +30,8 @@
   "keywords": [
     "javascript",
     "devtools",
-    "vigour"
+    "vigour",
+    "gaston",
   ],
   "author": "vigour-io",
   "license": "MIT",

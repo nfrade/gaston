@@ -7,17 +7,23 @@ Gaston is your favorite handyman, carriying Vigour's evergrowing set of devtools
 
 ## Commands
 
-```gulp compile``` Compiles all js, less and css files into bundle.js and bundle.css. Gaston keeps watching for changes.
+```gaston compile``` Compiles all js, less and css files into bundle.js and bundle.css. Gaston keeps watching for changes.
 
-```gulp compile-js``` Compiles all js files into bundle.js. Gaston keeps watching for changes.
+```gaston webserver``` Starts a localhost server on :8080.
 
-```gulp compile-less``` Compiles all less and css files into bundle.css. Gaston keeps watching for changes.
+### Params
 
-```gulp webserver``` Starts a localhost server on :8080.
+```-port:<portvalue>``` Uses this port for webserver (shorthand: ```-p:<portvalue>```)
 
-```gulp``` Performs all of the above.
+```-livereload``` Livereload parameter for webserver
 
-## Todo
+```-debug``` Debug parameter for browserify compile
 
-- Replace gulp with custom gaston command. Make available from npm and usable globally.
-- Add parameters for all commands.
+```-js``` Only compile js
+
+```-less``` / ```-css``` Only compile less and css (except if ```-js``` is also given)
+
+
+*Mix and match commands and params as you wish:*
+
+```gaston webserver compile -less -js -debug -livereload -p:8080``` Will do all of the above
