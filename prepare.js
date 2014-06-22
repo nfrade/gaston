@@ -27,9 +27,9 @@ function createJS () {
   })
 }
 
-module.exports = function ( rootFolder ) {
+module.exports = function ( rootFolder, callback ) {
 	var files = fs.readdirSync(rootFolder || './')
-		,	file
+		, file
 		, haveIndexHTML
 		, haveIndexJS
 		, i = files.length
