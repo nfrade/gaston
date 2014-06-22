@@ -35,7 +35,7 @@ module.exports = function ( rootFolder, callback ) {
 		, i = files.length
 		, readyCount = 2
 		, callbackFn = callback && function () {
-				if(!(readycount--)) callback()
+				if(!(readyCount--)) callback()
 			} 
 	
 	while (i--) {
@@ -59,5 +59,5 @@ module.exports = function ( rootFolder, callback ) {
 
 	if( !haveIndexHTML ) createHTML() 
 	if( !haveIndexJS ) createJS()
-	if( !readycount ) callback()
+	if( !readyCount ) callback()
 }
