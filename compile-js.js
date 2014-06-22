@@ -27,7 +27,6 @@ module.exports = function( indexFile
   , buildFolder
   , callback
   , dontwatch) {
-  log.warn('FUN AT NIGHT', buildFolder)
   var b = browserify(buildFolder + indexFile)
     .on('error',function(err){
       log.error('compile-js',err)

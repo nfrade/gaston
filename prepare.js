@@ -4,8 +4,6 @@ var fs = require('fs')
 
 function createHTML ( folder,templateName, callbackFn ) {
 
-	console.log('lets create some html')
-
 	var template = templateName || 'default.html'
 		,	templatFolder = 'templates'
 		, dir = __dirname
@@ -33,8 +31,6 @@ function createJS ( folder, callbackFn ) {
 
 module.exports = function ( rootFolder, callback ) {
 
-	console.log('call me!')
-
 	var folder = rootFolder || './'
     ,	files = fs.readdirSync(folder)
 		, file
@@ -42,13 +38,7 @@ module.exports = function ( rootFolder, callback ) {
 		, haveIndexJS
 		, i = files.length
 		, readyCount = 2
-		, callbackFn = callback && function () {
-			console.log('callback', readyCount)
-				if(!(--readyCount)) {
-					 callback()
-					 	console.log('m')
-					}
-			} 
+		, callbackFn = callback && function () { if(!(--readyCount)) callback() } 
 	
 	while (i--) {
 		file = files[i]
@@ -69,8 +59,6 @@ module.exports = function ( rootFolder, callback ) {
 			readyCount -= 1
 		}
 	}
-
-	console.log('readycount',readyCount)
 
 	if( !haveIndexHTML ) createHTML( folder,false, callbackFn ) 
 	if( !haveIndexJS ) createJS( folder,callbackFn )
