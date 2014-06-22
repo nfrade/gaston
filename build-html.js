@@ -1,15 +1,8 @@
 var fs = require('fs')
-
+	,	cleanCSS = require('clean-css')
+	, uglify = require("uglify-js")
 	, fileName = 'build.html'
 	,	htmlName = 'index.html'
-	,	jsName = 'bundle.js'
-	, cssName = 'bundle.css'
-
-	,	htmlString = fs.readFileSync('./index.html','utf8')
-	, jsString = fs.readFileSync('./bundle.js','utf8')
-	, cssString = fs.readFileSync('./bundle.css','utf8')
-
-	,	stream = fs.createWriteStream(fileName)
 
 function findJS (filename) {
 	return new RegExp('<script[\\s\\S]{0,}'
@@ -18,27 +11,26 @@ function findJS (filename) {
 }
 
 function findCSS (filename) {
-return new RegExp('<link[\\s\\S]{0,30}href[\\s\\S]{0,5}=[\\s\\S]{0,5}[\'"]'
-	+ filename.replace(/\./g,'\\.')
-	+'[\'"][\\s\\S]{0,}>','i');
+	return new RegExp('<link[\\s\\S]{0,30}href[\\s\\S]{0,5}=[\\s\\S]{0,5}[\'"]'
+		+filename.replace(/\./g,'\\.')
+		+'[\'"]([\\s\\S]*?)>','i');
 }
 
-stream.once('open', function(fd) {
-  var html = htmlString.replace(findJS(jsName),
-  		'<script type=text/javascript>' + jsString + '</script>')
-  	.replace(findCSS(cssName),
-  		'<style media="screen" type="text/css">' + cssString + '</style>')
+module.exports = function(buildFolder, jsBuildFileName, cssBuildFileName){
+	var htmlString = fs.readFileSync(buildFolder + htmlName,'utf8')
+		, cssString = fs.readFileSync(buildFolder + cssBuildFileName,'utf8')
+		, minimizedCSS = new cleanCSS().minify(cssString)
+		, minimizedJS = uglify.minify(buildFolder + jsBuildFileName).code
 
-  console.log(html)
-  stream.end(html);
-});
-
-//=====================
-
-// module.exports = function(htmlFile,jsFile,cssFile) {
-// 	// gulp.src(htmlFile)
-// 	// 	.pipe(minifyHTML())
-// 	// 	.pipe(rename(cssBuildFileName))
-// 	// 	.pipe(filesize())
-// 	// 	.pipe(gulp.dest(buildFolder));
-// };
+	fs.createWriteStream(fileName)
+		.end(htmlString
+			.replace(findCSS(cssBuildFileName)
+				, '<style media="screen" type="text/css">' 
+				+ minimizedCSS 
+				+ '</style>')
+			.replace(findJS(jsBuildFileName)
+				, '<script type=text/javascript>' 
+				+ minimizedJS 
+				+ '</script>')
+		)
+}

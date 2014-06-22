@@ -3,6 +3,7 @@
 var webserver = require('./../webserver')
 , compileJs = require('./../compile-js')
 , compileLess = require('./../compile-less')
+, buildHtml = require('./../build-html')
 
 //default sources
 , rootFolder = './'
@@ -45,4 +46,5 @@ while (j--) {
     js && compileJs(indexFile, debug, jsBuildFileName, buildFolder)
     ;less && compileLess(indexFile, cssBuildFileName, buildFolder)
   }
+  if (arg === 'build') buildHtml(buildFolder, jsBuildFileName, cssBuildFileName)
 }

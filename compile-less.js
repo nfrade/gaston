@@ -1,41 +1,40 @@
-var gulp = require('gulp')
-	, gutil = require('gulp-util')
-	, filesize = require('gulp-filesize')
-	, less = require('gulp-less')
-	, path = require('path')
-	, rename = require('gulp-rename')
-	, browserify = require('browserify')
+var browserify = require('browserify')
+	,	fs = require('fs')
 	, through = require('through')
 
-	, lessAndCssFiles = [];
+	,	cleanCSS = require('clean-css')
+	,	less = require('less')
 
 module.exports = function (indexFile,cssBuildFileName,buildFolder) {
-  var b = browserify(indexFile)
-		.on('error', gutil.log);
+  var b = browserify(indexFile).on('error', function (err) {
+	  	console.error('error:',err)
+	  })
+		, deps
+		, i
+		, lessFile
+		, lessString
+		, totalString = ''
+		, rebasedLess
 
 	b.deps()
-		.on('data', function(a){
-			var deps = a.deps,
-				i,
-				lessFile;
-
+		.on('data', function(a,b){
+			deps = a.deps
 			for (i in deps) {
-				if (~i.indexOf('.less') || ~i.indexOf('.css')) {
-					lessFile = deps[i];
-					lessAndCssFiles.push(lessFile);
-					gulp.src(lessFile)
-						.pipe(less())
-						.pipe(rename(cssBuildFileName))
-						.pipe(filesize())
-						.pipe(gulp.dest(buildFolder));
+				if (/\.(less)|(css)$/i.test(i)) {
+					lessFile = deps[i]
+					, lessString = fs.readFileSync(lessFile,'utf8')
+			    , rebasedLess = new cleanCSS({ // rebasing paths
+			    	noAdvanced:true
+			    }).minify(lessString)
+			    , totalString += rebasedLess
 				}
 			}
-
 		})
-		.on('end', function(){
-			gulp.watch(lessAndCssFiles, function(){
-				module.exports(indexFile,cssBuildFileName,buildFolder);
-			});
-		});
-};
-
+		.on('end',function(){
+		  less.render(totalString,function (e, css) {  // compile less to css
+		      fs.writeFile(buildFolder+cssBuildFileName, css, function(err){
+		          console.error('done compiling less\nerrors:',err);
+		      })
+		  })
+		})
+}
