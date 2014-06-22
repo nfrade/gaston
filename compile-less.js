@@ -1,14 +1,11 @@
 var browserify = require('browserify')
 	,	fs = require('fs')
-	, through = require('through')
-
 	,	cleanCSS = require('clean-css')
 	,	less = require('less')
+	, log = require('npmlog')
 
 module.exports = function (indexFile,cssBuildFileName,buildFolder) {
-  var b = browserify(indexFile).on('error', function (err) {
-	  	console.error('error:',err)
-	  })
+  var b = browserify(indexFile)
 		, deps
 		, i
 		, lessFile
@@ -17,10 +14,13 @@ module.exports = function (indexFile,cssBuildFileName,buildFolder) {
 		, rebasedLess
 
 	b.deps()
+		.on('error', function(err){
+			log.error(err)
+		})
 		.on('data', function(a,b){
 			deps = a.deps
 			for (i in deps) {
-				if (/\.(less)|(css)$/i.test(i)) {
+				if (/(\.less$)|(\.css$)/.test(i)) {
 					lessFile = deps[i]
 					, lessString = fs.readFileSync(lessFile,'utf8')
 			    , rebasedLess = new cleanCSS({ // rebasing paths
@@ -31,8 +31,8 @@ module.exports = function (indexFile,cssBuildFileName,buildFolder) {
 			}
 		})
 		.on('end',function(){
-		  less.render(totalString,function (e, css) {  // compile less to css
-		      fs.writeFile(buildFolder+cssBuildFileName, css, function(err){
+			if(lessFile) less.render(totalString,function (e, css) {  // compile less to css
+		      fs.writeFile(buildFolder + cssBuildFileName, css, function(err){
 		          console.error('done compiling less\nerrors:',err);
 		      })
 		  })

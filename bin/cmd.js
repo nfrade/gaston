@@ -1,8 +1,14 @@
+#!/usr/bin/env node
 var gaston = require('../')
+
+//default files
+, htmlFile = 'index.html'
+, jsFile = 'index.js'
+, cssFile = 'style.css'
 
 //default sources
 , rootFolder = './'
-, indexFile = rootFolder + 'index.js'
+, indexFile = rootFolder + jsFile
 
 //default destinations
 , buildFolder = rootFolder
@@ -36,10 +42,14 @@ if(!js && !less) js = less = true
 //check for commands
 while (j--) {
   arg = args[j]
-  if (arg === 'webserver') gaston.webserver(rootFolder, port, livereload)
+  if (arg === 'webserver')
+    gaston.webserver(rootFolder, port, livereload)
   if (arg === 'compile') {
     js && gaston.compileJs(indexFile, debug, jsBuildFileName, buildFolder)
     ;less && gaston.compileLess(indexFile, cssBuildFileName, buildFolder)
   }
-  if (arg === 'build') gaston.build(buildFolder, jsBuildFileName, cssBuildFileName)
+  if (arg === 'build')
+    gaston.build(buildFolder, jsBuildFileName, cssBuildFileName)
+  if (arg === 'prepare')
+    gaston.prepare(rootFolder, htmlFile, cssFile, jsFile)
 }

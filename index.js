@@ -1,4 +1,5 @@
 exports.webserver = require('./webserver')
 exports.compileJs = require('./compile-js')
 exports.compileLess = require('./compile-less')
-exports.build = require('./build-html')
+exports.build = require('./build')
+exports.prepare = require('./prepare')

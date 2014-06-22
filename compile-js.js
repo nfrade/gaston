@@ -1,7 +1,6 @@
 var browserify = require('browserify')
 	, filesize = require('gulp-filesize')
 	, gulp = require('gulp')
-	, gutil = require('gulp-util')
 	, log = require('npmlog')
   , source = require('vinyl-source-stream')
   , streamify = require('gulp-streamify')
@@ -11,7 +10,7 @@ var browserify = require('browserify')
   function handler (file, opts) { // ignores less files and remembers which js files to watch
 		var input = '';
 		log.info(file);
-		if (/\.(less)|(css)$/i.test(file) === false){
+		if (/(\.less$)|(\.css$)/.test(file) === false){
 			jsFiles.push(file);
 			return through();
 		}
@@ -22,10 +21,11 @@ var browserify = require('browserify')
 
 module.exports = function(indexFile,debug,jsBuildFileName,buildFolder) {
   var b = browserify(indexFile)
-  	.on('error', gutil.log);
-
-  b.transform({ relativeUrls: true, rootpath: buildFolder }, handler)
+		.transform({ relativeUrls: true, rootpath: buildFolder }, handler)
 		.bundle({ debug: debug })
+  	.on('error', function(err){
+  		log.error(err)
+  	})
     .pipe(source(jsBuildFileName))
     .pipe(streamify(filesize()))
     .pipe(gulp.dest(buildFolder))
