@@ -2,16 +2,20 @@ var fs = require('fs')
 	,	path = require('path')
 	, log = require('npmlog')
 
-function createHTML ( templateName, callbackFn ) {
+function createHTML ( folder,templateName, callbackFn ) {
+
+	console.log('lets create some html')
+
 	var template = templateName || 'default.html'
-		,	folder = 'templates'
+		,	templatFolder = 'templates'
 		, dir = __dirname
-		, templateFile = path.join(dir, folder, template)
+		, templateFile = path.join(dir, templatFolder, template)
 		,	htmlTemplate = fs.readFileSync(templateFile,'utf8')
 
 	fs.readFile(templateFile, function(err, data){
 		if (err) log.error('html read', err)
-	  fs.writeFile('index.html', data, function(err){
+			log.warn(folder)
+	  fs.writeFile(folder + 'index.html', data, function(err){
 	      if (err) log.error('html write', err)
 	      log.info('created file','index.html')
 	    	if( callbackFn ) callbackFn()
@@ -19,8 +23,8 @@ function createHTML ( templateName, callbackFn ) {
 	})
 }
 
-function createJS ( callbackFn ) {
-  fs.writeFile('index.js', '', function(err){
+function createJS ( folder, callbackFn ) {
+  fs.writeFile(folder + 'index.js', '', function(err){
       if (err) log.error('js write', err)
       log.info('created file','index.js')
     	if( callbackFn ) callbackFn()
@@ -28,14 +32,22 @@ function createJS ( callbackFn ) {
 }
 
 module.exports = function ( rootFolder, callback ) {
-	var files = fs.readdirSync(rootFolder || './')
+
+	console.log('call me!')
+
+	var folder = rootFolder || './'
+    ,	files = fs.readdirSync(folder)
 		, file
 		, haveIndexHTML
 		, haveIndexJS
 		, i = files.length
 		, readyCount = 2
 		, callbackFn = callback && function () {
-				if(!(readyCount--)) callback()
+			console.log('callback', readyCount)
+				if(!(--readyCount)) {
+					 callback()
+					 	console.log('m')
+					}
 			} 
 	
 	while (i--) {
@@ -45,19 +57,22 @@ module.exports = function ( rootFolder, callback ) {
 		}
 		if ( path.basename(file) === 'index.html' ){
 			log.info('found index.html file!',file)
-			haveIndexHTML = readyCount -= 1
+			haveIndexHTML = true
+			readyCount -= 1
 		}		
 		if ( path.extname(file) === '.js' ){
 			log.info('found js file!',file)
 		}
 		if ( path.basename(file) === 'index.js' ){
 			log.info('found index.js file!',file)
-			haveIndexJS = readyCount -= 1
+			haveIndexJS = true
+			readyCount -= 1
 		}
 	}
+
 	console.log('readycount',readyCount)
 
-	if( !haveIndexHTML ) createHTML() 
-	if( !haveIndexJS ) createJS()
+	if( !haveIndexHTML ) createHTML( folder,false, callbackFn ) 
+	if( !haveIndexJS ) createJS( folder,callbackFn )
 	if( !readyCount ) callback()
 }

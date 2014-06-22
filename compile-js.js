@@ -27,8 +27,11 @@ module.exports = function( indexFile
   , buildFolder
   , callback
   , dontwatch) {
-
-  var b = browserify(indexFile)
+  log.warn('FUN AT NIGHT', buildFolder)
+  var b = browserify(buildFolder + indexFile)
+    .on('error',function(err){
+      log.error('compile-js',err)
+    })
 		.transform({ relativeUrls: true, rootpath: buildFolder }, handler)
 		.bundle({ debug: debug })
 		.pipe(source(jsBuildFileName))

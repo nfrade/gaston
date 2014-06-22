@@ -7,7 +7,7 @@ var browserify = require('browserify')
   , watch = require('./watch')
 
 module.exports = function (indexFile, cssBuildFileName, buildFolder, callback, dontwatch) {
-  var b = browserify(indexFile)
+  var b = browserify(buildFolder + indexFile)
 		, deps
 		, file
 		, lessFile
