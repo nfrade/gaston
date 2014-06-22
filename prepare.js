@@ -33,7 +33,7 @@ module.exports = function ( rootFolder, callback ) {
 		, haveIndexHTML
 		, haveIndexJS
 		, i = files.length
-		, readyCount = 2;
+		, readyCount = 2
 		, callbackFn = callback && function () {
 				if(!(readycount--)) callback()
 			} 
