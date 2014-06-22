@@ -6,7 +6,7 @@ var browserify = require('browserify')
 	, path = require('path')
   , watch = require('./watch')
 
-module.exports = function (indexFile, cssBuildFileName, buildFolder) {
+module.exports = function (indexFile, cssBuildFileName, buildFolder, callback, dontwatch) {
   var b = browserify(indexFile)
 		, deps
 		, file
@@ -42,9 +42,11 @@ module.exports = function (indexFile, cssBuildFileName, buildFolder) {
 			          if (err) log.error('compile-less', err)
 			      })
 			  })
-				watch(lessFiles, function(){
+			  if(!dontwatch) watch(lessFiles, function(){
 	    		module.exports(indexFile, cssBuildFileName, buildFolder)
 	    	})
+
+			  if(callback) callback()
 			}
 		})
 }

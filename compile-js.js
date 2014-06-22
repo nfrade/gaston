@@ -21,16 +21,24 @@ var browserify = require('browserify')
 		return through(write,end);
 	};
 
-module.exports = function(indexFile,debug,jsBuildFileName,buildFolder) {
+module.exports = function( indexFile
+  , debug
+  , jsBuildFileName
+  , buildFolder
+  , callback
+  , dontwatch) {
+  
   var b = browserify(indexFile)
 		.transform({ relativeUrls: true, rootpath: buildFolder }, handler)
 		.bundle({ debug: debug })
 		.pipe(source(jsBuildFileName))
 		.pipe(vfs.dest(buildFolder))
     .on('end', function(){
-			watch(jsFiles, function(){
-    		module.exports(indexFile, debug, jsBuildFileName, buildFolder)
-    	})
+      if (!dontwatch) watch(jsFiles, function(){
+      		module.exports(indexFile, debug, jsBuildFileName, buildFolder)
+      	})
+      
+      if (callback) callback()
     	jsFiles = []
 		})
 
