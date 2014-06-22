@@ -19,7 +19,8 @@
     "through": "^2.3.4",
     "uglify-js": "^2.4.14",
     "vinyl-fs": "^0.3.0",
-    "vinyl-source-stream": "^0.1.1"
+    "vinyl-source-stream": "^0.1.1",
+    "gaze": "^0.6.4"
   },
   "scripts": {
     "test": "node test.js"
@@ -39,9 +40,5 @@
   "bugs": {
     "url": "https://github.com/vigour-io/gaston/issues"
   },
-  "homepage": "https://github.com/vigour-io/gaston",
-  "devDependencies": {
-    "gaze": "^0.6.4",
-    "watch": "^0.10.0"
-  }
+  "homepage": "https://github.com/vigour-io/gaston"
 }

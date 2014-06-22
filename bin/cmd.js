@@ -21,7 +21,6 @@ var gaston = require('../')
 , debug
 , js
 , less
-
 , arg
 , args = process.argv
 , i = j = args.length
@@ -51,5 +50,5 @@ while (j--) {
   if (arg === 'build')
     gaston.build(buildFolder, jsBuildFileName, cssBuildFileName)
   if (arg === 'prepare')
-    gaston.prepare(rootFolder, htmlFile, cssFile, jsFile)
+    gaston.prepare(rootFolder)
 }
