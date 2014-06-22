@@ -23,11 +23,11 @@ var browserify = require('browserify')
 
 module.exports = function( indexFile
   , debug
-  , jsBuildFileName
+  , jsBuildFileName 
   , buildFolder
   , callback
   , dontwatch) {
-  
+
   var b = browserify(indexFile)
 		.transform({ relativeUrls: true, rootpath: buildFolder }, handler)
 		.bundle({ debug: debug })

@@ -2,12 +2,7 @@ var fs = require('fs')
 	,	path = require('path')
 	, log = require('npmlog')
 
-//work in progress!!
-//
-	, callbackFn
-	, readyCount
-
-function createHTML ( templateName ) {
+function createHTML ( templateName, callbackFn ) {
 	var template = templateName || 'default.html'
 		,	folder = 'templates'
 		, dir = __dirname
@@ -19,16 +14,16 @@ function createHTML ( templateName ) {
 	  fs.writeFile('index.html', data, function(err){
 	      if (err) log.error('html write', err)
 	      log.info('created file','index.html')
-	    	if( callbackFn && !readyCount ) callbackFn()
+	    	if( callbackFn ) callbackFn()
 	  })
 	})
 }
 
-function createJS () {
+function createJS ( callbackFn ) {
   fs.writeFile('index.js', '', function(err){
       if (err) log.error('js write', err)
       log.info('created file','index.js')
-    	if( callbackFn && !readyCount ) callbackFn()
+    	if( callbackFn ) callbackFn()
   })
 }
 
@@ -38,9 +33,10 @@ module.exports = function ( rootFolder, callback ) {
 		, haveIndexHTML
 		, haveIndexJS
 		, i = files.length
-		
-		callbackFn = callback
-		readyCount = 2;
+		, readyCount = 2;
+		, callbackFn = callback && function () {
+				if(!(readycount--)) callback()
+			} 
 	
 	while (i--) {
 		file = files[i]
@@ -63,5 +59,5 @@ module.exports = function ( rootFolder, callback ) {
 
 	if( !haveIndexHTML ) createHTML() 
 	if( !haveIndexJS ) createJS()
-	if( callbackFn && !readyCount ) callbackFn()
+	if( !readycount ) callback()
 }
