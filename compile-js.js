@@ -1,16 +1,18 @@
 var browserify = require('browserify')
-	, filesize = require('gulp-filesize')
-	, gulp = require('gulp')
 	, log = require('npmlog')
-  , source = require('vinyl-source-stream')
-  , streamify = require('gulp-streamify')
+	,	vfs = require('vinyl-fs')
 	, through = require('through')
-  , jsFiles = [];
+  , watch = require('./watch')
+  , source = require('vinyl-source-stream')
+  , path = require('path')
+  , fs = require('fs')
+  , jsFiles = []
+  , input
 
   function handler (file, opts) { // ignores less files and remembers which js files to watch
-		var input = '';
-		log.info(file);
-		if (/(\.less$)|(\.css$)/.test(file) === false){
+		input = ''
+		if (/(\.js$)/.test(file)){
+			log.info('compile-js', path.relative(process.cwd(), file))
 			jsFiles.push(file);
 			return through();
 		}
@@ -23,16 +25,13 @@ module.exports = function(indexFile,debug,jsBuildFileName,buildFolder) {
   var b = browserify(indexFile)
 		.transform({ relativeUrls: true, rootpath: buildFolder }, handler)
 		.bundle({ debug: debug })
-  	.on('error', function(err){
-  		log.error(err)
-  	})
-    .pipe(source(jsBuildFileName))
-    .pipe(streamify(filesize()))
-    .pipe(gulp.dest(buildFolder))
-    .on('end',function(){
-			gulp.watch(jsFiles, function(){
-				module.exports(indexFile,debug,jsBuildFileName,buildFolder);
-			});
-		});
+		.pipe(source(jsBuildFileName))
+		.pipe(vfs.dest(buildFolder))
+    .on('end', function(){
+			watch(jsFiles, function(){
+    		module.exports(indexFile, debug, jsBuildFileName, buildFolder)
+    	})
+    	jsFiles = []
+		})
 
 };
