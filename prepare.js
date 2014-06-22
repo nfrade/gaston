@@ -38,8 +38,10 @@ module.exports = function ( rootFolder, callback ) {
 		, haveIndexHTML
 		, haveIndexJS
 		, i = files.length
-		, callbackFn = callback
-		, readyCount = 2;
+		
+		callbackFn = callback
+		readyCount = 2;
+	
 	while (i--) {
 		file = files[i]
 		if ( path.extname(file) === '.html' ){
