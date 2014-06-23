@@ -36,7 +36,6 @@ module.exports = function( indexFile
       if (!dontwatch) watch(jsFiles, function(){
       		module.exports(indexFile, debug, jsBuildFileName, buildFolder)
       	})
-      
       if (callback) callback()
     	jsFiles = []
 		})
