@@ -7,10 +7,9 @@ var browserify = require('browserify')
   , path = require('path')
   , fs = require('fs')
   , jsFiles = []
-  , input
 
   function handler (file, opts) { // ignores less files and remembers which js files to watch
-		input = ''
+		var input = ''
 		if (/(\.js$)/.test(file)){
 			log.info('compile-js', path.relative(process.cwd(), file))
 			jsFiles.push(file);
@@ -28,9 +27,7 @@ module.exports = function( indexFile
   , callback
   , dontwatch) {
   var b = browserify(buildFolder + indexFile)
-    .on('error',function(err){
-      log.error('compile-js',err)
-    })
+    .on('error',function(err){ log.error('compile-js',err) })
 		.transform({ relativeUrls: true, rootpath: buildFolder }, handler)
 		.bundle({ debug: debug })
 		.pipe(source(jsBuildFileName))
