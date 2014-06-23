@@ -42,17 +42,13 @@ module.exports = function ( rootFolder, callback ) {
 	
 	while (i--) {
 		file = files[i]
-		if ( path.extname(file) === '.html' ){
-			log.info('found html file!',file)
-		}
+		if ( path.extname(file) === '.html' ) log.info('found html file!',file)	
+		if ( path.extname(file) === '.js' ) log.info('found js file!',file)
 		if ( path.basename(file) === 'index.html' ){
 			log.info('found index.html file!',file)
 			haveIndexHTML = true
 			readyCount -= 1
-		}		
-		if ( path.extname(file) === '.js' ){
-			log.info('found js file!',file)
-		}
+		}	
 		if ( path.basename(file) === 'index.js' ){
 			log.info('found index.js file!',file)
 			haveIndexJS = true
