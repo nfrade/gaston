@@ -5,18 +5,19 @@ var gaze = require('gaze')
   , file
   , i
 
-function checkIfWatched (files) {
+function removeWatched (files) {
   i = files.length
   while ( i-- ) if( ~watched.indexOf(files[i]) ) files.splice(i, 1)
   watched = watched.concat(files) 
+  return files
 }
 
 module.exports = function(files, callback){
-  checkIfWatched(files)
+  files = removeWatched(files)
+
   if( files.length )
     gaze(files, function(err) {
-        i = watched.length
-        while ( i-- ) log.info('watching', path.relative(process.cwd(), watched[i]))
+        log.info('watching', files)
         if ( err ) log.error(err)
       })
       .on('changed', function(filepath) {

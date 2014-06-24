@@ -44,8 +44,15 @@ while (j--) {
   if (arg === 'webserver')
     gaston.webserver(rootFolder, port, livereload)
   if (arg === 'compile') {
-    js && gaston.compileJs(indexFile, debug, jsBuildFileName, buildFolder)
-    ;less && gaston.compileLess(indexFile, cssBuildFileName, buildFolder)
+    if(js && less){
+      gaston.prepare(rootFolder,function (){
+        gaston.compileJs(indexFile, debug, jsBuildFileName, buildFolder)
+        gaston.compileLess(indexFile, cssBuildFileName, buildFolder) 
+      })
+    }else{
+      js && gaston.compileJs(indexFile, debug, jsBuildFileName, buildFolder)
+      ;less && gaston.compileLess(indexFile, cssBuildFileName, buildFolder)     
+    }
   }
   if (arg === 'build')
     gaston.build(buildFolder, jsBuildFileName, cssBuildFileName)

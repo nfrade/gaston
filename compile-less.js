@@ -5,48 +5,109 @@ var browserify = require('browserify')
 	, log = require('npmlog')
 	, path = require('path')
   , watch = require('./watch')
+  , prepare = require('./prepare')
+  , processCwd = process.cwd()
+
+function findImports (string, nested) {
+	var found = string.match(/@import([\s\S]*?)\((.*?)\);?/g)
+		,	i = (found || []).length - 1
+		, imports
+		, files = []
+		, file
+		, from = path.relative(processCwd, nested)
+		, to
+	for (; i >= 0;){
+		to = found[i--].match(/url\(("|')?(.*?)("|')?\)/)[2]
+		file = path.join(from, to)
+		if (fs.existsSync(file)){
+			files = findFiles(file)
+			log.info('@import', file)
+		}
+		else {
+			log.error('can\'t find @import file', file)
+		}
+	}
+	return files
+}
+
+function findFiles (file) {
+	var string = fs.readFileSync(file, 'utf8')
+		, imports = findImports(string, path.dirname(file))
+		, files = [file].concat(imports)
+	return files
+}
+
+function filesToString (files) {
+	var string = ''
+		,	str
+		,	i = files.length - 1
+		, file
+	for (; i >= 0;) {
+		file = path.normalize(files[i--])
+		str = fs.readFileSync(file, 'utf8').replace(/@import([\s\S]*?)\((.*?)\);?/g, '')
+		string += rebasePaths(str, path.dirname(file))
+	};
+	return string
+}
+
+function rebasePaths (string, nested) {
+	var found = string.match(/\(("|')?(.*?)("|')?\)/g)
+		,	from
+		, to
+		, i = found.length - 1
+		, from = path.relative(processCwd, nested)
+		,	replace
+	for (; i >= 0;) {
+		to = found[i--].match(/\(("|')?(.*?)("|')?\)/)[2]
+		if(!(to.indexOf('data:') === 0 || /^https?:\/\//.test(to))){ // check if this is a file
+			replace = path.join(from, to)
+			string = string.replace(to, replace)
+		}
+	}1
+	return string
+}
 
 module.exports = function (indexFile, cssBuildFileName, buildFolder, callback, dontwatch) {
   var b = browserify(buildFolder + indexFile)
+  	.on('error', function(err){ log.error('compile-less browserify',err) })
 		, deps
+		, fl
 		, file
-		, lessFile
-		, lessString
-		, totalString = ''
-		, rebasedLess
-		, lessFiles = []
+		, files
+		, string = ''
+		, passedFiles = []
 
 	b.deps()
-		.on('error', function(err){
-			log.error(err)
-		})
+		.on('error', function(err){ log.error('require',err) })
 		.on('data', function(data){
 			deps = data.deps
 			for (file in deps) {
 				if (/(\.less$)|(\.css$)/.test(file)) {
-					log.info('compile-less', file)
-					lessFile = deps[file]
-					lessFiles.push(lessFile)
-					lessString = fs.readFileSync(lessFile,'utf8')
-			    , rebasedLess = new cleanCSS({ // rebasing paths
-			    	noAdvanced:true
-			    }).minify(lessString)
-			    , totalString += rebasedLess
+					file = path.normalize(file)
+					log.info('require', file)
+					files = findFiles(file)
+					// push files into watch array, make sure no doubles
+					for (var i = files.length - 1; i >= 0;i--) {
+						fl = files[i]
+						if(!~passedFiles.indexOf(fl)){
+							passedFiles.unshift(fl)
+						}
+					}
 				}
 			}
 		})
 		.on('end',function(){
-			if(lessFile) {
-				less.render(totalString,function (e, css) {  // compile less to css
+			if(passedFiles.length) {	
+				string = filesToString(passedFiles) + string
+				less.render(string,function (e, css) {  // compile less to css
 			      fs.writeFile(buildFolder + cssBuildFileName, css, function(err){
 			          if (err) log.error('compile-less', err)
 			      })
 			  })
-			  if(!dontwatch) watch(lessFiles, function(){
-	    		module.exports(indexFile, cssBuildFileName, buildFolder)
-	    	})
-
 			  if(callback) callback()
+			  if(!dontwatch) watch(passedFiles, function(){
+		  		module.exports(indexFile, cssBuildFileName, buildFolder)
+		  	})
 			}
 		})
 }
