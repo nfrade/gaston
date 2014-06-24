@@ -1,6 +1,5 @@
 var browserify = require('browserify')
 	,	fs = require('fs')
-	,	cleanCSS = require('clean-css')
 	,	less = require('less')
 	, log = require('npmlog')
 	, path = require('path')
