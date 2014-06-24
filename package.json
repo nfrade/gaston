@@ -9,9 +9,8 @@
   "dependencies": {
     "browserify": "^4.1.11",
     "clean-css": "^2.2.2",
+    "connect": "^3.0.1",
     "gaze": "^0.6.4",
-    "gulp": "^3.8.1",
-    "gulp-connect": "^2.0.5",
     "less": "^1.7.1",
     "npmlog": "^0.1.1",
     "through": "^2.3.4",
