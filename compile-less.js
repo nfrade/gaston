@@ -54,7 +54,7 @@ function rebasePaths (string, nested) {
 	var found = string.match(/\(("|')?(.*?)("|')?\)/g)
 		,	from
 		, to
-		, i = found.length - 1
+		, i = (found||[]).length - 1
 		, from = path.relative(processCwd, nested)
 		,	replace
 	for (; i >= 0;) {
@@ -84,7 +84,7 @@ module.exports = function (indexFile, cssBuildFileName, buildFolder, callback, d
 			for (file in deps) {
 				if (/(\.less$)|(\.css$)/.test(file)) {
 					file = path.normalize(file)
-					log.info('require', file)
+					log.info('compile-less', file)
 					files = findFiles(file)
 					// push files into watch array, make sure no doubles
 					for (var i = files.length - 1; i >= 0;i--) {
