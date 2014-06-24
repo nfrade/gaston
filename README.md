@@ -15,7 +15,7 @@ Gaston is your favorite handyman, carrying Vigour's evergrowing set of devtools.
 
 ```-port:<portvalue>``` Uses this port for webserver (shorthand: ```-p:<portvalue>```)
 
-```-livereload``` Livereload parameter for webserver
+```-livereload``` Livereload parameter for webserver (!TODO)
 
 ```-debug``` Debug parameter for browserify compile
 
