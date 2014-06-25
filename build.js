@@ -1,4 +1,4 @@
-var fs = require('fs')
+var fs = require('graceful-fs')
 	,	cleanCSS = require('clean-css')
 	, uglify = require("uglify-js")
 	, fileName = 'build.html'

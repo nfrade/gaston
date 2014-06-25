@@ -11,6 +11,7 @@
     "clean-css": "^2.2.2",
     "connect": "^3.0.1",
     "gaze": "^0.6.4",
+    "graceful-fs": "^3.0.2",
     "less": "^1.7.1",
     "npmlog": "^0.1.1",
     "through": "^2.3.4",

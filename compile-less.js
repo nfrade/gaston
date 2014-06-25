@@ -1,5 +1,5 @@
 var browserify = require('browserify')
-	,	fs = require('fs')
+	,	fs = require('graceful-fs')
 	,	less = require('less')
 	, log = require('npmlog')
 	, path = require('path')
@@ -81,6 +81,7 @@ module.exports = function (indexFile, cssBuildFileName, buildFolder, callback, d
 		.on('data', function(data){
 			deps = data.deps
 			for (file in deps) {
+				console.log(file)
 				if (/(\.less$)|(\.css$)/.test(file)) {
 					file = path.normalize(file)
 					log.info('compile-less', file)

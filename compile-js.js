@@ -5,7 +5,7 @@ var browserify = require('browserify')
   , watch = require('./watch')
   , source = require('vinyl-source-stream')
   , path = require('path')
-  , fs = require('fs')
+  , fs = require('graceful-fs')
   , jsFiles = []
 
   function handler (file, opts) { // ignores less files and remembers which js files to watch

@@ -1,6 +1,6 @@
 var connect = require('connect')
 	, http = require('http')
-	,	fs = require('fs')
+	,	fs = require('graceful-fs')
 	, app = connect()
 	, log = require('npmlog')
 	, path = require('path')
