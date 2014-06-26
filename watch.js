@@ -7,7 +7,9 @@ var gaze = require('gaze')
 
 function removeWatched (files) {
   i = files.length
-  while ( i-- ) if( ~watched.indexOf(files[i]) ) files.splice(i, 1)
+  while ( i-- ){
+    if( ~watched.indexOf(files[i]) ) files.splice(i, 1)
+  }
   watched = watched.concat(files) 
   return files
 }
