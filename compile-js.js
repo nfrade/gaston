@@ -69,7 +69,13 @@ module.exports = function( indexFile
       watchJS()
     })
 		.pipe(source(jsBuildFileName))
+    .on('data',function(data){ 
+      log.info('compile-js source data',data)
+    })
 		.pipe(vfs.dest(buildFolder))
+    .on('data',function(data){ 
+      log.info('compile-js vfs data',data)
+    })
     .on('end', function(){
       watchJS()
       if (callback) callback()

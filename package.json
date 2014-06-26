@@ -1,6 +1,6 @@
 {
   "name": "gaston",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "vigour's dev handyman",
   "main": "index.js",
   "bin": {
