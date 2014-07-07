@@ -8,12 +8,12 @@ var connect = require('connect')
 module.exports = function( folder, port ){
 	
 	app.use(function(req, res){
-		
-		
-		var request = path.join(process.cwd(), req.url)
+		if(!~req.url.indexOf(folder)) req.url = path.join(folder,req.url)
+
+		var request = path.join(process.cwd(),req.url)
 		
 		if(!path.extname(request)) request = path.join(request,'index.html')
-		
+
 		fs.readFile(request, function(err, data){
 			if (err) log.error('server',process.cwd(),'REQ',req.url,'REQUEAST',request) 
 				res.end(data)
