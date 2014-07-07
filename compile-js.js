@@ -50,7 +50,7 @@ module.exports = function( indexFile
     writeError( filename, error )
   }
   
-  var b = browserify(buildFolder + indexFile)
+  var b = browserify('./' + path.normalize(buildFolder,indexFile))
     .on('error',function(err){ 
       log.error('compile-js browserify',err)
       errorMessage(err)

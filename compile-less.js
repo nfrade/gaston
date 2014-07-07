@@ -16,6 +16,7 @@ function findImports (string, nested) {
 		, from = path.relative(processCwd, nested)
 		, to
 	for (; i >= 0;){
+		console.log('found')
 		to = found[i--].match(/url\(("|')?(.*?)("|')?\)/)[2]
 		file = path.join(from, to)
 		if (fs.existsSync(file)){
@@ -41,16 +42,25 @@ function filesToString (files) {
 		,	str
 		,	i = files.length - 1
 		, file
+		, cnt = 0
 	for (; i >= 0;) {
+		cnt++
 		file = path.normalize(files[i--])
 		str = fs.readFileSync(file, 'utf8').replace(/@import([\s\S]*?)\((.*?)\);?/g, '')
-		string += rebasePaths(str, path.dirname(file))
-	};
+		less.render(str, function(err,css){
+			if(err) console.error(err)
+			cnt--
+			string += rebasePaths(css, path.dirname(file))
+			if(!cnt) return string
+		})
+
+		// string += rebasePaths(str, path.dirname(file)) // CHANGE BACK TO THIS, UPDATE REBASE VARIABLE PATHS
+	}
 	return string
 }
 
 function rebasePaths (string, nested) {
-	var found = string.match(/\(("|')?(.*?)("|')?\)/g)
+	var found = string.match(/url\(("|')?(.*?)("|')?\)/g)
 		,	from
 		, to
 		, i = (found||[]).length - 1
@@ -62,12 +72,14 @@ function rebasePaths (string, nested) {
 			replace = path.join(from, to)
 			string = string.replace(to, replace)
 		}
-	}1
+	}
 	return string
 }
 
 module.exports = function (indexFile, cssBuildFileName, buildFolder, callback, dontwatch) {
-  var b = browserify(buildFolder + indexFile)
+  if(buildFolder.length) processCwd = path.join(processCwd,buildFolder)
+
+  var b = browserify('./' + path.normalize(buildFolder,indexFile))
   	.on('error', function(err){ log.error('compile-less browserify',err) })
 		, deps
 		, fl
@@ -82,7 +94,7 @@ module.exports = function (indexFile, cssBuildFileName, buildFolder, callback, d
 			deps = data.deps
 			for (file in deps) {
 				if (/(\.less$)|(\.css$)/.test(file)) {
-					file = path.normalize(file)
+					file = path.relative(process.cwd(),data.deps[file])
 					log.info('compile-less', file)
 					files = findFiles(file)
 					// push files into watch array, make sure no doubles
