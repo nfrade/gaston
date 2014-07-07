@@ -8,7 +8,8 @@ var connect = require('connect')
 module.exports = function( folder, port ){
 	
 	app.use(function(req, res){
-		if(!~req.url.indexOf(folder)) req.url = path.join(folder,req.url)
+		console.log(req.url)
+		// if(!~req.url.indexOf(folder)) req.url = path.join(folder,req.url)
 
 		var request = path.join(process.cwd(),req.url)
 		

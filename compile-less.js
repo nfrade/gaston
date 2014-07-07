@@ -5,7 +5,7 @@ var browserify = require('browserify')
 	, path = require('path')
   , watch = require('./watch')
   , prepare = require('./prepare')
-  , processCwd = process.cwd()
+  , currentDir;
 
 function findImports (string, nested) {
 	var found = string.match(/@import([\s\S]*?)\((.*?)\);?/g)
@@ -13,7 +13,7 @@ function findImports (string, nested) {
 		, imports
 		, files = []
 		, file
-		, from = path.relative(processCwd, nested)
+		, from = path.relative(currentDir, nested)
 		, to
 	for (; i >= 0;){
 		console.log('found')
@@ -64,7 +64,7 @@ function rebasePaths (string, nested) {
 		,	from
 		, to
 		, i = (found||[]).length - 1
-		, from = path.relative(processCwd, nested)
+		, from = path.relative(currentDir, nested)
 		,	replace
 	for (; i >= 0;) {
 		to = found[i--].match(/\(("|')?(.*?)("|')?\)/)[2]
@@ -77,7 +77,7 @@ function rebasePaths (string, nested) {
 }
 
 module.exports = function (indexFile, cssBuildFileName, buildFolder, callback, dontwatch) {
-  if(buildFolder.length) processCwd = path.join(processCwd,buildFolder)
+  currentDir = path.join(process.cwd(),buildFolder)
 
   var b = browserify('./' + path.normalize(buildFolder,indexFile))
   	.on('error', function(err){ log.error('compile-less browserify',err) })
