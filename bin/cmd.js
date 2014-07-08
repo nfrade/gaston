@@ -29,7 +29,7 @@ while (i--) {
   if (arg === '-debug') debug = true
   if (arg === '-js') js = true
   if (arg === '-less' || arg === '-css') less = true
-  if (arg.indexOf('-root:')===0) buildFolder ='act' + '/'
+  if (arg.indexOf('-root:')===0) buildFolder =arg.slice(6) + '/'
 }
 
 //default compile settings
