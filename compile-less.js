@@ -48,15 +48,7 @@ function filesToString (files) {
 		cnt++
 		file = path.normalize(files[i--])
 		str = fs.readFileSync(file, 'utf8').replace(/@import([\s\S]*?)\((.*?)\);?/g, '')
-
-		// less.render(str, function(err,css){
-		// 	if(err) console.error(err)
-		// 	cnt--
-		// 	string += rebasePaths(css, path.dirname(file))
-		// 	if(!cnt) return string
-		// })
-
-		string += rebasePaths(str, path.dirname(file)) // CHANGE BACK TO THIS, UPDATE REBASE VARIABLE PATHS
+		string += rebasePaths(str, path.dirname(file))
 	}
 	return string
 }
@@ -92,42 +84,47 @@ module.exports = function (indexFile, cssBuildFileName, buildFolder, callback, d
 		, string = ''
 		, passedFiles = []
 
-	b.deps()
-		.on('error', function(err){ log.error('require',err) })
-		.on('data', function(data){
-			deps = data.deps
+	compile()
 
+	function compile (){
 
-			for (file in deps) {
-				if (/(\.less$)|(\.css$)/.test(file)) {
-					// file = path.relative(process.cwd(),data.deps[file])
-					file = data.deps[file]
-					log.info('compile-less', file)
-					files = findFiles(file)
-					// push files into watch array, make sure no doubles
-					for (var i = files.length - 1; i >= 0;i--) {
-						fl = files[i]
-						if(!~passedFiles.indexOf(fl)){
-							passedFiles.unshift(fl)
+		b.deps()
+      .on('error',function(err){
+        log.info('compile-less ignoring:',err.filename)
+        b = b.ignore(err.filename)
+        compile()
+      })
+			.on('data', function(data){
+				deps = data.deps
+				for (file in deps) {
+					if (/(\.less$)|(\.css$)/.test(file)) {
+						file = data.deps[file]
+						log.info('compile-less', file)
+						files = findFiles(file)
+						// push files into watch array, make sure no doubles
+						for (var i = files.length - 1; i >= 0;i--) {
+							fl = files[i]
+							if(!~passedFiles.indexOf(fl)){
+								passedFiles.unshift(fl)
+							}
 						}
 					}
 				}
-			}
-		})
-		.on('end',function(){
-			if(passedFiles.length) {	
-				string = filesToString(passedFiles) + string
-				less.render(string,function (e, css) {  // compile less to css
-						if (e) log.error('compile-less less render', e)
-			      fs.writeFile(buildFolder + cssBuildFileName, css, function(err){
-			          if (err) log.error('compile-less write file', err)
-			      })
-			  })
-
-			  if(callback) callback()
-			  if(!dontwatch) watch(passedFiles, function(){
-		  		module.exports(indexFile, cssBuildFileName, buildFolder)
-		  	})
-			}
-		})
+			})
+			.on('end',function(){
+				if(passedFiles.length) {	
+					string = filesToString(passedFiles) + string
+					less.render(string,function (e, css) {  // compile less to css
+							if (e) log.error('compile-less less render', e)
+				      fs.writeFile(buildFolder + cssBuildFileName, css, function(err){
+				          if (err) log.error('compile-less write file', err)
+				      })
+				  })
+				  if(callback) callback()
+				  if(!dontwatch) watch(passedFiles, function(){
+			  		module.exports(indexFile, cssBuildFileName, buildFolder)
+			  	})
+				}
+			})
+	}
 }

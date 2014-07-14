@@ -7,13 +7,6 @@ var browserify = require('browserify')
   , path = require('path')
   , fs = require('graceful-fs')
 
- //  function prep (file, opts) { // ignores less files and remembers which js files to watch
- //    if (!/(\.less$)/.test(file) && !/(\.css$)/.test(file)){
-
-	// 	}
- //    return through();
-	// }
-
   function writeError ( filename , error ){
     var text = 'document.write("<h1>Error compiling js:</h1> '+ error +'");'
     fs.writeFile(
@@ -49,38 +42,48 @@ module.exports = function( indexFile
     writeError( filename, error )
   }
 
-  b.deps().on('data',function(data){
-      deps = data.deps
-      for (file in deps) {
-        if (/(\.js$)/.test(file)) {
-          file = data.deps[file]
-          log.info('compile-js', file)
-          jsFiles.push(file)
-        }else if (/(\.less$)|(\.css$)/.test(file)) {
-          b = b.ignore(data.deps[file])
+  function compile(){
+    b.deps()
+      .on('error',function(err){
+        log.info('compile-js ignoring:',err.filename)
+        b = b.ignore(err.filename)
+        compile()
+      })
+      .on('data',function(data){
+        deps = data.deps
+        for (file in deps) {
+          if (/(\.js$)/.test(file)) {
+            file = data.deps[file]
+            log.info('compile-js', file)
+            jsFiles.push(file)
+          }else if (/(\.less$)|(\.css$)/.test(file)) {
+            b = b.ignore(data.deps[file])
+          }
         }
-      }
-    }).on('end',function(){
+      })
+      .on('end',function(){
 
-    b.bundle({ debug: debug })
-      .on('error',function(err, data){ 
-        log.error('compile-js bundle',err)
-        errorMessage(err)
-        watchJS()
+      b.bundle({ debug: debug })
+        .on('error',function(err, data){ 
+          log.error('compile-js bundle',err)
+          errorMessage(err)
+          watchJS()
+        })
+        .pipe(source(jsBuildFileName))
+        .on('data',function(data){ 
+          log.info('compile-js source data',data)
+        })
+        .pipe(vfs.dest(buildFolder))
+        .on('data',function(data){ 
+          log.info('compile-js vfs data',data)
+        })
+        .on('end', function(){
+          watchJS()
+          if (callback) callback()
+        })
       })
-      .pipe(source(jsBuildFileName))
-      .on('data',function(data){ 
-        log.info('compile-js source data',data)
-      })
-      .pipe(vfs.dest(buildFolder))
-      .on('data',function(data){ 
-        log.info('compile-js vfs data',data)
-      })
-      .on('end', function(){
-        watchJS()
-        if (callback) callback()
-      })
+    }
 
-    })
+    compile()
 
 };
