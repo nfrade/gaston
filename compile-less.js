@@ -5,9 +5,9 @@ var browserify = require('browserify')
 	, path = require('path')
   , watch = require('./watch')
   , prepare = require('./prepare')
-  , currentDir;
+  , currentDir
 
-function findImports (string, nested) {
+function findImports (string, nested) { // add more import notations (less)
 	var found = string.match(/@import([\s\S]*?)\((.*?)\);?/g)
 		,	i = (found || []).length - 1
 		, imports
@@ -15,8 +15,8 @@ function findImports (string, nested) {
 		, file
 		, from = path.relative(currentDir, nested)
 		, to
+
 	for (; i >= 0;){
-		console.log('found')
 		to = found[i--].match(/url\(("|')?(.*?)("|')?\)/)[2]
 		file = path.join(from, to)
 		if (fs.existsSync(file)){
@@ -34,6 +34,7 @@ function findFiles (file) {
 	var string = fs.readFileSync(file, 'utf8')
 		, imports = findImports(string, path.dirname(file))
 		, files = [file].concat(imports)
+
 	return files
 }
 
@@ -47,27 +48,30 @@ function filesToString (files) {
 		cnt++
 		file = path.normalize(files[i--])
 		str = fs.readFileSync(file, 'utf8').replace(/@import([\s\S]*?)\((.*?)\);?/g, '')
-		less.render(str, function(err,css){
-			if(err) console.error(err)
-			cnt--
-			string += rebasePaths(css, path.dirname(file))
-			if(!cnt) return string
-		})
 
-		// string += rebasePaths(str, path.dirname(file)) // CHANGE BACK TO THIS, UPDATE REBASE VARIABLE PATHS
+		// less.render(str, function(err,css){
+		// 	if(err) console.error(err)
+		// 	cnt--
+		// 	string += rebasePaths(css, path.dirname(file))
+		// 	if(!cnt) return string
+		// })
+
+		string += rebasePaths(str, path.dirname(file)) // CHANGE BACK TO THIS, UPDATE REBASE VARIABLE PATHS
 	}
 	return string
 }
 
 function rebasePaths (string, nested) {
-	var found = string.match(/url\(("|')?(.*?)("|')?\)/g)
+	var found = string.match(/url\(([^@])("|')?(.*?)("|')?\)/g)
 		,	from
 		, to
 		, i = (found||[]).length - 1
 		, from = path.relative(currentDir, nested)
 		,	replace
+
 	for (; i >= 0;) {
 		to = found[i--].match(/\(("|')?(.*?)("|')?\)/)[2]
+
 		if(!(to.indexOf('data:') === 0 || /^https?:\/\//.test(to))){ // check if this is a file
 			replace = path.join(from, to)
 			string = string.replace(to, replace)
@@ -92,6 +96,8 @@ module.exports = function (indexFile, cssBuildFileName, buildFolder, callback, d
 		.on('error', function(err){ log.error('require',err) })
 		.on('data', function(data){
 			deps = data.deps
+
+
 			for (file in deps) {
 				if (/(\.less$)|(\.css$)/.test(file)) {
 					file = path.relative(process.cwd(),data.deps[file])
@@ -111,10 +117,12 @@ module.exports = function (indexFile, cssBuildFileName, buildFolder, callback, d
 			if(passedFiles.length) {	
 				string = filesToString(passedFiles) + string
 				less.render(string,function (e, css) {  // compile less to css
+						if (e) log.error('compile-less less render', e)
 			      fs.writeFile(buildFolder + cssBuildFileName, css, function(err){
-			          if (err) log.error('compile-less', err)
+			          if (err) log.error('compile-less write file', err)
 			      })
 			  })
+
 			  if(callback) callback()
 			  if(!dontwatch) watch(passedFiles, function(){
 		  		module.exports(indexFile, cssBuildFileName, buildFolder)

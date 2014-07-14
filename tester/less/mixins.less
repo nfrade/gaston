@@ -1,0 +1,165 @@
+/*
+ * MTV Play v0.1, 2014
+ * Author: Gideon van Dijk, Vigour.io
+ */
+
+/* ==========================================================================
+   MTV Play Mixins
+   ========================================================================== */
+
+/*
+ * Solids
+ */
+
+@white: #FFF;
+@safeWhite: #F9F9F9;
+
+@grey: #FAFAFA;
+
+@borderGrey: #DDD;
+@borderPink: #DBCEDB;
+
+@lightPink: #F8EFF8;
+@hotPink: #EE255C;
+@darkPink: #D71F52;
+
+@lightPurple: #5D4078;
+@hotPurple: #482866;
+@darkPurple: #231331;
+
+@hotYellow: #FFEB00;
+@darkYellow: #FDCD2F;
+
+@turquois: #00B5AF;
+
+@blue: #5082E5;
+
+@facebookBlue: #3B5998;
+@twitterBlue: #55ACEE;
+
+/*
+ * Gradients
+ */
+
+.gradientPurple(@color: #482866, @start: #482866, @stop: #231331) {
+  background: @color;
+  background: -webkit-gradient(linear,
+                               left bottom,
+                               left top,
+                               color-stop(0, @start),
+                               color-stop(1, @stop));
+  background: -ms-linear-gradient(bottom,
+                                  @start,
+                                  @stop);
+  background: -moz-linear-gradient(center bottom,
+                                   @start 0%,
+                                   @stop 100%);
+  background: -o-linear-gradient(@stop,
+                                 @start);
+  filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",@stop,@start));
+}
+
+/*
+ * Borders
+ */
+
+.bordered(@top-color: #DDD, @right-color: #DDD, @bottom-color: #DDD, @left-color: #DDD) {
+  border-top: solid 1px @top-color;
+  border-left: solid 1px @left-color;
+  border-right: solid 1px @right-color;
+  border-bottom: solid 1px @bottom-color;
+}
+
+/*
+ * Corners
+ */
+
+.rounded(@radius: 2px) {
+  -webkit-border-radius: @radius;
+  -moz-border-radius: @radius;
+  border-radius: @radius;
+}
+
+.borderRadius(@topright: 2px, @bottomright: 2px, @bottomleft: 2px, @topleft: 2px) {
+  -webkit-border-top-right-radius: @topright;
+  -webkit-border-bottom-right-radius: @bottomright;
+  -webkit-border-bottom-left-radius: @bottomleft;
+  -webkit-border-top-left-radius: @topleft;
+  -moz-border-radius-topright: @topright;
+  -moz-border-radius-bottomright: @bottomright;
+  -moz-border-radius-bottomleft: @bottomleft;
+  -moz-border-radius-topleft: @topleft;
+  border-top-right-radius: @topright;
+  border-bottom-right-radius: @bottomright;
+  border-bottom-left-radius: @bottomleft;
+  border-top-left-radius: @topleft;
+  .background-clip(padding-box);
+}
+
+
+/*
+ * Opacity
+ */
+
+.opacity05(@opacity: 0.5) {
+  -moz-opacity: @opacity;
+  -khtml-opacity: @opacity;
+  -webkit-opacity: @opacity;
+  opacity: @opacity;
+  @opperc: @opacity * 100;
+  -ms-filter: ~"progid:DXImageTransform.Microsoft.Alpha(opacity=@{opperc})";
+  filter: ~"alpha(opacity=@{opperc})";
+}
+
+.opacity075(@opacity: 0.75) {
+  -moz-opacity: @opacity;
+  -khtml-opacity: @opacity;
+  -webkit-opacity: @opacity;
+  opacity: @opacity;
+  @opperc: @opacity * 100;
+  -ms-filter: ~"progid:DXImageTransform.Microsoft.Alpha(opacity=@{opperc})";
+  filter: ~"alpha(opacity=@{opperc})";
+}
+
+.opacity095(@opacity: 0.95) {
+  -moz-opacity: @opacity;
+  -khtml-opacity: @opacity;
+  -webkit-opacity: @opacity;
+  opacity: @opacity;
+  @opperc: @opacity * 100;
+  -ms-filter: ~"progid:DXImageTransform.Microsoft.Alpha(opacity=@{opperc})";
+  filter: ~"alpha(opacity=@{opperc})";
+}
+
+/*
+ * Shadows
+ */
+
+.dropShadow (@x: 0, @y: 2px, @blur: 3px, @spread: 0, @alpha: 0.30) {
+	-webkit-box-shadow:	@x @y @blur @spread rgba(0, 0, 0, @alpha);
+	-moz-box-shadow:	@x @y @blur @spread rgba(0, 0, 0, @alpha);
+	box-shadow:		@x @y @blur @spread rgba(0, 0, 0, @alpha);
+}
+
+.dropShadowOverlay (@x: 0, @y: 3px, @blur: 8px, @spread: 2px, @alpha: 0.30) {
+	-webkit-box-shadow:	@x @y @blur @spread rgba(33, 17, 48, @alpha);
+	-moz-box-shadow:	@x @y @blur @spread rgba(33, 17, 48, @alpha);
+	box-shadow:		@x @y @blur @spread rgba(33, 17, 48, @alpha);
+}
+
+/*
+ * Icons
+ */
+
+.iconFont(@family: mtv_play, @weight: normal, @style: normal){
+    @font-face{
+        font-family: @family;
+        src:url('fonts/@{family}.eot');
+        src:url('fonts/@{family}.eot?#iefix') format('embedded-opentype'),
+            url('fonts/@{family}.woff') format('woff'),
+            url('fonts/@{family}.ttf') format('truetype'),
+            url('fonts/@{family}.svg#icon') format('svg');
+        font-weight: @weight;
+        font-style: @style;
+    }
+}
