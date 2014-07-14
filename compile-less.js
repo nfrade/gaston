@@ -100,7 +100,8 @@ module.exports = function (indexFile, cssBuildFileName, buildFolder, callback, d
 
 			for (file in deps) {
 				if (/(\.less$)|(\.css$)/.test(file)) {
-					file = path.relative(process.cwd(),data.deps[file])
+					// file = path.relative(process.cwd(),data.deps[file])
+					file = data.deps[file]
 					log.info('compile-less', file)
 					files = findFiles(file)
 					// push files into watch array, make sure no doubles

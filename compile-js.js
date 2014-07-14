@@ -6,21 +6,13 @@ var browserify = require('browserify')
   , source = require('vinyl-source-stream')
   , path = require('path')
   , fs = require('graceful-fs')
-  , jsFiles = []
 
-  function handler (file, opts) { // ignores less files and remembers which js files to watch
+ //  function prep (file, opts) { // ignores less files and remembers which js files to watch
+ //    if (!/(\.less$)/.test(file) && !/(\.css$)/.test(file)){
 
-    if (!/(\.less$)/.test(file) && !/(\.css$)/.test(file)){
-      console.log('>>>',file)
-      file = path.relative(process.cwd(), file)
-			log.info('compile-js', file)
-			jsFiles.push(file);
-      return through();
-		}
-    function doNothing() {  }
-    function end() { }
-    return through(doNothing,end);
-	}
+	// 	}
+ //    return through();
+	// }
 
   function writeError ( filename , error ){
     var text = 'document.write("<h1>Error compiling js:</h1> '+ error +'");'
@@ -40,6 +32,12 @@ module.exports = function( indexFile
   , callback
   , dontwatch) {
 
+  
+  var b = browserify('./' + path.normalize(buildFolder,indexFile))
+    , file
+    , deps
+    , jsFiles = []
+
   function watchJS () {
     if (!dontwatch) watch(jsFiles, function(){
       module.exports(indexFile, debug, jsBuildFileName, buildFolder)
@@ -50,37 +48,39 @@ module.exports = function( indexFile
     var filename = buildFolder + jsBuildFileName
     writeError( filename, error )
   }
-  
-  var b = browserify('./' + path.normalize(buildFolder,indexFile))
-    .on('error',function(err){ 
-      log.error('compile-js browserify',err)
-      errorMessage(err)
-      watchJS()
+
+  b.deps().on('data',function(data){
+      deps = data.deps
+      for (file in deps) {
+        if (/(\.js$)/.test(file)) {
+          file = data.deps[file]
+          log.info('compile-js', file)
+          jsFiles.push(file)
+        }else if (/(\.less$)|(\.css$)/.test(file)) {
+          b = b.ignore(data.deps[file])
+        }
+      }
+    }).on('end',function(){
+
+    b.bundle({ debug: debug })
+      .on('error',function(err, data){ 
+        log.error('compile-js bundle',err)
+        errorMessage(err)
+        watchJS()
+      })
+      .pipe(source(jsBuildFileName))
+      .on('data',function(data){ 
+        log.info('compile-js source data',data)
+      })
+      .pipe(vfs.dest(buildFolder))
+      .on('data',function(data){ 
+        log.info('compile-js vfs data',data)
+      })
+      .on('end', function(){
+        watchJS()
+        if (callback) callback()
+      })
+
     })
-		.transform({ relativeUrls: true, rootpath: buildFolder }, handler)
-    .on('error',function(err){ 
-      log.error('compile-js transform',err)
-      errorMessage(err)
-      watchJS()
-    })
-		.bundle({ debug: debug })
-    .on('error',function(err, data){ 
-      log.error('compile-js bundle',err)
-      errorMessage(err)
-      watchJS()
-    })
-		.pipe(source(jsBuildFileName))
-    .on('data',function(data){ 
-      log.info('compile-js source data',data)
-    })
-		.pipe(vfs.dest(buildFolder))
-    .on('data',function(data){ 
-      log.info('compile-js vfs data',data)
-    })
-    .on('end', function(){
-      watchJS()
-      if (callback) callback()
-    	jsFiles = []
-		})
 
 };
