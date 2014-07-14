@@ -9,16 +9,16 @@ var browserify = require('browserify')
   , jsFiles = []
 
   function handler (file, opts) { // ignores less files and remembers which js files to watch
-		var input = ''
-		if (/(\.js$)/.test(file)){
+    if (!/(\.less$)/.test(file) && !/(\.css$)/.test(file)){
+      console.log(file)
       file = path.relative(process.cwd(), file)
 			log.info('compile-js', file)
 			jsFiles.push(file);
-			return through();
+      return through();
 		}
-		function write( data ) { input += data; }
-		function end() { this.queue(null); }
-		return through(write,end);
+    function doNothing() { }
+
+    return through(doNothing);
 	}
 
   function writeError ( filename , error ){
