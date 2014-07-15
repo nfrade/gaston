@@ -28,6 +28,8 @@ module.exports = function(p,port,close,debug){
   function update(msg) {
     log.info('update',msg)
     w.bundle({debug:debug})
+    .on('error',function(err){ log.error(err) })
+    .pipe(fs.createWriteStream(path.join(dirname,'bundle.js')))
   }
 
   function ready(msg) {
