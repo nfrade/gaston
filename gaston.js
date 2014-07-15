@@ -27,7 +27,7 @@ module.exports = function(p,port,close,debug){
 
   function update(msg) {
     log.info('update',msg)
-    module.exports(p,port,close,debug)
+    w.bundle({debug:debug})
   }
 
   function ready(msg) {
