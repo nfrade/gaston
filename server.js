@@ -8,7 +8,7 @@ var fs = require('graceful-fs')
           if(!cnt) {
             reader(url+'/',res, (cnt=true) )
           } else {
-            console.log('ERROR cannot file', url)
+            log.error('cannot find file', url)
             res.end('file does not exist! ' + url)
           }
         } else {
@@ -26,7 +26,10 @@ var fs = require('graceful-fs')
     }
 
   , server = http.createServer(function (req, res) {
-      reader(req.url.slice(1),res)
+      if(~req.url.indexOf('__retry')) {
+        log.info('retry')
+        require('./gaston')()
+      }else reader(req.url.slice(1),res)
     })
 
 module.exports = function(port){

@@ -19,4 +19,4 @@ while (i--) {
   if (arg === '-close') close = true
 }
 
-gaston(path,port,close,debug)
+gaston(path,port || 8080,close,debug)
