@@ -2,19 +2,19 @@ var fs = require('graceful-fs')
   , path = require('path')
   , less = require('less')
 
-module.exports = function (lessFiles){
+module.exports = function (lessFiles, dirname){
   if(lessFiles.length) {  
-    var string = filesToString(lessFiles)
+    var string = filesToString(lessFiles,dirname)
     less.render(string,function (e, css) {  // compile less to css
       if (e) log.error('compile-less less render', e)
       fs.writeFile('bundle.css', css, function(err){
-          if (err) log.error('compile-less write file', err)
+        if (err) log.error('compile-less write file', err)
       })
     })
   }
 }
 
-function filesToString (files) {
+function filesToString (files,dirname) {
   var string = ''
     , str
     , i = files.length - 1
@@ -24,18 +24,17 @@ function filesToString (files) {
     cnt++
     file = path.normalize(files[i--])
     str = fs.readFileSync(file, 'utf8').replace(/@import([\s\S]*?)\((.*?)\);?/g, '')
-
-    string += rebasePaths(str, path.dirname(file))
+    string += rebasePaths(str, path.dirname(file),dirname)
   }
   return string
 }
 
-function rebasePaths (string, nested) {
+function rebasePaths (string, nested, dirname) {
   var found = string.match(/url\(([^@])("|')?(.*?)("|')?\)/g)
     , from
     , to
     , i = (found||[]).length - 1
-    , from = path.relative(process.cwd(), nested)
+    , from = path.relative(dirname, nested)
     , replace
 
   for (; i >= 0;) {

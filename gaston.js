@@ -8,14 +8,17 @@ var fs = require('graceful-fs')
 
 var w = watchify()
   , lessFiles = []
+  , dirname
 
 module.exports = function(p,port,close,debug){
   if(!p) p = path.join(process.cwd(),'index.js')
 
+  dirname = path.dirname(p)
+
   w.add(p)
-    .transform(transform)
-    .bundle({debug:debug})
-    .pipe(fs.createWriteStream('bundle.js'))
+  .transform(transform)
+  .bundle({debug:debug})
+  .pipe(fs.createWriteStream(path.join(dirname,'bundle.js')))
 
   w.on('log', ready )
   w.on('update', update )
@@ -23,16 +26,15 @@ module.exports = function(p,port,close,debug){
 
   function update(msg) {
     log.info('update',msg)
-    compileLess(lessFiles)
+    compileLess(lessFiles,dirname)
   }
 
   function ready(msg) {
     log.info('ready',msg)
-    compileLess(lessFiles)
+    compileLess(lessFiles,dirname)
     if(close) w.close()
     else server(port)
   }
-
 }
 
 function transform (file) {
@@ -60,7 +62,7 @@ function findImports (string, nested) {
     , imports
     , files = []
     , file
-    , from = path.relative(process.cwd(), nested)
+    , from = path.relative(dirname, nested)
     , to
 
   for (; i >= 0;){
