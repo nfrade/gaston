@@ -1,5 +1,6 @@
 var fs = require('graceful-fs')
   , path = require('path')
+  , log = require('npmlog')
   , less = require('less')
 
 module.exports = function (lessFiles, dirname){
