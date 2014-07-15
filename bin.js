@@ -13,7 +13,7 @@ var gaston = require('./gaston')
 //check for options
 while (i--) {
   arg = args[i]
-  if (arg.indexOf('-path:')===0) path = Number(arg.slice(6))
+  if (arg.indexOf('-path:')===0) path = String(arg.slice(6))
   if (arg.indexOf('-port:')===0) port = Number(arg.slice(6))
   if (arg === '-debug') debug = true
   if (arg === '-close') close = true

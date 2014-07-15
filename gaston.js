@@ -8,7 +8,7 @@ var fs = require('graceful-fs')
 
 module.exports = function(p, port, close, debug){
 
-  if(!p) p = path.join(process.cwd(),'index.js')
+  p = path.join(process.cwd(), p || 'index.js')
   
   var w = watchify()
     , dirname = path.dirname(p)
@@ -40,7 +40,8 @@ module.exports = function(p, port, close, debug){
     if(msg)log.info('ready',msg)
     if(close) w.close()
     else if(port) {
-      server(port)
+      var dir = path.relative(process.cwd(),dirname)
+      server(port, )
       port = false
     }
   }
@@ -62,8 +63,8 @@ module.exports = function(p, port, close, debug){
   function handleError ( error ){
     error = error.toString('utf8').replace(/('|")/g,'\'')
     var script = 'function doRetry () { var xmlhttp=new XMLHttpRequest();xmlhttp.open(\'GET\',\'__retry\' + Math.random(),true);xmlhttp.send();setTimeout(function(){location.reload()},50);}'
-      , html = '<script>' + script +'</script><div style=\'padding:20px;font-family: DIN Next LT Pro Light,Helvetica,Arial,sans-serif;background-color:#34cda7;\'><h1>ERROR:</h1><h2>'+ error +'</h2><button style=\'padding:40px;\'onclick=\'doRetry();\'>RETRY</button></div>'
-      , str = 'document.write("' + html + '");'
+    var html = '<script>' + script +'</script><div style=\'padding:20px;font-family: DIN Next LT Pro Light,Helvetica,Arial,sans-serif;background-color:#34cda7;\'><h1>ERROR:</h1><h2>'+ error +'</h2><button style=\'padding:40px;\'onclick=\'doRetry();\'>RETRY</button></div>'
+    var str = 'document.write("' + html + '");'
     fs.writeFile( output, str, function(err){if(err)console.log(err)})
     log.error(error)
     ready()
