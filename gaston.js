@@ -27,7 +27,7 @@ module.exports = function(p,port,close,debug){
 
   function update(msg) {
     log.info('update',msg)
-    compileLess(lessFiles,dirname)
+    module.exports(p,port,close,debug)
   }
 
   function ready(msg) {
