@@ -16,8 +16,9 @@ module.exports = function(p,port,close,debug){
   dirname = path.dirname(p)
 
   w.add(p)
-  .transform(transform)
+  .transform({global:true},transform)
   .bundle({debug:debug})
+  .on('error',function(err){ log.error(err) })
   .pipe(fs.createWriteStream(path.join(dirname,'bundle.js')))
 
   w.on('log', ready )
@@ -35,25 +36,23 @@ module.exports = function(p,port,close,debug){
     if(close) w.close()
     else server(port)
   }
-}
 
-function transform (file) {
-  if (/(\.less$)|(\.css$)/.test(file)){
-    var files = findFiles(file)
-      , i = files.length - 1
-      , fl
-
-    for (; i >= 0;) {
-      fl = files[i--]
-      if(!~lessFiles.indexOf(fl)) lessFiles.unshift(fl)
+  function transform (file) {
+    if (/(\.less$)|(\.css$)/.test(file)){
+      var files = findFiles(file)
+        , i = files.length - 1
+        , fl
+      for (; i >= 0;) {
+        fl = files[i--]
+        if(!~lessFiles.indexOf(fl)) lessFiles.unshift(fl)
+      }
+      var stream = through(function() {})
+      stream.push(null)
+      return stream
     }
-
-    return through(function (buf, enc, next) {
-      this.push('') 
-      next()
-    })
+    return through()
   }
-  return through()
+
 }
 
 function findImports (string, nested) {
