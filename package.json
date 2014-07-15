@@ -1,38 +1,29 @@
 {
   "name": "gaston",
-  "version": "0.1.0",
-  "description": "vigour's dev handyman",
-  "main": "index.js",
+  "version": "0.0.0",
+  "description": "buildtool for vigour-io",
+  "main": "gaston.js",
   "bin": {
-    "gaston": "bin/cmd.js"
+    "gaston": "bin.js"
   },
   "dependencies": {
-    "browserify": "^4.1.11",
-    "clean-css": "^2.2.2",
-    "connect": "^3.0.1",
-    "gaze": "^0.6.4",
     "graceful-fs": "^3.0.2",
-    "less": "^1.7.1",
+    "less": "^1.7.3",
     "npmlog": "^0.1.1",
-    "through": "^2.3.4",
-    "uglify-js": "^2.4.14",
-    "vinyl-fs": "^0.3.0",
-    "vinyl-source-stream": "^0.1.1"
+    "through2": "^0.5.1",
+    "watchify": "^0.10.2"
   },
-  "scripts": {
-    "test": "node test.js"
+  "directories": {
+    "test": "test"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/vigour-io/gaston.git"
   },
-  "keywords": [
-    "vigour",
-    "gaston",
-    "javascript",
-    "devtools"
-  ],
-  "author": "vigour-io",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Youri Daamen",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/vigour-io/gaston/issues"

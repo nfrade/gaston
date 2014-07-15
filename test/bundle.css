@@ -1,0 +1,372 @@
+@font-face {
+  font-family: 'TeleGroteskFet';
+  src: url(../act/fonts/TeleGroteskFett.woff);
+}
+@font-face {
+  font-family: 'TeleGroteskNormal';
+  src: url(../act/fonts/TeleGroteskNormal.woff);
+}
+body {
+  margin: 0px;
+  overflow: hidden;
+  background-color: #f2f2f2;
+  color: white;
+  font-weight: normal;
+  font-family: 'TeleGroteskNormal';
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0px;
+  font-weight: normal;
+}
+.topbar {
+  height: 44px;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  background-color: black;
+}
+.pause-icon {
+  width: 88px;
+  height: 88px;
+  background: transparent url('icons/light/pause.png') no-repeat center;
+}
+.play-icon {
+  width: 88px;
+  height: 88px;
+  background: transparent url('icons/light/play.png') no-repeat center;
+}
+.carousel {
+  overflow: hidden;
+  width: 100%;
+  margin-top: 44px;
+  background-color: black;
+}
+.carousel div {
+  position: absolute;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.carousel .dots {
+  width: 256px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  top: 368px;
+  position: relative;
+}
+.carousel .slide {
+  overflow: hidden;
+}
+.carousel .swiper {
+  background-color: black;
+}
+.carousel .dot {
+  width: 8px;
+  height: 8px;
+  margin: 4px;
+  border-radius: 4px;
+  background-color: white;
+  display: inline-block;
+  position: relative;
+}
+.carousel .holder {
+  pointer-events: none;
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+.carousel .holder div {
+  position: relative;
+}
+.carousel .overlay {
+  background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
+  display: table-cell;
+  height: 100%;
+  width: 100%;
+  vertical-align: middle;
+  padding-right: 30px;
+  text-align: right;
+}
+.carousel .cast {
+  width: 88px;
+  height: 88px;
+  background: transparent url('../icons/light/push-up.png') no-repeat center;
+}
+.carousel .play {
+  width: 88px;
+  height: 88px;
+  background: transparent url('../icons/light/play-round.png') no-repeat center;
+  bottom: 10px;
+}
+.carousel .playtext {
+  width: 200%;
+  position: absolute;
+  left: 68px;
+  top: 36px;
+  font-size: 18px;
+  text-transform: uppercase;
+}
+.carousel .icon {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: table;
+}
+.carousel .status {
+  width: 88px;
+  height: 88px;
+  background-size: auto;
+  position: relative;
+  margin: auto;
+}
+.carousel .artist {
+  font-size: 36px;
+  text-transform: uppercase;
+  font-family: 'TeleGroteskFet', Arial, sans-serif;
+}
+.carousel .title {
+  font-size: 42px;
+  font-family: 'TeleGroteskNormal', Arial, sans-serif;
+}
+.player {
+  position: absolute;
+  width: 100%;
+}
+.player .video {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-color: black;
+}
+.player .overlay {
+  height: 100%;
+  color: white;
+  position: absolute;
+}
+.player .topleft {
+  width: 88px;
+  height: 88px;
+  position: absolute;
+}
+.player .info {
+  background: transparent url('../act/icons/light/info.png') no-repeat center;
+}
+.player .back {
+  background: transparent url('../act/icons/light/back.png') no-repeat center;
+}
+.player .topright {
+  width: 88px;
+  height: 88px;
+  background: transparent url('../icons/light/exit.png') no-repeat center;
+  position: absolute;
+  right: 0px;
+}
+.player .topleft {
+  width: 88px;
+  height: 88px;
+  background: transparent url('../icons/light/full-screen.png') no-repeat center;
+  position: absolute;
+}
+.player .holder {
+  display: table-cell;
+  vertical-align: middle;
+}
+.player .textfield {
+  max-width: 50%;
+  padding-left: 50%;
+  text-align: center;
+  text-transform: uppercase;
+  font-family: 'TeleGroteskFet', Arial, sans-serif;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: table;
+}
+.player .title {
+  margin-top: 24px;
+  font-size: 36px;
+  text-transform: uppercase;
+  font-family: 'TeleGroteskFet', Arial, sans-serif;
+  text-align: center;
+}
+.player .subtitle {
+  font-size: 42px;
+  font-family: 'TeleGroteskNormal', Arial, sans-serif;
+  text-align: center;
+}
+.player .icon {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: table;
+}
+.player .status {
+  width: 88px;
+  height: 88px;
+  margin: auto;
+}
+.player .pause-icon {
+  width: 88px;
+  height: 88px;
+  background: transparent url('../icons/light/pause-circle.png') no-repeat center;
+}
+.player .play-icon {
+  width: 88px;
+  height: 88px;
+  background: transparent url('../icons/light/play-circle.png') no-repeat center;
+}
+.player .logo {
+  width: 100%;
+  height: 88px;
+  background: transparent url('../act/graphics/logo-white.png') no-repeat center;
+}
+.player .bar {
+  width: 100%;
+  position: absolute;
+  display: table;
+  bottom: 0;
+  height: 88px;
+}
+.player .progress {
+  display: table-cell;
+  vertical-align: middle;
+  width: 88px;
+  height: 88px;
+  text-align: center;
+}
+.player .seekbar {
+  height: 88px;
+}
+.player .buffer {
+  border-radius: 6px;
+  margin-top: 38px;
+  position: absolute;
+  height: 12px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.player .seek {
+  border-radius: 6px;
+  margin-top: 38px;
+  position: absolute;
+  height: 12px;
+  background-color: #e20074;
+}
+.player .button {
+  width: 24px;
+  height: 24px;
+  margin-top: -6px;
+  background-color: #f8eff8;
+  border-radius: 12px;
+}
+.player .duration {
+  display: table-cell;
+  vertical-align: middle;
+  width: 88px;
+  height: 88px;
+  text-align: center;
+}
+.player .sprite {
+  background-image: url("../act/ui/loader_horizontal.png");
+}
+.about {
+  color: #363636;
+  position: absolute;
+  width: auto;
+  padding-top: 20px;
+  padding-left: 30px;
+  padding-right: 30px;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+.about .artist {
+  line-height: 44px;
+  font-size: 28px;
+  text-transform: uppercase;
+  display: inline;
+  font-family: 'TeleGroteskFet', Arial, sans-serif;
+}
+.about .title {
+  margin-left: 8px;
+  font-size: 28px;
+  text-transform: uppercase;
+  display: inline;
+  font-family: 'TeleGroteskNormal', Arial, sans-serif;
+}
+.about .description {
+  font-size: 20px;
+  line-height: 1.5;
+  font-family: 'TeleGroteskNormal', Arial, sans-serif;
+}
+::-webkit-scrollbar {
+  display: none;
+}
+.controller {
+  top: 44px;
+  height: 400px;
+  position: absolute;
+  pointer-events: none;
+  overflow: hidden;
+}
+.controller .img {
+  width: 160px;
+  height: 160px;
+  margin: auto;
+  margin-top: 32px;
+  position: relative;
+}
+.controller .toggle {
+  pointer-events: auto;
+  width: 58px;
+  height: 58px;
+  background: transparent url('../icons/light/play-circle.png') no-repeat center;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+.controller .seekbar {
+  pointer-events: auto;
+  height: 88px;
+  margin-bottom: -44px;
+  position: relative;
+}
+.controller .line {
+  width: 100%;
+  height: 4px;
+  margin-top: 44px;
+  background-color: #363636;
+  position: relative;
+}
+.controller .seek {
+  border-radius: 6px;
+  margin-top: 42px;
+  position: absolute;
+  height: 4px;
+  margin-top: -4px;
+  background-color: #e20074;
+  position: relative;
+}
+.controller .button {
+  width: 24px;
+  height: 24px;
+  margin-top: -10px;
+  background-color: #f8eff8;
+  border-radius: 12px;
+  position: absolute;
+}
+body {
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+}
