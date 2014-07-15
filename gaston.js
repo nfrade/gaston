@@ -41,7 +41,7 @@ module.exports = function(p, port, close, debug){
     if(close) w.close()
     else if(port) {
       var dir = path.relative(process.cwd(),dirname)
-      server(port, )
+      server(port, dir)
       port = false
     }
   }
