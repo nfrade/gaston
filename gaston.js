@@ -23,6 +23,8 @@ module.exports = function(p, port, close, debug){
   
   module.exports = compile
 
+  var cnt = 0
+
   function compile () {
     w.deps()
       .on('error', handleError )
@@ -34,7 +36,7 @@ module.exports = function(p, port, close, debug){
         }
       })
       .on('end',function(){
-        less.compileString(dirname)
+        less.go(cnt)
       })
 
     w.bundle({debug:debug})

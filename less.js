@@ -5,16 +5,11 @@ var fs = require('graceful-fs')
 
   , lessString = ''
   , checked = []
+  , ready
+  , cnt = 0
 
-exports.compileString = function (dirname) {
-  less.render(lessString,function (e, css) {
-    if (e) log.error('less', e)
-    fs.writeFile(path.join(dirname,'bundle.css'), css, function(err){
-      if (err) log.error('less write', err)
-      lessString = ''
-      checked = []
-    })
-  })
+exports.go = function () {
+  ready = true
 }
 
 exports.requireImports = function(buf,enc,next){
@@ -30,6 +25,7 @@ exports.requireImports = function(buf,enc,next){
 
 exports.prepString = function (file,dirname) {
   if(!~checked.indexOf(file)){
+    checked.push(file)
 
     var resolve = path.relative(dirname,path.dirname(file))
 
@@ -49,7 +45,19 @@ exports.prepString = function (file,dirname) {
       }
 
       lessString += string + '\n'
-      checked.push(file)
+
+      cnt++
+
+      if(ready && checked.length === cnt){
+        less.render(lessString,function (e, css) {
+          if (e) log.error('less', e)
+          fs.writeFile(path.join(dirname,'bundle.css'), css, function(err){
+            if (err) log.error('less write', err)
+            lessString = ''
+            checked = []
+          })
+        })
+      }
 
     })
   }
