@@ -55,6 +55,7 @@ exports.prepString = function (file,dirname) {
             if (err) log.error('less write', err)
             lessString = ''
             checked = []
+            cnt = 0
           })
         })
       }
