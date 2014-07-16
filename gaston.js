@@ -25,6 +25,7 @@ module.exports = function(p, port, close, debug){
 
   function compile () {
     w.deps()
+      .on('error', handleError )
       .on('data',function(data){
         var deps = data.deps
         for(var i in deps){
