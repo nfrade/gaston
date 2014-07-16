@@ -30,13 +30,15 @@ exports.requireImports = function(buf,enc,next){
 
 exports.prepString = function (file,dirname) {
   if(!~checked.indexOf(file)){
-    
+
     var resolve = path.relative(dirname,path.dirname(file))
 
-    fs.createReadStream(file)
-      .on('data',function(buf){
-      var string = buf.toString('utf8').replace(/@import([\s\S]*?)\((.*?)\);?/g, '')
-        , found = string.match(/("|')((?!(https?:\/\/)|(data:)).)(.*?)(\.([a-z0-9A-Z?#-_]{0,15})("|'))/g)
+    fs.readFile(file,'utf8',function(err,string){
+      if(err) log.error(err)
+
+      var found = string
+          .replace(/@import([\s\S]*?)\((.*?)\);?/g, '')
+          .match(/("|')((?!(https?:\/\/)|(data:)).)(.*?)(\.([a-z0-9A-Z?#-_]{0,15})("|'))/g)
       
       if(found){
         for (var i = found.length - 1, file, resolved; i >= 0;) {
@@ -46,9 +48,9 @@ exports.prepString = function (file,dirname) {
         }
       }
 
-      lessString += string + '\n' //right order?
+      lessString += string + '\n'
       checked.push(file)
-      
+
     })
   }
 }
