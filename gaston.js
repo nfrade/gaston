@@ -33,12 +33,12 @@ module.exports = function(p, port, close, debug){
           if (/(\.less$)|(\.css$)/.test(file)) less.prepString(file,dirname)
         }
       })
+      .on('end',function(){
+        less.compileString(dirname)
+      })
 
     w.bundle({debug:debug})
     .on('error', handleError )
-    .on('end', function(){ 
-      less.compileString(dirname)
-    })
     .pipe(fs.createWriteStream(output))
   }
 
