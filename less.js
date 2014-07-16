@@ -56,6 +56,7 @@ exports.prepString = function (file,dirname) {
             lessString = ''
             checked = []
             cnt = 0
+            ready = false
           })
         })
       }
