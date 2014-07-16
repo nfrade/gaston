@@ -13,10 +13,9 @@ module.exports = function(p, port, close, debug){
   var w = watchify()
     , dirname = path.dirname(p)
     , output = path.join(dirname,'bundle.js')
-    , checked = []
 
   w.add(p)
-  w.transform({global:true},transform)
+  w.transform({global:true},check)
   w.on('log', ready )
   w.on('update', update )
 
@@ -26,25 +25,19 @@ module.exports = function(p, port, close, debug){
 
   function compile () {
 
-    //compile css
     w.deps()
       .on('data',function(data){
         var deps = data.deps
         for(var i in deps){
           file = deps[i]
-          if (/(\.less$)|(\.css$)/.test(file) && !~checked.indexOf(file)){
-            checked.push(file)
-            less.prepareLess(file,dirname)
-          }
+          if (/(\.less$)|(\.css$)/.test(file)) less.prepString(file,dirname)
         };
       })
 
-    //compile js
     w.bundle({debug:debug})
     .on('error', handleError )
     .on('end', function(){ 
-      less.compile(dirname) 
-      checked = []
+      less.compileString(dirname)
     })
     .pipe(fs.createWriteStream(output))
   }
@@ -64,15 +57,15 @@ module.exports = function(p, port, close, debug){
     }
   }
 
-  function transform (file) {
-    if (/(\.less$)|(\.css$)/.test(file)){
-      return through(function(buf,enc,next){
-        less.requireImports.call(this,buf)
-        this.push(null)
-        next()
-      })
-    }
-    return through()
+  function check (file) {
+    if (!/(\.less$)|(\.css$)/.test(file)) return through()
+    return through(handleLess)
+  }
+
+  function handleLess(buf,enc,next){
+    less.requireImports.call(this,buf)
+    this.push(null)
+    next()
   }
 
   function handleError ( error ){
