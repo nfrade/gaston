@@ -31,10 +31,8 @@ exports.prepString = function (file,dirname) {
 
     fs.readFile(file,'utf8',function(err,string){
       if(err) log.error(err)
-
-      var found = string
-          .replace(/@import([\s\S]*?)\((.*?)\);?/g, '')
-          .match(/("|')((?!(https?:\/\/)|(data:)).)(.*?)(\.([a-z0-9A-Z?#-_]{0,15})("|'))/g)
+      string = string.replace(/@import([\s\S]*?)\((.*?)\);?/g, '')
+      var found = string.match(/("|')((?!(https?:\/\/)|(data:)).)(.*?)(\.([a-z0-9A-Z?#-_]{0,15})("|'))/g)
       
       if(found){
         for (var i = found.length - 1, file, resolved; i >= 0;) {
