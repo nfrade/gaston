@@ -9,6 +9,7 @@ var gaston = require('./gaston')
 , arg
 , args = process.argv
 , i = args.length
+, build
 
 //check for options
 while (i--) {
@@ -17,6 +18,7 @@ while (i--) {
   if (arg.indexOf('-port:')===0) port = Number(arg.slice(6))
   if (arg === '-debug') debug = true
   if (arg === '-close') close = true
+  if (arg === '-build') build = true
 }
 
-gaston(path,port || 8080,close,debug)
+gaston(path,port || 8080,close,debug,build)

@@ -3,81 +3,149 @@ var fs = require('graceful-fs')
   , through = require('through2')
   , path = require('path')
   , log = require('npmlog')
-  , less = require('./less')
-  , server = require('./server')
+  , less = require('less')
+  , _server = require('./server')
+  , _build = require('./build')
 
-module.exports = function(p, port, close, debug){
+module.exports = function(p, port, close, debug, build){
+
 
   p = path.join(process.cwd(), p || 'index.js')
   
-  var w = watchify()
+  var depsarr = []
+    , depsobj = {}
     , dirname = path.dirname(p)
-    , output = path.join(dirname,'bundle.js')
+    , firstCompile = true
+    , outputJS = path.join(dirname,'bundle.js')
+    , outputCSS = path.join(dirname,'bundle.css')
+    , outputHTML = path.join(dirname,'index.html')
+    , buildFile = path.join(dirname,'build.html')
+    , w = watchify(p)
 
-  w.add(p)
-  w.transform({global:true},check)
-  w.on('log', ready )
-  w.on('update', update )
+  w.transform({global:true},transformLess)
+  w.on('log', ready)
+  w.on('update', compile)
 
   compile()
-  
+
   module.exports = compile
 
-  var cnt = 0
-
-  function compile () {
-    w.deps()
-      .on('error', handleError )
-      .on('data',function(data){
-        var deps = data.deps
-        for(var i in deps){
-          file = deps[i]
-          if (/(\.less$)|(\.css$)/.test(file)) less.prepString(file,dirname)
-        }
-      })
-      .on('end',function(){
-        less.go(cnt)
-      })
-
+  function compile (msg) {
+    if(msg) log.info(msg)
+    jsReady = false
     w.bundle({debug:debug})
-    .on('error', handleError )
-    .pipe(fs.createWriteStream(output))
-  }
+    .on('error', handleError)
+    .on('end',writeCSS)
+    .pipe(fs.createWriteStream(outputJS).on('finish',function(){
+      jsReady = true
+      if(build && cssReady) _build(outputHTML, outputJS,outputCSS, buildFile)
+    }))
 
-  function update(msg) {
-    log.info('update',msg)
-    compile()
   }
 
   function ready(msg) {
-    if(msg)log.info('ready',msg)
+    firstCompile = false
+    if(msg) log.info('ready',msg)
     if(close) w.close()
     else if(port) {
       var dir = path.relative(process.cwd(),dirname)
-      server(port, dir)
+      _server(port, dir)
       port = false
     }
   }
 
-  function check (file) {
-    if (!/(\.less$)|(\.css$)/.test(file)) return through()
-    return through(handleLess)
+  function writeCSS () {
+    var string = ''
+      , l = depsarr.length
+      , i = 0
+      , fname
+
+    cssReady = false
+
+    for (; i < l;) {
+      fname = depsarr[i++]
+      string += depsobj[fname] || ''
+    }
+
+    fs.writeFile(outputCSS, string, function(err){
+      if(err) log.error(err)
+      string = ''
+      cssReady = true
+      if(build && jsReady) _build(outputHTML, outputJS,outputCSS, buildFile)
+    })
+
   }
 
-  function handleLess(buf,enc,next){
-    less.requireImports.call(this,buf)
-    this.push(null)
-    next()
+  function refreshDeps() {
+    log.info('refreshDeps')
+    var arr = []
+    w.deps()
+    .on('data',function(data){
+      var deps = data.deps
+        , fname
+        , l = depsarr.length
+        , i = 0
+      for (; i < l;) {
+        fname = depsarr[i++]
+        if(!~depsarr.indexOf(fname)) console.log(fname)
+        if(!~arr.indexOf(fname)) arr.push(fname)
+      }
+    })
+    .on('end',function(){
+      depsarr = arr
+    })
+  }
+
+  function addDep (filename, content){
+    if(content) depsobj[filename] = content
+    if(!~depsarr.indexOf(filename)){
+      if(!firstCompile) refreshDeps()
+      return depsarr.push(filename)
+    }
+  }
+
+  function transformLess (file) {
+    if (!/(\.less$)|(\.css$)/.test(file)) return through()
+    return through(lessParser)
+
+    function lessParser(buf,enc,next){
+      var that = this
+        , relativeUrl = path.relative(dirname,path.dirname(file))
+
+      addDep(file)
+
+      less.Parser({ filename:file }).parse(buf.toString(),parseLess)
+
+      function parseLess(err, tree){
+        if (err) return next() || log.error(err)
+        parseRules(tree.rules)
+        addDep(file,tree.toCSS())
+        next()
+      }
+
+      function parseRules (rules) {
+        for (var l = rules.length, i = 0, rule, importpath, importfile; i < l; i++) {
+          rule = rules[i]
+          importpath = rule.path
+
+          if(importpath){
+            importfile = path.resolve(importpath.currentFileInfo.entryPath,importpath.value.value)
+            addDep(importfile) && that.push('require("' + importfile + '")')
+          }
+          if(rule.currentFileInfo) rule.currentFileInfo.rootpath = relativeUrl
+          if(rule.rules) parseRules(rule.rules)
+        }
+      }
+    }
   }
 
   function handleError ( error ){
+    log.error(error)
     error = error.toString('utf8').replace(/('|")/g,'\'')
     var script = 'function doRetry () { var xmlhttp=new XMLHttpRequest();xmlhttp.open(\'GET\',\'__retry\' + Math.random(),true);xmlhttp.send();setTimeout(function(){location.reload()},50);}'
       , html = '<script>' + script +'</script><div style=\'padding:20px;font-family: DIN Next LT Pro Light,Helvetica,Arial,sans-serif;background-color:#34cda7;\'><h1>ERROR:</h1><h2>'+ error +'</h2><button style=\'padding:40px;\'onclick=\'doRetry();\'>RETRY</button></div>'
       , str = 'document.write("' + html + '");'
-    fs.writeFile( output, str, function(err){if(err)log.error(err)})
-    log.error(error)
+    fs.writeFile( outputJS, str, function(err){if(err)log.error(err)})
     ready()
   }
-
 }
