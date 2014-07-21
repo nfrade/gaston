@@ -1,48 +1,111 @@
-module.exports = startServer
+module.exports = exports = startServer
+exports.serveFile = serveFile
 
 var fs = require('graceful-fs')  
   , http = require('http')
-  , url = require('url')
+  , u = require('url')
   , path = require('path')
   , log = require('npmlog')
+  , _compile = require('./compile')
 
-function startServer(port){
-  var server = http.createServer(function (req, res) {
-    if(~req.url.indexOf('__retry')) {
-      log.info('retry')
-      require('./gaston')()
-    } else {
-      reader(getTarget(req.url), res)
+function startServer(port, compile, close, debug, build){
+  if(compile){
+    cb = function(index, res){
+      return _compile(index, res, close, debug, build)
     }
-  })
-  log.info('start server on port: ', port)
-  server.listen(port)  
+  }
+  http.createServer(function (req, res) {
+    var url = path.join(process.cwd(),u.parse(req.url).pathname)
+    fs.exists(url,function(exists){
+      if(exists) found(url,res,cb)
+      else notFound(url,res)
+    })   
+  }).listen(port)
+  log.http('Start server on port: ', port)
 }
 
-function reader(url, res, cnt) {
-  fs.exists(url, function(exists) {
-    if(!exists) { 
-      if(!cnt) {
-        reader(url,res, (cnt=true) )
-      } else {
-        var urlpath = path.join(process.cwd(),url)
-        log.error('cannot find file', urlpath)
-        res.end('file does not exist! ' + urlpath)
+function serveFile(url, res){
+  fs.createReadStream(url)
+    .pipe(res)
+    .on('error',function(err){ 
+      res.end()
+      log.error(err) 
+    })
+}
+
+function serveIndex (url,res,cb) {
+  var index = path.join(url,'index.html')
+    , exists = fs.existsSync(index)
+  
+  if(exists) checkIndexJS(url,res,cb) && serveFile(index, res)
+  return exists
+}
+
+function checkIndexJS (url,res,cb) {
+  var index = path.join(url,'index.js')
+    , exists = fs.existsSync(index)
+
+  if(exists && cb) return cb(index, res)
+  else return true
+}
+
+function serveDirectory(url, res){
+  fs.readdir(url, function(err,files){
+    if(err) log.error(err)
+    var buttons = ''
+      , content = ''
+      , stats
+    for (var i = files.length - 1; i >= 0;) {
+      var file = files[i--]
+        , filepath = path.join(url,file)
+        , isDirectory = fs.statSync(filepath).isDirectory()
+      if(isDirectory && !(file.indexOf('.')===0)) {
+        var contentarr = fs.readdirSync(filepath)
+          , contentfiles = contentarr.join(' | ')
+          , button = addBtn(file,file,contentfiles)
+        if(~contentarr.indexOf('index.html')) buttons = button + buttons
+        else buttons += button
       }
-    } else {
-      fs.stat(url,function(err,stats) {
-        if(stats.isDirectory()) {
-          if(url[0]==='/') url = url.slice(1)
-          reader(path.join(url,'index.html'),res)
-        } else {
-          var rstream = fs.createReadStream(url)
-          rstream.pipe(res)
-        }
-      })
     }
+    makeUI(url,buttons,res)
   })
 }
 
-function getTarget(str){
-  return url.parse(str.slice(1)).pathname || 'index.html'
+function found (url, res, cb) {
+  fs.stat(url,function(err,stats){
+    if(err) log.error(err)
+    else if(stats.isFile()) serveFile(url,res)
+    else if(stats.isDirectory()) serveIndex (url,res,cb) || serveDirectory(url, res)
+  })
+}
+
+function notFound (url, res) {
+  log.http('Can\'t find ',url)
+  if(!path.extname(url).length){
+    var msg = 'Can\'t find ' + url
+    var button = addBtn(msg,'','Go Back To Top')
+    makeUI(url,button,res)
+  } else res.end()
+}
+
+function addBtn (title,val,subtitle,highlight){
+  var btnOpen = '<button style=\'padding:10px;width:100%;text-align:left;\'onclick="gotoFn(\''
+    , btnClose = '</button>'
+  return btnOpen
+    + val 
+    + '/\')";><h2>' 
+    + title
+    + '</h2>'
+    + '<p>' 
+    + subtitle || ''
+    + '</p>'
+    + btnClose
+}
+
+function makeUI (url,buttons,res) {
+  var urlpath = url.split(path.sep).join(' > ').slice(2,-3)
+  var head = '<head><h3 style=\'background-color:#34cda7;\'>' + urlpath + '</h3></head>'
+  var gotoFn = 'function gotoFn(val){location.href = val}'
+    , ui = '<!doctype html><body style=\'padding:20px;font-family: DIN Next LT Pro Light,Helvetica,Arial,sans-serif;\'>' + head + buttons + '</body><script>' + gotoFn + '</script></html>'
+  res.end(ui)  
 }
