@@ -22,6 +22,9 @@ module.exports = function(p, port, close, debug, build){
     , buildFile = path.join(dirname,'build.html')
     , w = watchify(p)
 
+    , cssReady
+    , jsReady
+
   w.transform({global:true},transformLess)
   w.on('log', ready)
   w.on('update', compile)
@@ -33,6 +36,7 @@ module.exports = function(p, port, close, debug, build){
   function compile (msg) {
     if(msg) log.info(msg)
     jsReady = false
+    if(!firstCompile) refreshDeps([])
     w.bundle({debug:debug})
     .on('error', handleError)
     .on('end',writeCSS)
@@ -40,7 +44,6 @@ module.exports = function(p, port, close, debug, build){
       jsReady = true
       if(build && cssReady) _build(outputHTML, outputJS,outputCSS, buildFile)
     }))
-
   }
 
   function ready(msg) {
@@ -59,26 +62,20 @@ module.exports = function(p, port, close, debug, build){
       , l = depsarr.length
       , i = 0
       , fname
-
     cssReady = false
-
     for (; i < l;) {
       fname = depsarr[i++]
       string += depsobj[fname] || ''
     }
-
     fs.writeFile(outputCSS, string, function(err){
       if(err) log.error(err)
       string = ''
       cssReady = true
       if(build && jsReady) _build(outputHTML, outputJS,outputCSS, buildFile)
     })
-
   }
 
-  function refreshDeps() {
-    log.info('refreshDeps')
-    var arr = []
+  function refreshDeps(arr) {
     w.deps()
     .on('data',function(data){
       var deps = data.deps
@@ -87,8 +84,7 @@ module.exports = function(p, port, close, debug, build){
         , i = 0
       for (; i < l;) {
         fname = depsarr[i++]
-        if(!~depsarr.indexOf(fname)) console.log(fname)
-        if(!~arr.indexOf(fname)) arr.push(fname)
+        if(/(\.less$)|(\.css$)/.test(fname) && !~arr.indexOf(fname)) arr.push(fname)
       }
     })
     .on('end',function(){
@@ -98,10 +94,7 @@ module.exports = function(p, port, close, debug, build){
 
   function addDep (filename, content){
     if(content) depsobj[filename] = content
-    if(!~depsarr.indexOf(filename)){
-      if(!firstCompile) refreshDeps()
-      return depsarr.push(filename)
-    }
+    if(!~depsarr.indexOf(filename)) return depsarr.push(filename)
   }
 
   function transformLess (file) {
@@ -113,9 +106,8 @@ module.exports = function(p, port, close, debug, build){
         , relativeUrl = path.relative(dirname,path.dirname(file))
 
       addDep(file)
-
       less.Parser({ filename:file }).parse(buf.toString(),parseLess)
-
+      
       function parseLess(err, tree){
         if (err) return next() || log.error(err)
         parseRules(tree.rules)
