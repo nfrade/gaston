@@ -35,8 +35,11 @@ module.exports = function(p, port, close, debug, build){
 
   function compile (msg) {
     jsReady = false
+    cssReady = false
+
     if(msg) log.info(msg)
     if(!firstCompile) refreshDeps([])
+
     w.bundle({debug:debug})
     .on('error', handleError)
     .on('end',writeCSS)
@@ -44,6 +47,7 @@ module.exports = function(p, port, close, debug, build){
       jsReady = true
       if(build && cssReady) _build(outputHTML, outputJS,outputCSS, buildFile)
     }))
+
   }
 
   function ready(msg) {
@@ -63,7 +67,6 @@ module.exports = function(p, port, close, debug, build){
       , i = 0
       , fname
 
-    cssReady = false
     for (; i < l;) {
       fname = depsarr[i++]
       string += depsobj[fname] || ''
@@ -88,6 +91,7 @@ module.exports = function(p, port, close, debug, build){
         if(/(\.less$)|(\.css$)/.test(fname) && !~arr.indexOf(fname)) arr.push(fname)
       }
     })
+    .on('error',handleError)
     .on('end',function(){
       depsarr = arr
     })
@@ -104,7 +108,7 @@ module.exports = function(p, port, close, debug, build){
 
     function lessParser(buf,enc,next){
       var that = this
-        , relativeUrl = path.relative(dirname,path.dirname(file))
+        , relativeUrl = path.relative(dirname,path.dirname(file)) + '/'
 
       addDep(file)
       less.Parser({ filename:file }).parse(buf.toString(),parseLess)

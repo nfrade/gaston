@@ -34,7 +34,7 @@ module.exports = function(port,dir){
       if(~req.url.indexOf('__retry')) {
         log.info('retry')
         require('./gaston')()
-      }else reader(path.join(dir,req.url.slice(1)),res)
+      }else reader(req.url.slice(1) || 'index.html',res)
     })
 
   log.info('start server on port: ',port)
