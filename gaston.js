@@ -34,8 +34,8 @@ module.exports = function(p, port, close, debug, build){
   module.exports = compile
 
   function compile (msg) {
-    if(msg) log.info(msg)
     jsReady = false
+    if(msg) log.info(msg)
     if(!firstCompile) refreshDeps([])
     w.bundle({debug:debug})
     .on('error', handleError)
@@ -62,6 +62,7 @@ module.exports = function(p, port, close, debug, build){
       , l = depsarr.length
       , i = 0
       , fname
+
     cssReady = false
     for (; i < l;) {
       fname = depsarr[i++]
@@ -124,6 +125,7 @@ module.exports = function(p, port, close, debug, build){
             importfile = path.resolve(importpath.currentFileInfo.entryPath,importpath.value.value)
             addDep(importfile) && that.push('require("' + importfile + '")')
           }
+
           if(rule.currentFileInfo) rule.currentFileInfo.rootpath = relativeUrl
           if(rule.rules) parseRules(rule.rules)
         }
