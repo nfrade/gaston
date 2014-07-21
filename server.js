@@ -4,9 +4,9 @@ var fs = require('graceful-fs')
   , log = require('npmlog')
 
 module.exports = function(port,dir){
-  
+
   var reader = function(url, res, cnt) {
-        
+ 
       fs.exists(url, function(exists) {
         if(!exists) { 
           if(!cnt) {

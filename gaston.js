@@ -9,7 +9,6 @@ var fs = require('graceful-fs')
 
 module.exports = function(p, port, close, debug, build){
 
-
   p = path.join(process.cwd(), p || 'index.js')
   
   var depsarr = []
@@ -55,7 +54,7 @@ module.exports = function(p, port, close, debug, build){
     if(msg) log.info('ready',msg)
     if(close) w.close()
     else if(port) {
-      var dir = path.relative(process.cwd(),dirname)
+      var dir = path.relative(process.cwd(),dirname) // no need really
       _server(port, dir)
       port = false
     }
