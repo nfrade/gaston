@@ -5,6 +5,9 @@ Gaston is your favorite handyman, carrying Vigour's evergrowing set of devtools.
 
 (*note: Vigour currently uses browserify and less. Gaston likes this)
 
+## Installation
+Install gaston globally by navigating to the root folder of the repository and doing `npm install -g`
+
 ## Commands
 
 ```gaston compile``` Compiles all js, less and css files into bundle.js and bundle.css. Gaston keeps watching for changes.
