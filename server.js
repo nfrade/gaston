@@ -29,6 +29,9 @@ function serveFile(url, res){
     .on('open',function(){
       stream.pipe(res)
     })
+    .on('finish',function(){
+      res.end()
+    })
     .on('error',function(err){ 
       res.end()
       log.error(err) 
