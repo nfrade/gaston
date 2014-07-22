@@ -9,7 +9,7 @@ var fs = require('graceful-fs')
 
   , leaveAlone = []
 
-module.exports = function(index, res, debug, close, build){
+module.exports = function(index, res, close, debug, build){
   
   if(~leaveAlone.indexOf(index)) return true
 
