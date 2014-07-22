@@ -25,8 +25,10 @@ function startServer(port, compile, close, debug, build){
 }
 
 function serveFile(url, res){
-  fs.createReadStream(url)
-    .pipe(res)
+  var stream = fs.createReadStream(url)
+    .on('open',function(){
+      stream.pipe(res)
+    })
     .on('error',function(err){ 
       res.end()
       log.error(err) 
