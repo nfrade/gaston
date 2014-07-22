@@ -12,6 +12,7 @@ var fs = require('graceful-fs')
 module.exports = function(index, res, close, debug, build){
   
   if(~leaveAlone.indexOf(index)) return true
+  if(!close) leaveAlone.push(index)
 
   var depsarr = []
     , depsobj = {}
@@ -55,7 +56,6 @@ module.exports = function(index, res, close, debug, build){
     firstCompile = false
     if(msg) log.info('ready',msg)
     if(close) w.close()
-    else leaveAlone.push(index)
   }
 
   function writeCSS () {
