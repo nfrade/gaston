@@ -26,12 +26,8 @@ function startServer(port, compile, close, debug, build){
 
 function serveFile(url, res){
   var stream = fs.createReadStream(url)
-    .on('open',function(){
-      stream.pipe(res)
-    })
-    .on('finish',function(){
-      res.end()
-    })
+    .on('open',function(){ stream.pipe(res) })
+    .on('finish',function(){ res.end() })
     .on('error',function(err){ 
       res.end()
       log.error(err) 
@@ -94,7 +90,7 @@ function notFound (url, res) {
 }
 
 function addBtn (title,val,subtitle,highlight){
-  var btnOpen = '<button style=\'padding:10px;width:100%;text-align:left;\'onclick="gotoFn(\''
+  var btnOpen = '<button style=\'padding:10px;width:100%;min-height:52px;text-align:left;\'onclick="gotoFn(\''
     , btnClose = '</button>'
   return btnOpen
     + val 
