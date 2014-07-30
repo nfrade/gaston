@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 var gaston = require('./gaston')
+	//options
+	, port = 8080
+	, debug
+	, close
+	, build
 
-//options
-, port = 8080
-, debug
-, close
-, arg
-, args = process.argv
-, i = args.length
-, build
+	, arg
+	, args = process.argv
+	, i = args.length
+
 
 //check for options
 while (i--) {

@@ -1,0 +1,27 @@
+body {
+	padding:20px;
+	font-family:DIN Next LT Pro Light,Helvetica,Arial,sans-serif
+}
+
+h2 {
+	background-color:#34cda7
+}
+
+h3 {
+	font-size:150%
+}
+
+button {
+	padding:10px;
+	min-height:52px;
+	text-align:left;
+	cursor:pointer
+}
+
+button.goto {
+	width:80%
+}
+
+button.buildNative {
+	width:20%
+}
