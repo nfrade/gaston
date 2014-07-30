@@ -105,8 +105,8 @@ function addBtn (title,val,subtitle,highlight){
 
 function makeUI (url,buttons,res) {
   var urlpath = url.split(path.sep).join(' > ').slice(2,-3)
-  var head = '<head><h3 style=\'background-color:#34cda7;\'>' + urlpath + '</h3></head>'
+  var header = '<h3 style=\'background-color:#34cda7;\'>' + urlpath + '</h3>'
   var gotoFn = 'function gotoFn(val){location.href = val}'
-    , ui = '<!doctype html><body style=\'padding:20px;font-family: DIN Next LT Pro Light,Helvetica,Arial,sans-serif;\'>' + head + buttons + '</body><script>' + gotoFn + '</script></html>'
+    , ui = '<!doctype html><body style=\'padding:20px;font-family: DIN Next LT Pro Light,Helvetica,Arial,sans-serif;\'>' + header + buttons + '</body><script>' + gotoFn + '</script></html>'
   res.end(ui)  
 }
