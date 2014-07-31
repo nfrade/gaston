@@ -2,18 +2,59 @@ function goTo (val) {
 	location.href = val
 }
 
-function buildNative (val, gastonUrl) {
-	bla.ajax({
+function ajaxError (error) {
+	console.error("Faya: ", error)
+}
+
+function buildNative (path) {
+	ajaxModule.ajax({
 		url: gastonUrl
 		, data: {
-			value: val
+			action: "build"
+			, path: path
 		}
 		, complete: function (data) {
-			console.log(data)
+			if (data === "pleaseCreate") createNativeDialog(path)
+			else if (data === "success") {
+				console.log("Success!")
+			} else {
+				console.log("Something went terribly wrong: ", data)
+			}
 		}
-		, error: function () {
-			console.error("Faya")
+		, error: ajaxError
+	})
+}
+
+function createNativeDialog (path) {
+	var targetDir = document.getElementById("targetDir")
+		, dialog = document.getElementById("nativeCreateDialog")
+	targetDir.innerHTML = path
+	dialog.style.display = "block"
+}
+
+function hideCreateNativeDialog () {
+	document.getElementById('nativeCreateDialog').style.display = "none"
+}
+
+function cancelCreateNative () {
+	hideCreateNativeDialog()
+}
+
+function submitCreateNative () {
+	ajaxModule.ajax({
+		url: gastonUrl
+		, data: {
+			action: "create"
+			, path: document.getElementById("targetDir").innerHTML
+			, rdsid: document.getElementById('rdsid').value
+			, displayName: document.getElementById('displayName').value
 		}
+		, complete: function (data) {
+			if (data === "success") {
+				hideCreateNativeDialog()
+			}
+		}
+		, error: ajaxError
 	})
 }
 
@@ -45,8 +86,8 @@ var _a = 'addEventListener';
  * @param   {Object}   [params.header]        Sets request headers
  * @param   {*}        [params.data]          Pass data to the request, defaults to ? on get;
  */
- var bla = {}
-bla.ajax = function(params, urlset) {
+ var ajaxModule = {}
+ajaxModule.ajax = function(params, urlset) {
   var _url = params.url;
   if (!urlset && _url instanceof Array) {
     params.m = function() {
@@ -128,7 +169,7 @@ bla.ajax = function(params, urlset) {
   }
 };
 
-bla.encode = function(data, method) {
+ajaxModule.encode = function(data, method) {
   var result = '';
   if (data instanceof Object) {
     if (data instanceof FormData && method != 'GET') {

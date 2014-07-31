@@ -18,10 +18,46 @@ button {
 	cursor:pointer
 }
 
-button.goto {
+button.gotoButton {
 	width:80%
 }
 
-button.buildNative {
+button.nativeButton {
 	width:20%
+}
+
+label {
+	display: block;
+	font-weight: bold;
+}
+
+input {
+	width: 100%;
+	font-size: 150%;
+}
+
+#nativeCreateDialog {
+	position: fixed;
+	top: 0;
+	left: 50px;
+	padding: 20px;
+	background: #fff;
+	border: 1px solid #eee;
+	display: none;
+}
+
+#nativeCreateDialog button {
+	width: 48%;
+	text-align: center;
+	font-weight: bold;
+}
+
+#targetDir {
+	font-style: italic;
+}
+
+.primary {
+	color: #fff;
+	background: #428bca;
+	border-color: #357ebd;
 }
