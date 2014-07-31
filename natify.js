@@ -50,18 +50,13 @@ module.exports = exports = {
 			})
 	}
 	, populate: function (cwd, cordovaDirectoryName, cb) {
-		exec('rsync -r * ' + cordovaDirectoryName + '/www --exclude ' + cordovaDirectoryName
+		exec('rsync -r * '
+			+ cordovaDirectoryName
+			+ '/www --exclude '
+			+ cordovaDirectoryName
 			, { cwd: cwd }
 			, function (error, stdout, stderr) {
-				if (error) {
-					cb(error)
-				} else {
-					exec('cordova build'
-				  	, { cwd: cwd + '/' + cordovaDirectoryName}
-				  	, function (error, stdout, stderr) {
-				  		cb(error)
-				  	})
-				}
+				cb(error)
 			})
 	}
 }
