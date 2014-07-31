@@ -12,65 +12,66 @@ var fs = require('graceful-fs')
   , jsAsset = fs.readFileSync(__dirname + "/jsText.js", "utf8")
   , dialogs = fs.readFileSync(__dirname + "/dialogs.html", "utf8")
   , gastonUrl = "/gastonReservedUrlHopefullyNobodyNamesADirectoryLikeThis"
-  , cordovaDirectoryName = "nativeBuildStuff"
 
 function startServer (port, compile, close, debug, build) {
-  if(compile){
-    cb = function(index, res){
+  if (compile) {
+    cb = function (index, res) {
       return _compile(index, res, close, debug, build)
     }
   }
   http.createServer(function (req, res) {
     var parsedUrl = u.parse(req.url, true)
       , pathname = parsedUrl.pathname
-      , url = path.join(process.cwd(),pathname)
-      , natifyAction
-      , cordovaDirectory
-      , natifyDone = function (error) {
-        if (error) {
-          res.end(JSON.stringify({
-            msg: "failure"
-            , error: error.toString()
-          }))
-        } else {
-          res.end(JSON.stringify({ msg: "success"}))
-        }
-      }
+      , url = path.join(process.cwd(), pathname)
     if (pathname.indexOf(gastonUrl) === 0) {
-      if (parsedUrl.query.action === "populate") {
-        cordovaDirectory = parsedUrl.query.path + "/" + cordovaDirectoryName
-        fs.exists(cordovaDirectory, function (exists) {
-          if (exists) {
-            _natify.hasPlatforms(cordovaDirectory, function (hasPlatforms, availablePlatforms) {
-              if (hasPlatforms) {
-                _natify.populate(parsedUrl.query.path, cordovaDirectoryName, natifyDone)
-              } else {
-                res.end(JSON.stringify({
-                  msg: "pleaseInstallPlatforms"
-                  , availablePlatforms: availablePlatforms
-                }))
-              }
-            })
-          } else {
-            res.end(JSON.stringify({ msg: "pleaseCreate" }))
-          }
-        })
-      } else if (parsedUrl.query.action === "create") {
-        _natify.create(parsedUrl.query.path, cordovaDirectoryName, parsedUrl.query.rdsid, parsedUrl.query.displayName, natifyDone)
-      } else if (parsedUrl.query.action === "installPlatforms") {
-        _natify.installPlatforms(parsedUrl.query.path + '/' + cordovaDirectoryName, parsedUrl.query.selectedPlatforms, natifyDone)
-      }
-      else res.end("Gaston says: You want me to do something I've never heard of. Well I don't like it. I don't like it one bit.")
-
-      
+      parseGastonCommand(parsedUrl.query, res)
     } else {
-      fs.exists(url,function(exists){
+      fs.exists(url, function(exists){
         if(exists) found(url, pathname, res,cb)
         else notFound(url,res)
       })
     }
   }).listen(port)
-  log.http('Start server on port: ', port)
+  log.http('Gaston is at your service at http://localhost:' + port)
+}
+
+function parseGastonCommand (query, res) {
+  var natifyDone = function (error) {
+      if (error) {
+        res.end(JSON.stringify({
+          msg: "failure"
+          , error: error.toString()
+        }))
+      } else {
+        res.end(JSON.stringify({ msg: "success" }))
+      }
+    }
+    , cordovaDirectoryName = "nativeBuildStuff"
+    , cordovaDirectory
+  if (query.action === "populate") {
+    cordovaDirectory = query.path + "/" + cordovaDirectoryName
+    fs.exists(cordovaDirectory, function (exists) {
+      if (exists) {
+        _natify.hasPlatforms(cordovaDirectory, function (hasPlatforms, availablePlatforms) {
+          if (hasPlatforms) {
+            _natify.populate(query.path, cordovaDirectoryName, natifyDone)
+          } else {
+            res.end(JSON.stringify({
+              msg: "pleaseInstallPlatforms"
+              , availablePlatforms: availablePlatforms
+            }))
+          }
+        })
+      } else {
+        res.end(JSON.stringify({ msg: "pleaseCreate" }))
+      }
+    })
+  } else if (query.action === "create") {
+    _natify.create(query.path, cordovaDirectoryName, query.rdsid, query.displayName, natifyDone)
+  } else if (query.action === "installPlatforms") {
+    _natify.installPlatforms(query.path + '/' + cordovaDirectoryName, query.selectedPlatforms, natifyDone)
+  }
+  else res.end("Gaston says: You want me to do something I've never heard of. Well I don't like it. I don't like it one bit.")
 }
 
 function serveFile(url, res){
@@ -143,12 +144,12 @@ function addBtn (title, val, pathname, subtitle, containsIndexHtml){
   var label = '<h3>' + title + '</h3>'
     , directoryContents = (subtitle) ? '<p>' + subtitle + '</p>' : ''
     , targetPath = pathname.slice(1) + val
-    , buildNative = (containsIndexHtml) ? '<button class="nativeButton" onclick="buildNative(\'' + targetPath + '\', \'' + gastonUrl + '\')">Run natively</button>' : ''
+    , runNatively = (containsIndexHtml) ? '<button class="nativeButton" onclick="runNatively(\'' + targetPath + '\', \'' + gastonUrl + '\')">Run natively</button>' : ''
   return '<button class="gotoButton" onclick="goTo(\'' + val + '/\');">'
     + label
     + directoryContents
     + '</button>'
-    + buildNative
+    + runNatively
 }
 
 function makeUI (url, buttons, res) {

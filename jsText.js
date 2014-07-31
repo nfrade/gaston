@@ -11,7 +11,7 @@ function failure (data) {
   alert("Gaston: I've failed you, but it's probably your fault. Check the javascript console for details.")
 }
 
-function buildNative (path) {
+function runNatively (path) {
   var gastonUrl = document.getElementById("gastonUrl").value
 	ajaxModule.ajax({
 		url: gastonUrl
@@ -42,7 +42,7 @@ function installPlatformsDialog (path, availablePlatforms) {
 		, newHTML = ""
 	targetDir.value = path
 	for (; i >= 0; i -= 1) {
-		newHTML += '<label>' + availablePlatforms[i] + '</label><input type="checkbox" value="' + availablePlatforms[i] + '">'
+		newHTML += '<label>' + availablePlatforms[i] + '<input type="checkbox" value="' + availablePlatforms[i] + '"></label>'
 	}
 	platformSelection.innerHTML = newHTML
 	dialog.style.display = "block"
@@ -85,7 +85,7 @@ function submitCreateNative () {
 		, complete: function (data) {
 			if (data.msg === "success") {
 				hideCreateNativeDialog()
-				buildNative(path)
+				runNatively(path)
 			}
 		}
 		, error: ajaxError
@@ -114,7 +114,7 @@ function submitInstallPlatforms () {
 			, complete: function (data) {
         if (data.msg === "success") {
   				hideInstallPlatformsDialog()
-  				buildNative(path)
+  				runNatively(path)
         } else {
           failure(data)
         }
