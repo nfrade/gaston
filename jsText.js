@@ -6,23 +6,46 @@ function ajaxError (error) {
 	console.error("Faya: ", error)
 }
 
+function failure (data) {
+  console.log(data)
+  alert("Gaston: I've failed you, but it's probably your fault. Check the javascript console for details.")
+}
+
 function buildNative (path) {
+  var gastonUrl = document.getElementById("gastonUrl").value
 	ajaxModule.ajax({
 		url: gastonUrl
 		, data: {
-			action: "build"
+			action: "populate"
 			, path: path
 		}
 		, complete: function (data) {
-			if (data === "pleaseCreate") createNativeDialog(path)
-			else if (data === "success") {
+			if (data.msg === "pleaseCreate") createNativeDialog(path)
+			else if (data.msg === "pleaseInstallPlatforms") {
+				installPlatformsDialog(path, data.availablePlatforms)
+			}
+			else if (data.msg === "success") {
 				console.log("Success!")
 			} else {
-				console.log("Something went terribly wrong: ", data)
+				failure(data)
 			}
 		}
 		, error: ajaxError
 	})
+}
+
+function installPlatformsDialog (path, availablePlatforms) {
+	var targetDir = document.getElementById('installPlatformsTargetDir')
+		, dialog = document.getElementById("installPlatformsDialog")
+		, i = availablePlatforms.length - 1
+		, platformSelection = document.getElementById("platformSelection")
+		, newHTML = ""
+	targetDir.value = path
+	for (; i >= 0; i -= 1) {
+		newHTML += '<label>' + availablePlatforms[i] + '</label><input type="checkbox" value="' + availablePlatforms[i] + '">'
+	}
+	platformSelection.innerHTML = newHTML
+	dialog.style.display = "block"
 }
 
 function createNativeDialog (path) {
@@ -36,26 +59,69 @@ function hideCreateNativeDialog () {
 	document.getElementById('nativeCreateDialog').style.display = "none"
 }
 
+function hideInstallPlatformsDialog () {
+	document.getElementById('installPlatformsDialog').style.display = "none"
+}
+
 function cancelCreateNative () {
 	hideCreateNativeDialog()
 }
 
+function cancelInstallPlatforms () {
+	hideInstallPlatformsDialog()
+}
+
 function submitCreateNative () {
+	var path = document.getElementById("targetDir").innerHTML
+    , gastonUrl = document.getElementById("gastonUrl").value
 	ajaxModule.ajax({
 		url: gastonUrl
 		, data: {
 			action: "create"
-			, path: document.getElementById("targetDir").innerHTML
+			, path: path
 			, rdsid: document.getElementById('rdsid').value
 			, displayName: document.getElementById('displayName').value
 		}
 		, complete: function (data) {
-			if (data === "success") {
+			if (data.msg === "success") {
 				hideCreateNativeDialog()
+				buildNative(path)
 			}
 		}
 		, error: ajaxError
 	})
+}
+
+function submitInstallPlatforms () {
+	var path = document.getElementById('installPlatformsTargetDir').value
+		, checkboxes = document.getElementById('platformSelection').querySelectorAll("input")
+		, i = checkboxes.length - 1
+		, selectedPlatforms = []
+    , gastonUrl = document.getElementById("gastonUrl").value
+	for (; i >= 0; i -= 1) {
+		if (checkboxes[i].checked) {
+			selectedPlatforms.push(checkboxes[i].value)
+		}
+	}
+	if (selectedPlatforms.length > 0) {
+		ajaxModule.ajax({
+			url: gastonUrl
+			, data: {
+				action: 'installPlatforms'
+				, path: path
+				, selectedPlatforms: selectedPlatforms
+			}
+			, complete: function (data) {
+        if (data.msg === "success") {
+  				hideInstallPlatformsDialog()
+  				buildNative(path)
+        } else {
+          failure(data)
+        }
+			}
+			, error: ajaxError
+    })
+	}
 }
 
 // TODO Require this rather than copy paste (see `vigour-js/browser/network/ajax.js`)

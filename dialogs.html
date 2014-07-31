@@ -1,4 +1,4 @@
-<div id="nativeCreateDialog">
+<div id="nativeCreateDialog" class="dialog">
 	<p>Gaston wants to call `cordova create` in the <span id="targetDir"></span> directory with the following parameters. Please change them appropriately before continuing.</p>
 	<label for="rdsid">Reverse domain-style identifier</label>
 	<input id="rdsid" type="text" value="io.cordova.hellocordova">
@@ -6,4 +6,13 @@
 	<input id="displayName" type="text" value="HelloWorld">
 	<button id="createNativeCancelButton" onclick="cancelCreateNative()">Cancel</button>
 	<button id="createNativeButton" class="primary" onclick="submitCreateNative()">Create</button>
+</div>
+<div id="installPlatformsDialog" class="dialog">
+	<p>The following platforms are available on your current OS. Check those which you would like to install.</p>
+	<input id="installPlatformsTargetDir" type="hidden">
+	<div id="platformSelection">
+		
+	</div>
+	<button id="installPlatformsCancelButton" onclick="cancelInstallPlatforms()">Cancel</button>
+	<button id="installPlatformsButton" class="primary" onclick="submitInstallPlatforms()">Install</button>
 </div>

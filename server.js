@@ -10,7 +10,7 @@ var fs = require('graceful-fs')
   , _natify = require('./natify')
   , cssAsset = fs.readFileSync(__dirname + "/cssText.css", "utf8")
   , jsAsset = fs.readFileSync(__dirname + "/jsText.js", "utf8")
-  , nativeCreateDialog = fs.readFileSync(__dirname + "/nativeCreateDialog.html", "utf8")
+  , dialogs = fs.readFileSync(__dirname + "/dialogs.html", "utf8")
   , gastonUrl = "/gastonReservedUrlHopefullyNobodyNamesADirectoryLikeThis"
   , cordovaDirectoryName = "nativeBuildStuff"
 
@@ -28,25 +28,38 @@ function startServer (port, compile, close, debug, build) {
       , cordovaDirectory
       , natifyDone = function (error) {
         if (error) {
-          res.end(error)
+          res.end(JSON.stringify({
+            msg: "failure"
+            , error: error.toString()
+          }))
         } else {
-          res.end("success")
+          res.end(JSON.stringify({ msg: "success"}))
         }
       }
     if (pathname.indexOf(gastonUrl) === 0) {
-      if (parsedUrl.query.action === "build") {
+      if (parsedUrl.query.action === "populate") {
         cordovaDirectory = parsedUrl.query.path + "/" + cordovaDirectoryName
         fs.exists(cordovaDirectory, function (exists) {
           if (exists) {
-            _natify.build(cordovaDirectory, natifyDone)
+            _natify.hasPlatforms(cordovaDirectory, function (hasPlatforms, availablePlatforms) {
+              if (hasPlatforms) {
+                _natify.populate(parsedUrl.query.path, cordovaDirectoryName, natifyDone)
+              } else {
+                res.end(JSON.stringify({
+                  msg: "pleaseInstallPlatforms"
+                  , availablePlatforms: availablePlatforms
+                }))
+              }
+            })
           } else {
-            res.end("pleaseCreate")
+            res.end(JSON.stringify({ msg: "pleaseCreate" }))
           }
         })
       } else if (parsedUrl.query.action === "create") {
         _natify.create(parsedUrl.query.path, cordovaDirectoryName, parsedUrl.query.rdsid, parsedUrl.query.displayName, natifyDone)
+      } else if (parsedUrl.query.action === "installPlatforms") {
+        _natify.installPlatforms(parsedUrl.query.path + '/' + cordovaDirectoryName, parsedUrl.query.selectedPlatforms, natifyDone)
       }
-      // else if (parsedUrl.query.action === "run") {}
       else res.end("Gaston says: You want me to do something I've never heard of. Well I don't like it. I don't like it one bit.")
 
       
@@ -130,7 +143,7 @@ function addBtn (title, val, pathname, subtitle, containsIndexHtml){
   var label = '<h3>' + title + '</h3>'
     , directoryContents = (subtitle) ? '<p>' + subtitle + '</p>' : ''
     , targetPath = pathname.slice(1) + val
-    , buildNative = (containsIndexHtml) ? '<button class="nativeButton" onclick="buildNative(\'' + targetPath + '\', \'' + gastonUrl + '\')">Build native apps</button>' : ''
+    , buildNative = (containsIndexHtml) ? '<button class="nativeButton" onclick="buildNative(\'' + targetPath + '\', \'' + gastonUrl + '\')">Run natively</button>' : ''
   return '<button class="gotoButton" onclick="goTo(\'' + val + '/\');">'
     + label
     + directoryContents
@@ -139,9 +152,10 @@ function addBtn (title, val, pathname, subtitle, containsIndexHtml){
 }
 
 function makeUI (url, buttons, res) {
-  var head = '<head><meta charset="utf-8"><style type="text/css">' + cssAsset + '</style><script type="text/javascript">var gastonUrl = "' + gastonUrl + '";' + jsAsset + '</script></head>'
+  var head = '<head><meta charset="utf-8"><style type="text/css">' + cssAsset + '</style><script type="text/javascript">' + jsAsset + '</script></head>'
     , urlpath = url.split(path.sep).join(' > ').slice(2, -3)
     , breadcrumbs = '<h2>' + urlpath + '</h2>'
-    , ui = '<!doctype html><html>' + head + '<body>' + breadcrumbs + buttons + nativeCreateDialog + '</body></html>'
+    , data = '<input id="gastonUrl" type="hidden" value="' + gastonUrl + '">'
+    , ui = '<!doctype html><html>' + head + '<body>' + data + breadcrumbs + buttons + dialogs + '</body></html>'
   res.end(ui)  
 }

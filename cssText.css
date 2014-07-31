@@ -1,21 +1,23 @@
 body {
-	padding:20px;
-	font-family:DIN Next LT Pro Light,Helvetica,Arial,sans-serif
+	padding: 20px;
+	font-family: DIN Next LT Pro Light, Helvetica, Arial, sans-serif;
 }
 
 h2 {
-	background-color:#34cda7
+	margin: 0 0 20px 0;
+	background-color: #34cda7;
+	padding: 5px;
 }
 
 h3 {
-	font-size:150%
+	font-size: 1.5em;
 }
 
 button {
-	padding:10px;
-	min-height:52px;
-	text-align:left;
-	cursor:pointer
+	padding: 10px;
+	min-height: 52px;
+	text-align: left;
+	cursor: pointer;
 }
 
 button.gotoButton {
@@ -26,34 +28,46 @@ button.nativeButton {
 	width:20%
 }
 
-label {
-	display: block;
-	font-weight: bold;
-}
-
-input {
-	width: 100%;
-	font-size: 150%;
-}
-
-#nativeCreateDialog {
+.dialog {
 	position: fixed;
 	top: 0;
-	left: 50px;
+	left: 0;
+	width: 98%;
 	padding: 20px;
-	background: #fff;
-	border: 1px solid #eee;
+	background: #eee;
+	border: 1px solid #ddd;
+	text-align: center;
 	display: none;
 }
 
-#nativeCreateDialog button {
-	width: 48%;
+.dialog p {
+	text-align: left;
+}
+
+.dialog label {
+	font-weight: bold;
+	text-align: left;
+	margin: 10px 0 10px 20px;
+}
+
+#nativeCreateDialog label {
+	display: block;
+}
+
+.dialog input[type=text] {
+	width: 95%;
+	font-size: 150%;
+}
+
+.dialog button {
+	width: 46%;
 	text-align: center;
 	font-weight: bold;
 }
 
 #targetDir {
 	font-style: italic;
+	font-weight: bold;
 }
 
 .primary {
