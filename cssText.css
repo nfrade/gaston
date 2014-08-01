@@ -34,6 +34,10 @@ button.natify {
 	text-align: center;
 }
 
+.labelLegend {
+	font-weight: bold;
+}
+
 .disabledLabel {
 	color: #888;
 	font-style: italic;
