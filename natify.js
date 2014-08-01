@@ -1,24 +1,36 @@
 var fs = require('graceful-fs')
 	, exec = require('child_process').exec
 
+function logCommand (cwd, command) {
+	console.log('in `' + cwd + '`\n\trunning `' + command + '`')
+}
+
+function done (cb) {
+	return function (error, stdout, stderr) {
+		console.log('\t\tstdout: ', stdout)
+		console.log('\t\tstderr: ', stderr)
+		cb(error)
+	}
+}
+
 module.exports = exports = {
 	create: function (cwd, cordovaDirectoryName, rdsid, displayName, cb) {
-		console.log('running `cordova create ...`')
-		exec('cordova create '
+		var command = 'cordova create '
 			+ cordovaDirectoryName
 			+ ' '
 			+ rdsid
 			+ ' '
 			+ cordovaDirectoryName
+		logCommand(cwd, command)
+		exec(command
 			, { cwd: cwd }
-			, function (error, stdout, stderr) {
-				cb(error)
-			})
+			, done(cb))
 	}
 	, getPlatforms: function (cwd, cordovaDirectoryName, cb) {
 		var dir = cwd + '/' + cordovaDirectoryName
-		console.log('running `cordova platforms list`')
-		exec('cordova platforms list'
+			, command = 'cordova platforms list'
+		logCommand(dir, command)
+		exec(command
 			, { cwd: dir }
 			, function (error, stdout, stderr) {
 				var platforms
@@ -76,37 +88,33 @@ module.exports = exports = {
 	, installPlatforms: function (cwd, cordovaDirectoryName, selectedPlatforms, cb) {
 		var s = selectedPlatforms
 			, dir = cwd + '/' + cordovaDirectoryName
-		console.log('running `cordova platform add ...`')
-		exec('cordova platform add ' + s.join(' ')
+			, command = 'cordova platform add ' + s.join(' ')
+		logCommand(dir, command)
+		exec(command
 			, { cwd: dir }
-			, function (error, stdout, stderr) {
-					cb(error)
-			})
+			, done(cb))
 	}
 	, populate: function (cwd, cordovaDirectoryName, cb) {
-		console.log('copying source files into www directory')
-		exec('rsync -r * '
+		var command = 'rsync -r * '
 			+ cordovaDirectoryName
 			+ '/www --exclude '
 			+ cordovaDirectoryName
+		logCommand(cwd, command)
+		exec(command
 			, { cwd: cwd }
-			, function (error, stdout, stderr) {
-				cb(error)
-			})
+			, done(cb))
 	}
 	, run: function (cwd, cordovaDirectoryName, selectedPlatforms, flag, cb) {
 		exports.populate(cwd, cordovaDirectoryName, function (error) {
-			var dir = cwd + '/' + cordovaDirectoryName
+			var dir
+				, command
 			if (error) {
 				cb(error)
 			} else {
-				console.log('running `cordova run ...`')
-				exec('cordova run ' + selectedPlatforms.join(' ') + ' ' + flag
-					, { cwd: dir }
-					, function (error, stdout, stderr) {
-						console.log(stderr)
-						cb(error)
-					})
+				dir = cwd + '/' + cordovaDirectoryName
+				command = 'cordova run ' + selectedPlatforms.join(' ') + ' ' + flag
+				logCommand(dir, command)
+				exec(command, { cwd: dir }, done(cb))
 			}
 		})
 	}

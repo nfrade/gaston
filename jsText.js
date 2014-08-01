@@ -13,14 +13,31 @@ function goTo (val) {
 	location.href = val
 }
 
+function notify (msg) {
+  var discard = document.createElement('span')
+    , message = document.createElement('p')
+    , notifier = document.getElementById('notifier')
+  discard.appendChild(document.createTextNode('(dismiss)'))
+  discard.addEventListener('click', function (event) {
+    var toRemove = event.target.parentNode
+      , removed = toRemove.parentNode.removeChild(toRemove)
+    delete removed
+  })
+
+  message.appendChild(document.createTextNode(msg))
+  message.appendChild(discard)
+  
+  notifier.appendChild(message)
+}
+
 function ajaxError (error) {
 	console.error('Ajax error: ', error)
-  alert("Gaston: An Ajax request failed. Check the javascript console for details.")
+  notify("Gaston: An Ajax request failed. Check the javascript console for details.")
 }
 
 function failure (data) {
   console.log(data)
-  alert("Gaston: Something failed. Check the javascript console for details.")
+  notify("Gaston: Something failed. Check the javascript console and gaston logs for details.")
 }
 
 function enableNative (button) {
@@ -101,12 +118,10 @@ function showPlatformsDialog (path, button, createDialog) {
         , platforms
         , i
       if (data.msg === 'success') {
-        modelDialog = document.querySelector('#installPlatformsDialog')
+        modelDialog = document.getElementById('installPlatformsDialog')
         dialog = modelDialog.cloneNode(true)
-        platforms = dialog.querySelector('.platformSelection').querySelectorAll('input')
+        platforms = dialog.getElementsByClassName('platformSelection')[0].getElementsByTagName('input')
         for (i = platforms.length - 1; i >= 0; i -= 1) {
-          console.log('in installed', !!~data.platforms.installed.indexOf(platforms[i].value))
-          console.log('in available', !!~data.platforms.available.indexOf(platforms[i].value))
           if (!(~data.platforms.installed.indexOf(platforms[i].value) || ~data.platforms.available.indexOf(platforms[i].value))) {
             platforms[i].disabled = true
             platforms[i].parentNode.style.fontStyle = 'italic'
