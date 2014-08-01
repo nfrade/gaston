@@ -1,18 +1,27 @@
-<div id="nativeCreateDialog" class="dialog">
-	<p>Gaston wants to call `cordova create` in the <span id="targetDir"></span> directory with the following parameters. Please change them appropriately before continuing. <a href="http://cordova.apache.org/docs/en/3.5.0/guide_cli_index.md.html" target="_blank">more info</a></p>
-	<label for="rdsid">Reverse domain-style identifier</label>
-	<input id="rdsid" type="text" value="io.cordova.hellocordova">
-	<label for="displayName">Display name</label>
-	<input id="displayName" type="text" value="HelloWorld">
-	<button id="createNativeCancelButton" onclick="cancelCreateNative()">Cancel</button>
-	<button id="createNativeButton" class="primary" onclick="submitCreateNative()">Create</button>
+<div id="nativeCreateDialog" class="dialog nativeCreateDialog">
+	<p>Gaston wants to call <em>`cordova create`</em> in the <span class="targetDirectory"></span> directory with the following parameters. Please change them appropriately before continuing. (<a href="http://cordova.apache.org/docs/en/3.5.0/guide_cli_index.md.html" target="_blank">more info</a>)</p>
+	<label>Reverse domain-style identifier
+		<input class="rdsid" type="text" value="io.cordova.hellocordova">
+	</label>
+	<label>Display name
+		<input class="displayName" type="text" value="HelloWorld">
+	</label>
+	<button class="cancelButton">Cancel</button>
+	<button class="submitButton primary">Create</button>
 </div>
-<div id="installPlatformsDialog" class="dialog">
-	<p>The following platforms are available on your current OS. Check those which you would like to install.</p>
-	<input id="installPlatformsTargetDir" type="hidden">
-	<div id="platformSelection">
-		
-	</div>
-	<button id="installPlatformsCancelButton" onclick="cancelInstallPlatforms()">Cancel</button>
-	<button id="installPlatformsButton" class="primary" onclick="submitInstallPlatforms()">Install</button>
+
+<div id="installPlatformsDialog" class="dialog installPlatformsDialog">
+	<p><input type="checkbox"> Available <span class="disabledLabel"><input type="checkbox" disabled> Not available on this OS</span></p>
+	<ul class="platformSelection">
+		<li><label><input type="checkbox" value="amazon-fireos"> Amazon FireOS</label></li>
+		<li><label><input type="checkbox" value="android"> Android</label></li>
+		<li><label><input type="checkbox" value="blackberry10"> Blackberry10</label></li>
+		<li><label><input type="checkbox" value="firefoxos"> FirefoxOS</label></li>
+		<li><label><input type="checkbox" value="ios"> iOS</label></li>
+		<li><label><input type="checkbox" value="windows8"> Windows 8</label></li>
+		<li><label><input type="checkbox" value="wp8"> Windows Phone 8</label></li>
+	</ul>
+	<button class="cancelButton">Cancel</button>
+	<button class="emulateButton primary">Emulate</button>
+	<button class="runButton primary">Run</button>
 </div>

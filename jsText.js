@@ -1,103 +1,193 @@
+window.onload = function () {
+  var natifyButtons = document.getElementsByClassName('natify')
+    , i = natifyButtons.length - 1
+  for (; i >= 0; i -= 1) {
+    natifyButtons[i].addEventListener('click', function (event) {
+      var natifyButton = event.target;
+      enableNative(natifyButton)
+    })
+  }
+}
+
 function goTo (val) {
 	location.href = val
 }
 
 function ajaxError (error) {
-	console.error("Faya: ", error)
+	console.error('Ajax error: ', error)
+  alert("Gaston: An Ajax request failed. Check the javascript console for details.")
 }
 
 function failure (data) {
   console.log(data)
-  alert("Gaston: I've failed you, but it's probably your fault. Check the javascript console for details.")
+  alert("Gaston: Something failed. Check the javascript console for details.")
 }
 
-function runNatively (path) {
-  var gastonUrl = document.getElementById("gastonUrl").value
+function enableNative (button) {
+  var gastonUrl = document.getElementById('gastonUrl').value
+   , path = button.getElementsByClassName('natifyTargetPath')[0].value
 	ajaxModule.ajax({
 		url: gastonUrl
 		, data: {
-			action: "populate"
+			action: 'enable'
 			, path: path
 		}
 		, complete: function (data) {
-			if (data.msg === "pleaseCreate") createNativeDialog(path)
-			else if (data.msg === "pleaseInstallPlatforms") {
-				installPlatformsDialog(path, data.availablePlatforms)
-			}
-			else if (data.msg === "success") {
-				console.log("Success!")
-			} else {
-				failure(data)
-			}
+			if (data.msg === 'success') {
+        showPlatformsDialog(path, button)
+      } else if (data.msg === 'pleaseCreate') {
+        showCreateDialog(path, button)
+      } else {
+        failure(data)
+      }
 		}
 		, error: ajaxError
 	})
 }
 
-function installPlatformsDialog (path, availablePlatforms) {
-	var targetDir = document.getElementById('installPlatformsTargetDir')
-		, dialog = document.getElementById("installPlatformsDialog")
-		, i = availablePlatforms.length - 1
-		, platformSelection = document.getElementById("platformSelection")
-		, newHTML = ""
-	targetDir.value = path
-	for (; i >= 0; i -= 1) {
-		newHTML += '<label>' + availablePlatforms[i] + '<input type="checkbox" value="' + availablePlatforms[i] + '"></label>'
-	}
-	platformSelection.innerHTML = newHTML
-	dialog.style.display = "block"
+function showCreateDialog (path, button) {
+  var modelDialog = document.getElementById('nativeCreateDialog')
+    , dialog = modelDialog.cloneNode(true)
+    , targetDir = dialog.getElementsByClassName('targetDirectory')[0]
+  targetDir.innerHTML = path
+  dialog.getElementsByClassName('cancelButton')[0].addEventListener('click', function (event) {
+    var parent = dialog.parentNode
+      , removed = parent.removeChild(dialog)
+    removed = null
+    button.style.display = 'block'
+  })
+  dialog.getElementsByClassName('submitButton')[0].addEventListener('click', function (event) {
+    submitCreateNative(path, button, dialog)
+  })
+  button.parentNode.insertBefore(dialog, button)
+  dialog.style.display = 'block'
+  button.style.display = 'none'
 }
 
-function createNativeDialog (path) {
-	var targetDir = document.getElementById("targetDir")
-		, dialog = document.getElementById("nativeCreateDialog")
-	targetDir.innerHTML = path
-	dialog.style.display = "block"
+function submitCreateNative (path, button, dialog) {
+  var gastonUrl = document.getElementById('gastonUrl').value
+  ajaxModule.ajax({
+    url: gastonUrl
+    , data: {
+      action: 'create'
+      , path: path
+      , rdsid: dialog.getElementsByClassName('rdsid')[0].value
+      , displayName: dialog.getElementsByClassName('displayName')[0].value
+    }
+    , complete: function (data) {
+      if (data.msg === 'success') {
+        showPlatformsDialog(path, button, dialog)
+      } else {
+        failure(data)
+      }
+    }
+    , error: ajaxError
+  })
 }
 
-function hideCreateNativeDialog () {
-	document.getElementById('nativeCreateDialog').style.display = "none"
+function showPlatformsDialog (path, button, createDialog) {
+  var gastonUrl = document.getElementById('gastonUrl').value
+  ajaxModule.ajax({
+    url: gastonUrl
+    , data: {
+      action: 'getPlatforms'
+      , path: path
+    }
+    , complete: function (data) {
+      var modelDialog
+        , dialog
+        , parent
+        , removed
+        , platforms
+        , i
+      if (data.msg === 'success') {
+        modelDialog = document.querySelector('#installPlatformsDialog')
+        dialog = modelDialog.cloneNode(true)
+        platforms = dialog.querySelector('.platformSelection').querySelectorAll('input')
+        for (i = platforms.length - 1; i >= 0; i -= 1) {
+          console.log('in installed', !!~data.platforms.installed.indexOf(platforms[i].value))
+          console.log('in available', !!~data.platforms.available.indexOf(platforms[i].value))
+          if (!(~data.platforms.installed.indexOf(platforms[i].value) || ~data.platforms.available.indexOf(platforms[i].value))) {
+            platforms[i].disabled = true
+            platforms[i].parentNode.style.fontStyle = 'italic'
+            platforms[i].parentNode.style.color = '#888'
+          }
+        }
+        dialog.getElementsByClassName('cancelButton')[0].addEventListener('click', function (event) {
+          var parent = dialog.parentNode
+            , removed
+          button.style.display = 'block'
+          removed = parent.removeChild(dialog)
+          delete removed
+        })
+        dialog.getElementsByClassName('emulateButton')[0].addEventListener('click', function (event) {
+          run(path, platforms, 'emulate')
+        })
+        dialog.getElementsByClassName('runButton')[0].addEventListener('click', function (event) {
+          run(path, platforms, 'run')
+        })
+        dialog.style.display = 'block'
+        parent = button.parentNode
+        if (createDialog) {
+          removed = parent.removeChild(createDialog)
+          delete removed
+        }
+        parent.insertBefore(dialog, button)
+        button.style.display = 'none'
+      } else {
+        failure(data)
+      }
+    }
+    , error: ajaxError
+  })
 }
 
-function hideInstallPlatformsDialog () {
-	document.getElementById('installPlatformsDialog').style.display = "none"
+function run (path, platforms, action) {
+  var gastonUrl = document.getElementById('gastonUrl').value
+    , selectedPlatforms = createPlatformsList(platforms)
+  if (selectedPlatforms.length > 0) {
+    ajaxModule.ajax({
+      url: gastonUrl
+      , data: {
+        action: action
+        , path: path
+        , platforms: selectedPlatforms
+      }
+      , complete: function (data) {
+        if (data.msg === 'success') {
+          // TODO
+        } else {
+          failure(data)
+        }
+      }
+      , error: ajaxError
+    })
+  } else {
+    pleaseSelectPlatforms()
+  }
 }
 
-function cancelCreateNative () {
-	hideCreateNativeDialog()
+function createPlatformsList (platforms) {
+  var i = platforms.length - 1
+    , list = []
+  for (; i >= 0; i -= 1) {
+    if (platforms[i].checked) {
+      list.push(platforms[i].value)
+    }
+  }
+  return list
 }
 
-function cancelInstallPlatforms () {
-	hideInstallPlatformsDialog()
-}
-
-function submitCreateNative () {
-	var path = document.getElementById("targetDir").innerHTML
-    , gastonUrl = document.getElementById("gastonUrl").value
-	ajaxModule.ajax({
-		url: gastonUrl
-		, data: {
-			action: "create"
-			, path: path
-			, rdsid: document.getElementById('rdsid').value
-			, displayName: document.getElementById('displayName').value
-		}
-		, complete: function (data) {
-			if (data.msg === "success") {
-				hideCreateNativeDialog()
-				runNatively(path)
-			}
-		}
-		, error: ajaxError
-	})
+function pleaseSelectPlatforms () {
+  alert('Gaston: Please select one or many platforms and try again')
 }
 
 function submitInstallPlatforms () {
 	var path = document.getElementById('installPlatformsTargetDir').value
-		, checkboxes = document.getElementById('platformSelection').querySelectorAll("input")
+		, checkboxes = document.getElementById('platformSelection').querySelectorAll('input')
 		, i = checkboxes.length - 1
 		, selectedPlatforms = []
-    , gastonUrl = document.getElementById("gastonUrl").value
+    , gastonUrl = document.getElementById('gastonUrl').value
 	for (; i >= 0; i -= 1) {
 		if (checkboxes[i].checked) {
 			selectedPlatforms.push(checkboxes[i].value)
@@ -112,9 +202,9 @@ function submitInstallPlatforms () {
 				, selectedPlatforms: selectedPlatforms
 			}
 			, complete: function (data) {
-        if (data.msg === "success") {
+        if (data.msg === 'success') {
   				hideInstallPlatformsDialog()
-  				runNatively(path)
+  				enableNative(path)
         } else {
           failure(data)
         }

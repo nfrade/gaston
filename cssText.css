@@ -21,21 +21,30 @@ button {
 }
 
 button.gotoButton {
-	width:80%
+	width: 100%;
+	margin-bottom: 0;
 }
 
-button.nativeButton {
-	width:20%
+button.natify {
+	width: 100%;
+	margin-top: 0;
+	border-top: 0;
+	background: #aaa;
+	font-weight: bold;
+	text-align: center;
+}
+
+.disabledLabel {
+	color: #888;
+	font-style: italic;
 }
 
 .dialog {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 98%;
+	width: 96%;
+	border: 0;
+	border-top: 0;
+	margin-top: 0;
 	padding: 20px;
-	background: #eee;
-	border: 1px solid #ddd;
 	text-align: center;
 	display: none;
 }
@@ -47,15 +56,14 @@ button.nativeButton {
 .dialog label {
 	font-weight: bold;
 	text-align: left;
-	margin: 10px 0 10px 20px;
 }
 
-#nativeCreateDialog label {
+.nativeCreateDialog label {
 	display: block;
 }
 
 .dialog input[type=text] {
-	width: 95%;
+	width: 100%;
 	font-size: 150%;
 }
 
@@ -65,7 +73,13 @@ button.nativeButton {
 	font-weight: bold;
 }
 
-#targetDir {
+.dialog ul {
+	list-style: none;
+	text-align: left;
+	float: left;
+}
+
+.targetDirectory {
 	font-style: italic;
 	font-weight: bold;
 }

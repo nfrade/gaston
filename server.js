@@ -8,10 +8,10 @@ var fs = require('graceful-fs')
   , log = require('npmlog')
   , _compile = require('./compile')
   , _natify = require('./natify')
-  , cssAsset = fs.readFileSync(__dirname + "/cssText.css", "utf8")
-  , jsAsset = fs.readFileSync(__dirname + "/jsText.js", "utf8")
-  , dialogs = fs.readFileSync(__dirname + "/dialogs.html", "utf8")
-  , gastonUrl = "/gastonReservedUrlHopefullyNobodyNamesADirectoryLikeThis"
+  , cssAsset = fs.readFileSync(__dirname + '/cssText.css', 'utf8')
+  , jsAsset = fs.readFileSync(__dirname + '/jsText.js', 'utf8')
+  , dialogs = fs.readFileSync(__dirname + '/dialogs.html', 'utf8')
+  , gastonUrl = '/gastonReservedUrlHopefullyNobodyNamesADirectoryLikeThis'
 
 function startServer (port, compile, close, debug, build) {
   if (compile) {
@@ -32,44 +32,43 @@ function startServer (port, compile, close, debug, build) {
       })
     }
   }).listen(port)
-  log.http('Gaston is at your service at http://localhost:' + port)
+  log.http("Gaston is at your service at http://localhost:" + port)
 }
 
 function parseGastonCommand (query, res) {
-  var natifyDone = function (error) {
+  var done = function (error, data) {
       if (error) {
         res.end(JSON.stringify({
-          msg: "failure"
+          msg: 'failure'
           , error: error.toString()
         }))
       } else {
-        res.end(JSON.stringify({ msg: "success" }))
+        res.end(JSON.stringify({
+          msg: 'success'
+          , platforms: data
+        }))
       }
     }
-    , cordovaDirectoryName = "nativeBuildStuff"
-    , cordovaDirectory
-  if (query.action === "populate") {
-    cordovaDirectory = query.path + "/" + cordovaDirectoryName
+    , cordovaDirectoryName = 'nativeBuildStuff'
+    , cordovaDirectory = query.path + '/' + cordovaDirectoryName
+  if (query.action === 'enable') {
     fs.exists(cordovaDirectory, function (exists) {
       if (exists) {
-        _natify.hasPlatforms(cordovaDirectory, function (hasPlatforms, availablePlatforms) {
-          if (hasPlatforms) {
-            _natify.populate(query.path, cordovaDirectoryName, natifyDone)
-          } else {
-            res.end(JSON.stringify({
-              msg: "pleaseInstallPlatforms"
-              , availablePlatforms: availablePlatforms
-            }))
-          }
-        })
+        res.end(JSON.stringify({
+          msg: 'success'
+        }))
       } else {
-        res.end(JSON.stringify({ msg: "pleaseCreate" }))
+        res.end(JSON.stringify({ msg: 'pleaseCreate' }))
       }
     })
-  } else if (query.action === "create") {
-    _natify.create(query.path, cordovaDirectoryName, query.rdsid, query.displayName, natifyDone)
-  } else if (query.action === "installPlatforms") {
-    _natify.installPlatforms(query.path + '/' + cordovaDirectoryName, query.selectedPlatforms, natifyDone)
+  } else if (query.action === 'create') {
+    _natify.create(query.path, cordovaDirectoryName, query.rdsid, query.displayName, done)
+  } else if (query.action === 'getPlatforms') {
+    _natify.getPlatforms(query.path, cordovaDirectoryName, done)
+  } else if (query.action === 'emulate') {
+    _natify.attemptRun(query.path, cordovaDirectoryName, JSON.parse(query.platforms), '--emulator', done)
+  } else if (query.action === 'run') {
+    _natify.attemptRun(query.path, cordovaDirectoryName, JSON.parse(query.platforms), '--device', done)
   }
   else res.end("Gaston says: You want me to do something I've never heard of. Well I don't like it. I don't like it one bit.")
 }
@@ -132,10 +131,10 @@ function found (url, pathname, res, cb) {
 }
 
 function notFound (url, res) {
-  log.http('Can\'t find ',url)
+  log.http("Can't find ",url)
   if(!path.extname(url).length){
-    var msg = 'Can\'t find ' + url
-    var button = addBtn(msg,'', '', 'Go Back To Top')
+    var msg = "Can\'t find " + url
+    var button = addBtn(msg,'', '', "Go Back To Top")
     makeUI(url,button,res)
   } else res.end()
 }
@@ -144,12 +143,12 @@ function addBtn (title, val, pathname, subtitle, containsIndexHtml){
   var label = '<h3>' + title + '</h3>'
     , directoryContents = (subtitle) ? '<p>' + subtitle + '</p>' : ''
     , targetPath = pathname.slice(1) + val
-    , runNatively = (containsIndexHtml) ? '<button class="nativeButton" onclick="runNatively(\'' + targetPath + '\', \'' + gastonUrl + '\')">Run natively</button>' : ''
+    , enableNative = (containsIndexHtml) ? '<button class="natify">Run natively<input type="hidden" class="natifyTargetPath" value="' + targetPath + '"></button>' : ''
   return '<button class="gotoButton" onclick="goTo(\'' + val + '/\');">'
     + label
     + directoryContents
     + '</button>'
-    + runNatively
+    + enableNative
 }
 
 function makeUI (url, buttons, res) {
