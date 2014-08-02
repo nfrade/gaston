@@ -130,11 +130,10 @@ module.exports = function(index, res, close, debug, build){
       }
 
       function parseRules (rules) {
-        for (var l = rules.length, i = 0, rule, importpath, importfile; i < l; i++) {
+        for (var l = rules.length, i = 0, rule, importfile; i < l; i++) {
           rule = rules[i]
-          importpath = rule.path
-          if(importpath){
-            importfile = path.resolve(importpath.currentFileInfo.entryPath,importpath.value.value)
+          importfile = rule.importedFilename
+          if (importfile) {
             addDep(importfile) && that.push('require("' + importfile + '");')
           }
           if(rule.currentFileInfo) rule.currentFileInfo.rootpath = relativeUrl
