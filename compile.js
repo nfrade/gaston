@@ -135,7 +135,7 @@ module.exports = function(index, res, close, debug, build){
           importpath = rule.path
           if(importpath){
             importfile = path.resolve(importpath.currentFileInfo.entryPath,importpath.value.value)
-            addDep(importfile) && that.push('require("' + importfile + '")')
+            addDep(importfile) && that.push('require("' + importfile + '");')
           }
           if(rule.currentFileInfo) rule.currentFileInfo.rootpath = relativeUrl
           if(rule.rules) parseRules(rule.rules)
