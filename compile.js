@@ -9,25 +9,25 @@ var fs = require('graceful-fs')
 
   , leaveAlone = []
 
-module.exports = function(index, res, close, debug, build){
+module.exports = function (index, res, close, debug, build) {
   
-  if(~leaveAlone.indexOf(index)) return true
-  if(!close) leaveAlone.push(index)
+  if (~leaveAlone.indexOf(index)) return true
+  if (!close) leaveAlone.push(index)
 
   var depsarr = []
     , depsobj = {}
     , dirname = path.dirname(index)
     , firstCompile = true
-    , outputJS = path.join(dirname,'bundle.js')
-    , outputCSS = path.join(dirname,'bundle.css')
-    , outputHTML = path.join(dirname,'index.html')
-    , buildFile = path.join(dirname,'build.html')
+    , outputJS = path.join(dirname, 'bundle.js')
+    , outputCSS = path.join(dirname, 'bundle.css')
+    , outputHTML = path.join(dirname, 'index.html')
+    , buildFile = path.join(dirname, 'build.html')
     , w = watchify(index)
 
     , cssReady
     , jsReady
 
-  w.transform({global:true},transformLess)
+  w.transform({ global: true }, transformLess)
   w.on('log', ready)
   w.on('update', compile)
 
@@ -37,25 +37,25 @@ module.exports = function(index, res, close, debug, build){
     jsReady = false
     cssReady = false
 
-    if(msg) log.info(msg)
-    if(!firstCompile) refreshDeps([])
+    if (msg) log.info('compile msg', msg)
+    if (!firstCompile) refreshDeps([])
 
-    w.bundle({debug:debug})
+    w.bundle({ debug: debug })
     .on('error', handleError)
-    .on('end',writeCSS)
-    .pipe(fs.createWriteStream(outputJS).on('finish',function(){
+    .on('end', writeCSS)
+    .pipe(fs.createWriteStream(outputJS).on('finish', function () {
       jsReady = true
-      if(cssReady){
+      if (cssReady) {
         _server.serveFile(outputHTML,res)
-        if(build) _build(outputHTML, outputJS,outputCSS, buildFile)
+        if (build) _build(outputHTML, outputJS, outputCSS, buildFile)
       }
     }))
   }
 
-  function ready(msg) {
+  function ready (msg) {
     firstCompile = false
-    if(msg) log.info('ready',msg)
-    if(close) w.close()
+    if (msg) log.info('ready', msg)
+    if (close) w.close()
   }
 
   function writeCSS () {
@@ -69,20 +69,20 @@ module.exports = function(index, res, close, debug, build){
       string += depsobj[fname] || ''
     }
 
-    fs.writeFile(outputCSS, string, function(err){
-      if(err) log.error('cssWrite',err)
+    fs.writeFile(outputCSS, string, function (err) {
+      if (err) log.error('cssWrite', err)
       string = ''
       cssReady = true
-      if(jsReady) {
-        _server.serveFile(outputHTML,res)
-        if(build) _build(outputHTML, outputJS,outputCSS, buildFile)
+      if (jsReady) {
+        _server.serveFile(outputHTML, res)
+        if (build) _build(outputHTML, outputJS, outputCSS, buildFile)
       }
     })
   }
 
-  function refreshDeps(arr) {
+  function refreshDeps (arr) {
     w.deps()
-    .on('data',function(data){
+    .on('data', function (data) {
       var deps = data.deps
         , fname
         , l = depsarr.length
@@ -92,64 +92,69 @@ module.exports = function(index, res, close, debug, build){
         if(/(\.less$)|(\.css$)/.test(fname) && !~arr.indexOf(fname)) arr.push(fname)
       }
     })
-    .on('error',handleError)
-    .on('end',function(){
+    .on('error', handleError)
+    .on('end', function () {
       depsarr = arr
     })
   }
 
-  function addDep (filename, content){
-    if(content) depsobj[filename] = content
-    if(!~depsarr.indexOf(filename)) return depsarr.push(filename)
+  function addDep (filename, content) {
+    if (content) depsobj[filename] = content
+    if (!~depsarr.indexOf(filename)) return depsarr.push(filename)
   }
 
   function transformLess (file) {
     if (!/(\.less$)|(\.css$)/.test(file)) return through()
     return through(lessParser)
 
-    function lessParser(buf,enc,next){
+    function lessParser (buf,enc,next){
       var that = this
-        , relativeUrl = path.relative(dirname,path.dirname(file))
-
-      if(relativeUrl.length) relativeUrl += '/'
+        , relativeUrl = path.relative(dirname, path.dirname(file))
+      if (relativeUrl.length) relativeUrl += '/'
 
       addDep(file)
-      less.Parser({ filename:file }).parse(buf.toString(),parseLess)
+      less.Parser({
+        filename: file
+        , rootpath: relativeUrl
+      }).parse(buf.toString(), parseLess)
       
-      function parseLess(err, tree){
-        if (err) return next() || log.error('lessParse',err)
-        parseRules(tree.rules)
+      function parseLess (err, tree) {
         var css
+        if (err) {
+          log.error('lessParse', err)
+          return next()
+        }
+        parseRules(tree.rules)
         try {
           css = tree.toCSS()
         }catch (ex) {
           log.error(ex)
         }
-        addDep(file,css)
+        addDep(file, css)
         next()
       }
 
       function parseRules (rules) {
-        for (var l = rules.length, i = 0, rule, importfile; i < l; i++) {
+        for (var l = rules.length, i = 0, rule, importfile; i < l; i += 1) {
           rule = rules[i]
           importfile = rule.importedFilename
           if (importfile) {
-            addDep(importfile) && that.push('require("' + importfile + '");')
+            addDep(importfile)
+            that.emit('file', importfile)
           }
-          if(rule.currentFileInfo) rule.currentFileInfo.rootpath = relativeUrl
-          if(rule.rules) parseRules(rule.rules)
+          if (rule.rules) parseRules(rule.rules)
         }
       }
     }
   }
 
-  function handleError ( error ){
+  function handleError (error) {
     log.error(error)
     error = error.toString('utf8').replace(/('|")/g,'\'')
     var script = 'function doRetry () {location.reload();}'
       , html = '<script>' + script +'</script><div style=\'padding:20px;font-family: DIN Next LT Pro Light,Helvetica,Arial,sans-serif;background-color:#34cda7;\'><h1>ERROR:</h1><h2>'+ error +'</h2><button style=\'padding:40px;\'onclick=\'doRetry();\'>RETRY</button></div>'
       , str = 'document.write("' + html + '");'
-    fs.writeFile( outputJS, str, function(err){if(err)log.error(err)})
+    fs.writeFile(outputJS, str, function (err) { if (err) log.error(err) })
     ready()
   }
 }

@@ -153,7 +153,7 @@ function addBtn (title, val, pathname, subtitle, containsIndexHtml){
 
 function makeUI (url, buttons, res) {
   var head = '<head><meta charset="utf-8"><style type="text/css">' + cssAsset + '</style><script type="text/javascript">' + jsAsset + '</script></head>'
-    , urlpath = url.split(path.sep).join(' > ').slice(2, -3)
+    , urlpath = url.split(path.sep).join(' > ').slice(3, -3)
     , breadcrumbs = '<h2>' + urlpath + '</h2>'
     , data = '<input id="gastonUrl" type="hidden" value="' + gastonUrl + '">'
     , ui = '<!doctype html><html>' + head + '<body>' + data + breadcrumbs + buttons + dialogs + '</body></html>'
