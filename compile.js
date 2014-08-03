@@ -139,8 +139,10 @@ module.exports = function (index, res, close, debug, build) {
           importfile = rule.importedFilename
 
           // if (rule.value) console.log(JSON.stringify(rule.value))
-          if (importfile) {
+          if (importfile && !~depsarr.indexOf(importfile)) {
+            // log.info('emitting',importfile)
             stream.emit('file', importfile)
+            depsarr.push(importfile)
           }
           if (rule.name) {
             // log.info('rule name', rule.name)
