@@ -123,7 +123,7 @@ module.exports = function (index, res, close, debug, build) {
         filename: file
         , relativeUrls: true
       }).parse(data, function (err, tree) {
-        log.info('parsing file', file)
+        // log.info('parsing file', file)
         // log.info('tree', JSON.stringify(tree, null, "  "))
         if (err) log.error('lessParse', err)
         else parseRules(tree.rules)
