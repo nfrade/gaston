@@ -1,0 +1,53 @@
+@import "colors.less";
+@import "dir/icons.less";
+@import "dir/more.less";
+
+@red: #800;
+
+.icon(@url) {
+	background: url(@url) no-repeat center right;
+}
+
+p {
+	height: 200px;
+	border: 1px solid #eee;
+}
+
+.color {
+	color: @red;
+}
+
+.doubleImportedColor {
+	color: @blue;
+}
+
+.url {
+	background: url(images/vigour.jpeg) no-repeat center right;
+}
+
+.iconCall {
+	.icon('images/vigour.jpeg');
+}
+
+.urlDown {
+	background: url(dir/images/wu.jpeg) no-repeat center right;
+}
+
+.urlUp {
+	background: url(../vigour.jpeg) no-repeat center right;
+}
+
+// .styles {
+// 	color: @green;
+// 	.icon('images/vigour.jpeg')
+// 	p {
+// 		background: url(images/vigour.jpeg) no-repeat center right;
+// 	}
+// }
+
+// .otherStyles {
+// 	.icon('dir/images/wu.jpeg');
+// 	p {
+// 		background: url(dir/images/wu.jpeg) no-repeat center right;
+// 	}
+// }

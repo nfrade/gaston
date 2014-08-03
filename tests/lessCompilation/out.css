@@ -1,0 +1,16 @@
+p {
+  font-style: italic;
+}
+p {
+  font-weight: bold;
+}
+p {
+  height: 100px;
+}
+.styles {
+  color: #008800;
+  background: url('images/vigour.jpeg') no-repeat center right;
+}
+.otherStyles {
+  background: url('dir/images/wu.jpeg') no-repeat center right;
+}
