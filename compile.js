@@ -106,14 +106,12 @@ module.exports = function (index, res, close, debug, build) {
   function transformLess (file) {
     if (!/(\.less$)|(\.css$)/.test(file)) return through()
     var stream = through(function () { this.push(null) })
+    // log.info('reading file', file)
     fs.readFile(file, 'utf8', lessParser)
     return stream
 
     function lessParser (err, data) {
       var relativeUrl = path.relative(dirname, path.dirname(file))
-      // log.info('file', file)
-      // log.info('data', data)
-      // log.info('\n')
       
       if (relativeUrl.length) relativeUrl += '/'
       depsarr.push(file)
@@ -124,42 +122,56 @@ module.exports = function (index, res, close, debug, build) {
         , relativeUrls: true
       }).parse(data, function (err, tree) {
         // log.info('parsing file', file)
-        // log.info('tree', JSON.stringify(tree, null, "  "))
         if (err) log.error('lessParse', err)
         else parseRules(tree.rules)
-        // log.info('tree', JSON.stringify(tree, null, "  "))
+        // inspectTree(tree)
         try { depsobj[file] = tree.toCSS()}
         catch (ex) { log.error(ex) }
         if(!--depscount) writeCSS()
       })
 
-      function parseRules (rules) {
-        if(!(rules instanceof Array)) rules = [rules]
-        rules.forEach(function (rule) {
+      // function inspectTree (value, parent, grandParent) {
+      //   if (value instanceof Array) {
+      //     value.forEach(function (v) {
+      //       inspectTree(v, value, parent)
+      //     })
+      //   } else if (value.value) {
+      //     inspectTree(value.value, value, parent)
+      //   } else if (value.rules) {
+      //     inspectTree(value.rules, value, parent)
+      //   } else if (typeof value === "string" && value === "mtv_play_logo.png") {
+      //     log.info('>>>>>', value)
+      //     log.info('grandParent', grandParent)
+      //   }
+      // }
+
+      function parseRules (rule) {
+        if (rule instanceof Array) {
+          rule.forEach(function (r) {
+            parseRules(r)
+          })
+        } else {
           importfile = rule.importedFilename
 
-          // if (rule.value) console.log(JSON.stringify(rule.value))
-          if (importfile && !~depsarr.indexOf(importfile)) {
-            // log.info('emitting',importfile)
+          if (importfile) {
             stream.emit('file', importfile)
             depsarr.push(importfile)
           }
-          if (rule.name) {
-            // log.info('rule name', rule.name)
-            // log.info('rule', JSON.stringify(rule, null, "  "))
-          }
+
           if (rule.root) {
-            // log.info('recursion (root)')
             parseRules(rule.root.rules)
-          //} else if (rule.rules) {
-            // log.info('recursion (rules)')
-            // parseRules(rule.rules)
-          } else if (rule.currentFileInfo && (relativeUrl.length || rule.currentFileInfo.rootpath.length)){
+          } else if (rule.rules) {
+            parseRules(rule.rules)
+          } else if (rule.value) {
+            parseRules(rule.value)
+          } else if (rule.currentFileInfo
+              && !rule.currentFileInfo.alreadyManuallyRebased) {
+            rule.currentFileInfo.alreadyManuallyRebased = true
+            if (relativeUrl.length || rule.currentFileInfo.rootpath.length) {
               rule.currentFileInfo.rootpath = path.join(relativeUrl, rule.currentFileInfo.rootpath)
+            }
           }
-          // else if (rule.value) parseRules(rule.value)
-          // THIS WORKS FOR MTV PERFECTLY => DOESNT FOR TEST CASE (turn off relativeUrls and change rootPath to relativeUrl instead of path.join etc => works perfect)
-        })
+        }
       }
     }
   }
