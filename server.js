@@ -36,21 +36,49 @@ function startServer (port, compile, close, debug, build) {
 }
 
 function parseGastonCommand (query, res) {
-  var done = function (error, data) {
+  var handleFailure = function (error, cb) {
       if (error) {
         res.end(JSON.stringify({
           msg: 'failure'
           , error: error.toString()
         }))
       } else {
+        cb()
+      }
+    }
+    , doneCreate = function (error, data) {
+      handleFailure(error, function () {
+        res.end(JSON.stringify({
+          msg: 'success'
+        }))
+      })
+    }
+    , doneGetPlatforms = function (error, data) {
+      handleFailure(error, function () {
         res.end(JSON.stringify({
           msg: 'success'
           , platforms: data
         }))
-      }
+      })
+    }
+    , donePreparePlatforms = function (error, data) {
+      handleFailure(error, function () {
+        res.end(JSON.stringify({
+          msg: 'success'
+          , targets: data
+        }))
+      })
+    }
+    , doneLaunch = function (error, data) {
+      handleFailure(error, function () {
+        res.end(JSON.stringify({
+          msg: 'success'
+        }))
+      })
     }
     , cordovaDirectoryName = 'nativeBuildStuff'
     , cordovaDirectory = query.path + '/' + cordovaDirectoryName
+    , escapedTargets
   if (query.action === 'enable') {
     fs.exists(cordovaDirectory, function (exists) {
       if (exists) {
@@ -62,13 +90,16 @@ function parseGastonCommand (query, res) {
       }
     })
   } else if (query.action === 'create') {
-    _natify.create(query.path, cordovaDirectoryName, query.rdsid, query.displayName, done)
+    _natify.create(query.path, cordovaDirectoryName, query.rdsid, query.displayName, doneCreate)
   } else if (query.action === 'getPlatforms') {
-    _natify.getPlatforms(query.path, cordovaDirectoryName, done)
+    _natify.getPlatforms(query.path, cordovaDirectoryName, doneGetPlatforms)
   } else if (query.action === 'emulate') {
-    _natify.attemptRun(query.path, cordovaDirectoryName, JSON.parse(query.platforms), '--emulator', done)
+    log.info('platforms', query.platforms)
+    _natify.preparePlatforms(query.path, cordovaDirectoryName, JSON.parse(query.platforms), '--emulator', donePreparePlatforms)
   } else if (query.action === 'run') {
-    _natify.attemptRun(query.path, cordovaDirectoryName, JSON.parse(query.platforms), '--device', done)
+    _natify.preparePlatforms(query.path, cordovaDirectoryName, JSON.parse(query.platforms), '--device', donePreparePlatforms)
+  } else if (query.action === 'launch') {
+    _natify.run(query.path, cordovaDirectoryName, JSON.parse(query.targets), query.ultimateAction, doneLaunch)
   }
   else res.end("Gaston says: You want me to do something I've never heard of. Well I don't like it. I don't like it one bit.")
 }

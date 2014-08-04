@@ -114,3 +114,12 @@ button.natify {
 	text-decoration: underline;
 	cursor: pointer;
 }
+
+.selectTargetsDialog ul li {
+	float: left;
+	margin-right: 10px;
+}
+
+.selectTargetsDialog ul li label {
+	display: block;
+}

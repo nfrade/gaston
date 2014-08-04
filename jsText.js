@@ -1,7 +1,8 @@
 window.onload = function () {
   var natifyButtons = document.getElementsByClassName('natify')
-    , i = natifyButtons.length - 1
-  for (; i >= 0; i -= 1) {
+    , l = natifyButtons.length
+    , i
+  for (i = 0; i < l; i += 1) {
     natifyButtons[i].addEventListener('click', function (event) {
       var natifyButton = event.target;
       enableNative(natifyButton)
@@ -24,7 +25,7 @@ function notify (msg) {
     delete removed
   })
 
-  message.appendChild(document.createTextNode(msg))
+  message.innerHTML = msg
   message.appendChild(discard)
   
   notifier.appendChild(message)
@@ -32,12 +33,12 @@ function notify (msg) {
 
 function ajaxError (error) {
 	console.error('Ajax error: ', error)
-  notify("Gaston: An Ajax request failed. Check the javascript console for details.")
+  notify("An Ajax request failed. Check the javascript console and/or gaston logs for details.")
 }
 
 function failure (data) {
   console.log(data)
-  notify("Gaston: Something failed. Check the javascript console and gaston logs for details.")
+  notify("Gaston: I failed you. Check the javascript console and/or gaston logs for details.")
 }
 
 function enableNative (button) {
@@ -116,12 +117,14 @@ function showPlatformsDialog (path, button, createDialog) {
         , parent
         , removed
         , platforms
+        , l
         , i
       if (data.msg === 'success') {
         modelDialog = document.getElementById('installPlatformsDialog')
         dialog = modelDialog.cloneNode(true)
         platforms = dialog.getElementsByClassName('platformSelection')[0].getElementsByTagName('input')
-        for (i = platforms.length - 1; i >= 0; i -= 1) {
+        l = platforms.length
+        for (i = 0; i < l; i += 1) {
           if (!(~data.platforms.installed.indexOf(platforms[i].value) || ~data.platforms.available.indexOf(platforms[i].value))) {
             platforms[i].disabled = true
             platforms[i].parentNode.style.fontStyle = 'italic'
@@ -136,10 +139,10 @@ function showPlatformsDialog (path, button, createDialog) {
           delete removed
         })
         dialog.getElementsByClassName('emulateButton')[0].addEventListener('click', function (event) {
-          run(path, platforms, 'emulate')
+          run(path, platforms, 'emulate', dialog)
         })
         dialog.getElementsByClassName('runButton')[0].addEventListener('click', function (event) {
-          run(path, platforms, 'run')
+          run(path, platforms, 'run', dialog)
         })
         dialog.style.display = 'block'
         parent = button.parentNode
@@ -157,7 +160,7 @@ function showPlatformsDialog (path, button, createDialog) {
   })
 }
 
-function run (path, platforms, action) {
+function run (path, platforms, action, showPlatformsDialog) {
   var gastonUrl = document.getElementById('gastonUrl').value
     , selectedPlatforms = createPlatformsList(platforms)
   if (selectedPlatforms.length > 0) {
@@ -169,8 +172,76 @@ function run (path, platforms, action) {
         , platforms: selectedPlatforms
       }
       , complete: function (data) {
+        var modelDialog
+          , dialog
+          , platformList
+          , lis = ''
+          , l
+          , i
+          , noDialogNecessary = false
+          , cancel = function () {
+            var removed = dialog.parentNode.removeChild(dialog)
+            delete removed
+            showPlatformsDialog.style.display = 'block'
+          }
         if (data.msg === 'success') {
-          // TODO
+          modelDialog = document.getElementById('selectTargetsDialog')
+          dialog = modelDialog.cloneNode(true)
+          showPlatformsDialog.parentNode.insertBefore(dialog, showPlatformsDialog)
+          platformList = dialog.getElementsByClassName('platformList')[0]
+          for (platform in data.targets) {
+            l = data.targets[platform].length
+            if (l === 0) {
+              noDialogNecessary = true
+              if (action === 'emulate') {
+                notify("Gaston: Cordova can't find any emulators for " + platform + ". Try again when you got your shit together. (<a href='https://cordova.apache.org/docs/en/2.9.0/guide_command-line_index.md.html' title='Open cordova documentation in a new tab' target='__blank'>more info</a>)")
+              } else {
+                notify("Gaston: Cordova can't find any " + platform + " devices. Try again when a device is available. (<a href='https://github.com/vigour-io/gaston#readme' title='Open the Gaston readme in a new tab' target='__blank'>more info</a>)")
+              }
+            } else {
+              lis += '<li><label>' + platform + '</label><select>'
+              for (i = 0; i < l; i += 1) {
+                lis += '<option value=\'' + data.targets[platform][i] + '\'>' + data.targets[platform][i] + '</option>'
+              }
+              lis += '</select></li>'
+            }
+          }
+          if (noDialogNecessary) {
+            cancel()
+          } else {
+            platformList.innerHTML = lis
+
+            dialog.getElementsByClassName('cancelButton')[0].addEventListener('click', function (event) {
+              cancel()
+            })
+
+            dialog.getElementsByClassName('launchButton')[0].addEventListener('click', function (event) {
+              var selectedTargets = []
+                , platformLis = platformList.getElementsByTagName('li')
+                , l = platformLis.length
+                , i
+                , platTargets
+                , l
+                , j
+                , currentPlatform
+                , currentTarget
+              for (i = 0; i < l; i += 1) {
+                currentPlatform = platformLis[i].getElementsByTagName('label')[0].innerHTML
+                selectedTargets[i] = { platform: currentPlatform }
+                platTargets = platformLis[i].getElementsByTagName('select')[0].getElementsByTagName('option')
+                len = platTargets.length
+                for (j = 0; j < len; j += 1) {
+                  if (platTargets[j].selected) {
+                    selectedTargets[i].target = platTargets[j].value
+                  }
+                }
+              }
+              launch(path, selectedTargets, action, dialog)
+            })
+
+            dialog.style.display = 'block'
+            showPlatformsDialog.style.display = 'none'
+          }
         } else {
           failure(data)
         }
@@ -182,10 +253,28 @@ function run (path, platforms, action) {
   }
 }
 
+function launch (path, targets, action, runDialog) {
+  var gastonUrl = document.getElementById('gastonUrl').value
+  ajaxModule.ajax({
+    url: gastonUrl
+    , data: {
+      action: 'launch'
+      , ultimateAction: action
+      , path: path
+      , targets: targets
+    }
+    , complete: function (data) {
+      notify('Done. If anything is not working, check Gaston logs.')
+    }
+    , error: ajaxError
+  })
+}
+
 function createPlatformsList (platforms) {
-  var i = platforms.length - 1
+  var l = platforms.length
+    , i
     , list = []
-  for (; i >= 0; i -= 1) {
+  for (i = 0; i < l; i += 1) {
     if (platforms[i].checked) {
       list.push(platforms[i].value)
     }
@@ -194,16 +283,17 @@ function createPlatformsList (platforms) {
 }
 
 function pleaseSelectPlatforms () {
-  alert('Gaston: Please select one or many platforms and try again')
+  notify('Gaston: You have to select a platform first, dumba... sir.')
 }
 
 function submitInstallPlatforms () {
 	var path = document.getElementById('installPlatformsTargetDir').value
 		, checkboxes = document.getElementById('platformSelection').querySelectorAll('input')
-		, i = checkboxes.length - 1
+		, l = checkboxes.length
+    , i
 		, selectedPlatforms = []
     , gastonUrl = document.getElementById('gastonUrl').value
-	for (; i >= 0; i -= 1) {
+	for (i = 0; i < l; i += 1) {
 		if (checkboxes[i].checked) {
 			selectedPlatforms.push(checkboxes[i].value)
 		}
