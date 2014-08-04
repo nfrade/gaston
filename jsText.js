@@ -27,7 +27,6 @@ function notify (msg) {
 
   message.innerHTML = msg
   message.appendChild(discard)
-  
   notifier.appendChild(message)
 }
 
@@ -52,9 +51,11 @@ function enableNative (button) {
 		}
 		, complete: function (data) {
 			if (data.msg === 'success') {
-        showPlatformsDialog(path, button)
-      } else if (data.msg === 'pleaseCreate') {
-        showCreateDialog(path, button)
+        if (data.content === 'pleaseCreate') {
+          showCreateDialog(path, button)
+        } else {
+          showPlatformsDialog(path, button)
+        }
       } else {
         failure(data)
       }
@@ -125,7 +126,7 @@ function showPlatformsDialog (path, button, createDialog) {
         platforms = dialog.getElementsByClassName('platformSelection')[0].getElementsByTagName('input')
         l = platforms.length
         for (i = 0; i < l; i += 1) {
-          if (!(~data.platforms.installed.indexOf(platforms[i].value) || ~data.platforms.available.indexOf(platforms[i].value))) {
+          if (!(~data.content.installed.indexOf(platforms[i].value) || ~data.content.available.indexOf(platforms[i].value))) {
             platforms[i].disabled = true
             platforms[i].parentNode.style.fontStyle = 'italic'
             platforms[i].parentNode.style.color = '#888'
@@ -189,8 +190,8 @@ function run (path, platforms, action, showPlatformsDialog) {
           dialog = modelDialog.cloneNode(true)
           showPlatformsDialog.parentNode.insertBefore(dialog, showPlatformsDialog)
           platformList = dialog.getElementsByClassName('platformList')[0]
-          for (platform in data.targets) {
-            l = data.targets[platform].length
+          for (platform in data.content) {
+            l = data.content[platform].length
             if (l === 0) {
               noDialogNecessary = true
               if (action === 'emulate') {
@@ -201,7 +202,7 @@ function run (path, platforms, action, showPlatformsDialog) {
             } else {
               lis += '<li><label>' + platform + '</label><select>'
               for (i = 0; i < l; i += 1) {
-                lis += '<option value=\'' + data.targets[platform][i] + '\'>' + data.targets[platform][i] + '</option>'
+                lis += '<option value=\'' + data.content[platform][i] + '\'>' + data.content[platform][i] + '</option>'
               }
               lis += '</select></li>'
             }

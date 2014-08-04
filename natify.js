@@ -15,7 +15,17 @@ function done (cb) {
 }
 
 module.exports = exports = {
-	create: function (cwd, cordovaDirectoryName, rdsid, displayName, cb) {
+	isCreated: function (cwd, cordovaDirectoryName, cb) {
+		var dir = cwd + '/' + cordovaDirectoryName
+		fs.exists(dir, function (exists) {
+      if (exists) {
+      	cb()
+      } else {
+      	cb(null, 'pleaseCreate')
+      }
+    })
+	}
+	, create: function (cwd, cordovaDirectoryName, rdsid, displayName, cb) {
 		var command = 'cordova create '
 			+ cordovaDirectoryName
 			+ ' '
@@ -180,11 +190,9 @@ module.exports = exports = {
 			if (error) {
 				cb(error)
 			} else {
-				console.log('no error')
 				dir = cwd + '/' + cordovaDirectoryName
 				l = targets.length
 				nbLeft = l
-				console.log('targets', targets)
 				for (i = 0; i < l; i += 1) {
 					usableTarget = (~targets[i].target.indexOf(' ')) ? '"' + targets[i].target + '"' : targets[i].target
 					command = 'cordova run '
