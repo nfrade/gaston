@@ -265,7 +265,7 @@ function launch (path, targets, action, runDialog) {
       , targets: targets
     }
     , complete: function (data) {
-      notify('Done. If anything is not working, check Gaston logs.')
+      notify('Done. If anything is not working, check Gaston logs. If you need more help, have a look in <a href="https://github.com/vigour-io/gaston#user-content-troubleshooting" title="Open the gaston troubleshooting guide in a new tab" target="__blank">the troubleshooting guide</a>.')
     }
     , error: ajaxError
   })
