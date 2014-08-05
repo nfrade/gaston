@@ -126,7 +126,7 @@ module.exports = function (index, res, close, debug, build) {
         else parseRules(tree.rules)
         // inspectTree(tree)
         try { depsobj[file] = tree.toCSS()}
-        catch (ex) { log.error(ex) }
+        catch (ex) { log.error('toCSS',ex) }
         if(!--depscount) writeCSS()
       })
 
