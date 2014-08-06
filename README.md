@@ -33,6 +33,30 @@ Install gaston globally by navigating to the root folder of the repository and d
 
 ```gaston webserver compile -less -js -debug -livereload -p:8080``` Will do all of the above
 
+## Usage
+With gaston, you can require scripts and styles with the same syntax, e.g.
+```
+var config = require('./config')
+require('styles.less')
+```
+
+### Known issues
+Make sure the styles you require are in the same directory as the file which requires them, otherwise, path rebasing will not work correctly. If the file you want to require is elsewhere, just require a file in the same directory and have that file import the desired file, e.g.
+
+**instead of**
+```
+require('dir/styles.less')
+```
+
+**do this**
+```
+require('importer.less')
+```
+and in *importer.less*:
+```
+@import 'dir/styles.less';
+```
+
 <a name="nativeReqs"></a>
 ## Native Features Requirements
 ### Setup
