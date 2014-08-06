@@ -3,7 +3,7 @@ gaston
 
 Gaston is your favorite handyman, carrying Vigour's evergrowing set of devtools.
 
-(*note: Vigour currently uses browserify and less. Gaston likes this. So should you.)
+(note: Vigour currently uses browserify and less. Gaston likes this. So should you.)
 
 ## Installation
 Install gaston globally by navigating to the root folder of the repository and doing `npm install -g`
@@ -12,26 +12,26 @@ Install gaston globally by navigating to the root folder of the repository and d
 
 `gaston` Starts a server which provides a file browser for the current directory. Clicking on a directory which has an index.html in it builds the project in that directory, watches for changes, and launches the app in the browser. The *Run natively* button creates a cordova project and provides options to support various platforms, and run the project in emulators or natively on physical devices plugged in by USB. This process has many requirements and is somewhat difficult to automate, so you may want to check out the [Native Features Requirements](#user-content-nativeReqs) and  [Troubleshooting](#user-content-troubleshooting) sections.
 
-```gaston compile``` Compiles all js, less and css files into bundle.js and bundle.css. Gaston keeps watching for changes.
+`gaston compile` Compiles all js, less and css files into bundle.js and bundle.css. Gaston keeps watching for changes.
 
-```gaston webserver``` Starts a localhost server on port 8080.
+`gaston webserver` Starts a localhost server on port 8080.
 
 ### Params
 
-```-port:<portvalue>``` Uses this port for webserver (shorthand: ```-p:<portvalue>```)
+`-port:<portvalue>` Uses this port for webserver (shorthand: `-p:<portvalue>`)
 
-```-livereload``` Livereload parameter for webserver (!TODO)
+`-livereload` Livereload parameter for webserver (!TODO)
 
-```-debug``` Debug parameter for browserify compile
+`-debug` Debug parameter for browserify compile
 
-```-js``` Only compile js
+`-js` Only compile js
 
-```-less``` / ```-css``` Only compile less and css (except if ```-js``` is also given)
+`-less` / `-css` Only compile less and css (except if `-js` is also given)
 
 
 *Mix and match commands and params as you wish:*
 
-```gaston webserver compile -less -js -debug -livereload -p:8080``` Will do all of the above
+`gaston webserver compile -less -js -debug -livereload -p:8080` Will do all of the above
 
 ## Usage
 With gaston, you can require scripts and styles with the same syntax, e.g.
