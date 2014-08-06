@@ -43,19 +43,10 @@ require('styles.less')
 ### Known issues
 Make sure the styles you require are in the same directory as the file which requires them, otherwise, path rebasing will not work correctly. If the file you want to require is elsewhere, just require a file in the same directory and have that file import the desired file, e.g.
 
-**instead of**
-```
-require('dir/styles.less')
-```
+**instead of** `require('dir/styles.less')`
 
-**do this**
-```
-require('importer.less')
-```
-and in *importer.less*:
-```
-@import 'dir/styles.less';
-```
+**do this** `require('importer.less')`
+and in *importer.less*: `@import 'dir/styles.less';`
 
 <a name="nativeReqs"></a>
 ## Native Features Requirements
