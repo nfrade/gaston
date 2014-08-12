@@ -170,8 +170,8 @@ module.exports = exports = {
 	}
 	, populate: function (cwd, cordovaDirectoryName, cb) {
 		var command = 'rsync -r * '
-			+ cordovaDirectoryName
-			+ '/www --exclude '
+			+ cordovaDirectoryName + '/www'
+			+ ' --exclude '
 			+ cordovaDirectoryName
 		logCommand(cwd, command)
 		exec(command

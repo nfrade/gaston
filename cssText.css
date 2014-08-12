@@ -99,13 +99,24 @@ button.natify {
 	top: 0;
 	left: 0;
 	width: 100%;
-	background: rgba(255, 0, 0, 0.5);
 	border-bottom: 1px solid #888;
+}
+
+#notifier div {
+	padding: 10px;
+}
+
+#notifier div.error {
+	background: rgba(255, 0, 0, 0.5);
+}
+
+#notifier div.success {
+	background: rgba(0, 255, 0, 0.5);
 }
 
 #notifier p {
 	width: 96%;
-	padding: 20px;
+	padding: 10px;
 	background: #ddd;
 }
 

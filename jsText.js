@@ -14,30 +14,33 @@ function goTo (val) {
 	location.href = val
 }
 
-function notify (msg) {
+function notify (level, msg) {
   var discard = document.createElement('span')
     , message = document.createElement('p')
+    , messageWrapper = document.createElement('div')
     , notifier = document.getElementById('notifier')
   discard.appendChild(document.createTextNode('(dismiss)'))
   discard.addEventListener('click', function (event) {
-    var toRemove = event.target.parentNode
+    var toRemove = event.target.parentNode.parentNode
       , removed = toRemove.parentNode.removeChild(toRemove)
     delete removed
   })
 
   message.innerHTML = msg
   message.appendChild(discard)
-  notifier.appendChild(message)
+  messageWrapper.appendChild(message)
+  messageWrapper.className = level
+  notifier.appendChild(messageWrapper)
 }
 
 function ajaxError (error) {
 	console.error('Ajax error: ', error)
-  notify("An Ajax request failed. Check the javascript console and/or gaston logs for details.")
+  notify('error', "An Ajax request failed. Check the javascript console and/or gaston logs for details.")
 }
 
 function failure (data) {
   console.log(data)
-  notify("Gaston: I failed you. Check the javascript console and/or gaston logs for details.")
+  notify('error', "Gaston: I failed you. Check the javascript console and/or gaston logs for details.")
 }
 
 function enableNative (button) {
@@ -195,9 +198,9 @@ function run (path, platforms, action, showPlatformsDialog) {
             if (l === 0) {
               noDialogNecessary = true
               if (action === 'emulate') {
-                notify("Gaston: Cordova can't find any emulators for " + platform + ". Try again when you got your shit together. (<a href='https://cordova.apache.org/docs/en/2.9.0/guide_command-line_index.md.html' title='Open cordova documentation in a new tab' target='__blank'>more info</a>)")
+                notify('error', "Gaston: Cordova can't find any emulators for " + platform + ". Try again when you got your shit together. (<a href='https://cordova.apache.org/docs/en/2.9.0/guide_command-line_index.md.html' title='Open cordova documentation in a new tab' target='__blank'>more info</a>)")
               } else {
-                notify("Gaston: Cordova can't find any " + platform + " devices. Try again when a device is available. (<a href='https://github.com/vigour-io/gaston#readme' title='Open the Gaston readme in a new tab' target='__blank'>more info</a>)")
+                notify('error', "Gaston: Cordova can't find any " + platform + " devices. Try again when a device is available. (<a href='https://github.com/vigour-io/gaston#readme' title='Open the Gaston readme in a new tab' target='__blank'>more info</a>)")
               }
             } else {
               lis += '<li><label>' + platform + '</label><select>'
@@ -265,7 +268,7 @@ function launch (path, targets, action, runDialog) {
       , targets: targets
     }
     , complete: function (data) {
-      notify('Done. If anything is not working, check Gaston logs. If you need more help, have a look in <a href="https://github.com/vigour-io/gaston#user-content-troubleshooting" title="Open the gaston troubleshooting guide in a new tab" target="__blank">the troubleshooting guide</a>.')
+      notify('success', 'Done. If anything is not working, check Gaston logs. If you need more help, have a look in <a href="https://github.com/vigour-io/gaston#user-content-troubleshooting" title="Open the gaston troubleshooting guide in a new tab" target="__blank">the troubleshooting guide</a>.')
     }
     , error: ajaxError
   })
@@ -284,7 +287,7 @@ function createPlatformsList (platforms) {
 }
 
 function pleaseSelectPlatforms () {
-  notify('Gaston: You have to select a platform first, dumba... sir.')
+  notify('error', 'Gaston: You have to select a platform first, dumba... sir.')
 }
 
 function submitInstallPlatforms () {
