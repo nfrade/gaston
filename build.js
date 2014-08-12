@@ -20,20 +20,27 @@ module.exports = function(htmlFile, jsFile, cssFile, buildFile){
 
 	var htmlString = fs.readFileSync(htmlFile,'utf8')
 		, cssString = fs.readFileSync(cssFile,'utf8')
-		, minimizedCSS = new cleanCSS().minify(cssString)
-		, minimizedJS = uglify.minify(jsFile).code
+		, minimizedCSS
+		, minimizedJS
 
-	htmlString = htmlString.replace(findCSS(path.basename(cssFile))
-		, '<style media="screen" type="text/css">' 
-		+ minimizedCSS 
-		+ '</style>')
-			.replace(findJS(path.basename(jsFile))
-				, '<script type=text/javascript>' 
-				+ minimizedJS 
-				+ '</script>')
+	try {
+		minimizedCSS = new cleanCSS().minify(cssString)
+		minimizedJS = uglify.minify(jsFile).code
 
-	fs.writeFile(buildFile,htmlString,function(err){
-		if(err) log.error(err)
-		else log.info('build complete')
-	})
+		htmlString = htmlString.replace(findCSS(path.basename(cssFile))
+			, '<style media="screen" type="text/css">' 
+			+ minimizedCSS 
+			+ '</style>')
+				.replace(findJS(path.basename(jsFile))
+					, '<script type=text/javascript>' 
+					+ minimizedJS 
+					+ '</script>')
+
+		fs.writeFile(buildFile,htmlString,function(err){
+			if(err) log.error(err)
+			else log.info('build complete')
+		})
+	} catch (ex) {
+		console.error(ex)
+	}
 }
