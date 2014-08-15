@@ -61,6 +61,15 @@ function parseGastonCommand (query, res) {
       , query.rdsid
       , query.displayName
       , done)
+  } else if (query.action === 'getConfig') {
+    _natify.getConfig(query.path
+      , cordovaDirectoryName
+      , done)
+  } else if (query.action === 'saveConfig') {
+    _natify.saveConfig(query.path
+      , cordovaDirectoryName
+      , query.data
+      , done)
   } else if (query.action === 'getPlatforms') {
     _natify.getPlatforms(query.path
       , cordovaDirectoryName
@@ -113,7 +122,7 @@ function checkIndexJS (url,res,cb) {
   else return true
 }
 
-function serveDirectory(url, pathname, res){
+function serveDirectory (url, pathname, res){
   fs.readdir(url, function(err,files){
     if(err) log.error(err)
     var buttons = ''

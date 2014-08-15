@@ -1,6 +1,7 @@
 var fs = require('graceful-fs')
 	, exec = require('child_process').exec
 	, log = require('npmlog')
+	, xml2js = require('xml2js')
 
 function logCommand (cwd, command) {
 	log.info('in `' + cwd + '`\n\trunning `' + command + '`')
@@ -35,7 +36,95 @@ module.exports = exports = {
 		logCommand(cwd, command)
 		exec(command
 			, { cwd: cwd }
-			, done(cb))
+			, done(function (err) {
+				// var dir = cwd + '/' + cordovaDirectoryName
+				if (err) {
+					cb(err)
+				} else {
+					var command = 'cordova plugin add '
+						+ 'https://github.com/apache/cordova-plugins.git#master:keyboard'
+					console.log('Skipping `' + command + '` (see https://issues.apache.org/jira/browse/CB-3020?focusedCommentId=14094596&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-14094596)')
+					cb(null)
+				// 	logCommand(dir, command)
+				// 	exec(command
+				// 		, { cwd: dir }
+				// 		, done(cb))
+				}
+			}))
+	}
+	, getConfig: function (cwd, cordovaDirectoryName, cb) {
+		var file = cwd + '/' + cordovaDirectoryName + '/config.xml'
+		fs.readFile(file, 'utf8', function (err, fileContents) {
+			var parsedConfig
+			if (err) {
+				cb(err)
+			} else {
+				parsedConfig = xml2js.parseString(fileContents
+					, { trim: true }
+					, function (err, result) {
+						if (err) {
+							cb(err)
+						} else {
+							parsedConfig = result.widget
+							cb(null, {
+								rdsid: parsedConfig.$.id
+								, name: parsedConfig.name[0]
+								, description: parsedConfig.description[0]
+								, authorEmail: parsedConfig.author[0].$.email
+								, authorHref: parsedConfig.author[0].$.href
+								, authorText: parsedConfig.author[0]._
+							})
+						}
+					})
+			}
+		})
+	}
+	, saveConfig: function (cwd, cordovaDirectoryName, data, cb) {
+		var file = cwd + '/' + cordovaDirectoryName + '/config.xml'
+		fs.readFile(file, 'utf8', function (err, fileContents) {
+			var parsedConfig
+			if (err) {
+				cb(err)
+			} else {
+				parsedConfig = xml2js.parseString(fileContents, function (err, result) {
+					var parsedData
+						, xml
+					if (err) {
+						cb(err)
+					} else {
+						parsedData = JSON.parse(data)
+
+						result.widget.$.id = parsedData.rdsid
+						result.widget.name[0] = parsedData.name
+						result.widget.description[0] = parsedData.description
+						result.widget.author[0].$.email = parsedData.authorEmail
+						result.widget.author[0].$.href = parsedData.authorHref
+						result.widget.author[0]._ = parsedData.authorText
+
+						// TODO Make different versions and send to different places (merges/:platform/config.xml)
+						// OR, if cordova doesn't use this properly, do nothing more here, but add extras when running (make platform-specific config.xml, build for that platform, replace original config.xml, repeat for other platforms, run all, something horrible like that)
+						result.widget.preference = [
+							{ $: { name: "HideKeyboardFormAccessoryBar", value: "true" } }	// TODO Get this to work or confirm it is indefinately broken
+							, { $: { name: "KeyboardShrinksView", value: "true" } }	// TODO Test that this actually does something
+							, { $: { name: "AllowInlineMediaPlayback", value: "true" } }	// TODO Confirm I can remove
+							, { $: { name: "MediaPlaybackRequiresUserGesture", value: "false" } }	// TODO Confirm I can remove
+							, { $: { name: "AndroidPersistentFileLocation", value: "Internal" } }	// TODO Choose proper value
+							, { $: { name: "iosPersistentFileLocation", value: "Library" } }	// TODO Choose proper value
+						]
+
+
+						xml = new xml2js.Builder()
+						fs.writeFile(file, xml.buildObject(result), 'utf8', function (err) {
+							if (err) {
+								cb(err)
+							} else {
+								cb(null)
+							}
+						})
+					}
+				})
+			}
+		})
 	}
 	, getPlatforms: function (cwd, cordovaDirectoryName, cb) {
 		var dir = cwd + '/' + cordovaDirectoryName

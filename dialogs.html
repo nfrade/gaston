@@ -1,5 +1,5 @@
 <div id="nativeCreateDialog" class="dialog nativeCreateDialog">
-	<p>Gaston wants to call <em>`cordova create`</em> in the <span class="targetDirectory"></span> directory with the following parameters. Please change them appropriately before continuing. (<a href="http://cordova.apache.org/docs/en/3.5.0/guide_cli_index.md.html" target="_blank">more info</a>)</p>
+	<p>Gaston wants to create a cordova project in the <span class="targetDirectory"></span> directory with the following parameters. Please change them appropriately before continuing. (<a href="http://cordova.apache.org/docs/en/3.5.0/guide_cli_index.md.html" target="_blank">more info</a>)</p>
 	<label>Reverse domain-style identifier
 		<input class="rdsid" type="text" value="io.cordova.hellocordova">
 	</label>
@@ -11,6 +11,7 @@
 </div>
 
 <div id="installPlatformsDialog" class="dialog installPlatformsDialog">
+	<button class="configureButton">Configure</button>
 	<p class="labelLegend"><input type="checkbox"> Available <span class="disabledLabel"><input type="checkbox" disabled> Not available on this OS</span></p>
 	<ul class="platformSelection">
 		<li><label><input type="checkbox" value="amazon-fireos"> Amazon FireOS</label></li>
@@ -31,6 +32,29 @@
 	<ul class="platformList"></ul>
 	<button class="cancelButton">Cancel</button>
 	<button class="launchButton primary">Launch</button>
+</div>
+
+<div id="configureDialog" class="dialog configureDialog">
+	<label>Reverse-domain-style identifier
+		<input class="rdsid" type="text" disabled>
+	</label>
+	<label>Name
+		<input class="name" type="text" disabled>
+	</label>
+	<label>Description
+		<input class="description" type="text">
+	</label>
+	<label>Author e-mail
+		<input class="authorEmail" type="text">
+	</label>
+	<label>Author href
+		<input class="authorHref" type="text">
+	</label>
+	<label>Author name
+		<input class="authorText" type="text">
+	</label>
+	<button class="cancelButton">Cancel</button>
+	<button class="saveConfigButton primary">Save</button>
 </div>
 
 <div id="notifier">

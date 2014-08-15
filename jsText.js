@@ -107,6 +107,79 @@ function submitCreateNative (path, button, dialog) {
   })
 }
 
+function showConfigureDialog (path, button) {
+  var gastonUrl = document.getElementById('gastonUrl').value
+  ajaxModule.ajax({
+    url: gastonUrl
+    , data: {
+      action: 'getConfig'
+      , path: path
+    }
+    , complete: function (data) {
+      var modelDialog
+        , dialog
+        , parent
+      if (data.msg === 'success') {
+        modelDialog = document.getElementById('configureDialog')
+        dialog = modelDialog.cloneNode(true)
+
+        dialog.getElementsByClassName('rdsid')[0].value = data.content.rdsid
+        dialog.getElementsByClassName('name')[0].value = data.content.name
+        dialog.getElementsByClassName('description')[0].value = data.content.description
+        dialog.getElementsByClassName('authorEmail')[0].value = data.content.authorEmail
+        dialog.getElementsByClassName('authorHref')[0].value = data.content.authorHref
+        dialog.getElementsByClassName('authorText')[0].value = data.content.authorText
+        
+        dialog.getElementsByClassName('cancelButton')[0].addEventListener('click', function (event) {
+          var parent = dialog.parentNode
+            , removed
+          button.style.display = 'block'
+          removed = parent.removeChild(dialog)
+          delete removed
+        })
+
+        dialog.getElementsByClassName('saveConfigButton')[0].addEventListener('click', function (event) {
+          ajaxModule.ajax({
+            url: gastonUrl
+            , data: {
+              action: 'saveConfig'
+              , path: path
+              , data: {
+                rdsid: dialog.getElementsByClassName('rdsid')[0].value
+                , name: dialog.getElementsByClassName('name')[0].value
+                , description: dialog.getElementsByClassName('description')[0].value
+                , authorEmail: dialog.getElementsByClassName('authorEmail')[0].value
+                , authorHref: dialog.getElementsByClassName('authorHref')[0].value
+                , authorText: dialog.getElementsByClassName('authorText')[0].value
+              }
+            }
+            , complete: function (data) {
+              if (data.msg === 'success') {
+                var parent = dialog.parentNode
+                  , removed
+                button.style.display = 'block'
+                removed = parent.removeChild(dialog)
+                delete removed
+              } else {
+                console.log('failing save')
+                failure(data)
+              }
+            }
+          })
+        })
+
+        dialog.style.display = 'block'
+        parent = button.parentNode
+        parent.insertBefore(dialog, button)
+        button.style.display = 'none'
+      } else {
+        failure(data)
+      }
+    }
+    , error: ajaxError
+  })
+}
+
 function showPlatformsDialog (path, button, createDialog) {
   var gastonUrl = document.getElementById('gastonUrl').value
   ajaxModule.ajax({
@@ -135,12 +208,15 @@ function showPlatformsDialog (path, button, createDialog) {
             platforms[i].parentNode.style.color = '#888'
           }
         }
+        dialog.getElementsByClassName('configureButton')[0].addEventListener('click', function (event) {
+          showConfigureDialog(path, event.target)
+        })
         dialog.getElementsByClassName('cancelButton')[0].addEventListener('click', function (event) {
-          var parent = dialog.parentNode
-            , removed
+          var dialogParent = dialog.parentNode
+            , removedDialog
           button.style.display = 'block'
-          removed = parent.removeChild(dialog)
-          delete removed
+          removedDialog = dialogParent.removeChild(dialog)
+          delete removedDialog
         })
         dialog.getElementsByClassName('emulateButton')[0].addEventListener('click', function (event) {
           run(path, platforms, 'emulate', dialog)
