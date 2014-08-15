@@ -63,6 +63,9 @@ You'll need to install the Cordova CLI and its prerequisites (various IDE's and 
 - You will need Windows 8 pro (64) to install Visual Studio Express 2013 Update 2, which is needed to install the Windows Phone SDK 8
 - To get a Windows Phone emulator running, you need to enable Hyper-V on Windows 8 pro (64). Do this by running (`Win+R`) the `appwiz.cpl` program and selecting *Turn Windows features on or off*. Note that Hyper-V is only available on some Processors. For example, I was unable to enable this feature on the Windows virtual machine running on my iMac.
 
+#### For the Connect SDK
+- `sudo gem install cocoapods`
+
 #### Known issues
 When building (`cordova build`) or running in an emulator (`cordova emulate`), you may get messages asking to add certain utilities to your path (`android`, `adb`). This did not work for me, so instead, I created symbolic links in `/usr/local/bin`, and this works fine.
 
@@ -86,6 +89,9 @@ Cordova automatically makes the emulators for iOS and Windows Phone 8; for these
 This means cordova can't find an emulator for the platform you specified. Either such an emulator doesn't exist (see [Creating an emulator](#user-content-createEmulator)) or cordova can't find an existing emulator. If an android emulator cannot be found, it is most probably due to [this cordova issue](https://issues.apache.org/jira/browse/CB-7257). To solve this problem, make sure the emulator you want to launch your project in is started and unlocked, then, navigate to the *nativeBuildStuff* directory created by gaston and run the following command: `cordova run android --emulator`
 
 ### Running on a physical device fails
+- Sometimes, unplugging, replugging, and trying again can work
+- Sometimes the app is sent to the device but not automatically launched, just tap the icon
+- For iOS devices, try running the project found in *nativeBuildStuff/platforms/ios* directly from xcode
 - Use `adb devices` to see if an android device is recognized. If not,
     + Log in as a developper
     + Enable ADB / USB debugging (look through settings, [except on Nexus 7](http://stackoverflow.com/questions/18103117/how-to-enable-usb-deb)
