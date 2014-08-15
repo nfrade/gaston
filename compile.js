@@ -49,15 +49,22 @@ module.exports = function (index, res, close, debug, build) {
     served = false
 
     if (msg) log.info('compile msg', msg)
-    if (!firstCompile) refreshDeps([])
 
-    w.bundle({ debug: debug })
-    .on('error', handleError)
-    // .on('end', writeCSS)
-    .pipe(fs.createWriteStream(outputJS).on('finish', function () {
-      jsReady = true
-      serveIfReady()
-    }))
+    if (!firstCompile) {
+      refreshDeps([], done)
+    } else {
+      done()
+    }
+
+    function done () {
+      w.bundle({ debug: debug })
+        .on('error', handleError)
+        // .on('end', writeCSS)
+        .pipe(fs.createWriteStream(outputJS).on('finish', function () {
+          jsReady = true
+          serveIfReady()
+       }))
+    }
   }
 
   function ready (msg) {
@@ -86,23 +93,24 @@ module.exports = function (index, res, close, debug, build) {
     })
   }
 
-  function refreshDeps (arr) {
+  function refreshDeps (arr, cb) {
     w.deps()
-    .on('data', function (data) {
-      var deps = data.deps
-        , fname
-        , l = depsarr.length
-        , i = 0
-      for (; i < l;) {
-        fname = depsarr[i++]
-        if(/(\.less$)|(\.css$)/.test(fname) && !~arr.indexOf(fname)){
-          cssReady = false
-          arr.push(fname)
+      .on('data', function (data) {
+        var deps = data.deps
+          , fname
+        for (dep in deps) {
+          fname = deps[dep]
+          if(/(\.less$)|(\.css$)/.test(fname) && !~arr.indexOf(fname)){
+            cssReady = false
+            arr.push(fname)
+          }
         }
-      }
-    })
-    .on('error', handleError)
-    .on('end', function () {depsarr = arr})
+      })
+      .on('error', handleError)
+      .on('end', function () {
+        depsarr = arr
+        cb()
+      })
   }
 
   function transformLess (file) {
