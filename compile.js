@@ -25,7 +25,7 @@ module.exports = function (index, res, close, debug, build) {
     , buildFile = path.join(dirname, 'build.html')
     , w = watchify(index)
 
-    , cssReady
+    , cssReady = true
     , jsReady
     , served
 
@@ -46,7 +46,6 @@ module.exports = function (index, res, close, debug, build) {
 
   function compile (msg) {
     jsReady = false
-    cssReady = false
     served = false
 
     if (msg) log.info('compile msg', msg)
@@ -96,7 +95,10 @@ module.exports = function (index, res, close, debug, build) {
         , i = 0
       for (; i < l;) {
         fname = depsarr[i++]
-        if(/(\.less$)|(\.css$)/.test(fname) && !~arr.indexOf(fname)) arr.push(fname)
+        if(/(\.less$)|(\.css$)/.test(fname) && !~arr.indexOf(fname)){
+          cssReady = false
+          arr.push(fname)
+        }
       }
     })
     .on('error', handleError)
@@ -105,6 +107,7 @@ module.exports = function (index, res, close, debug, build) {
 
   function transformLess (file) {
     if (!/(\.less$)|(\.css$)/.test(file)) return through()
+    cssReady = false
     var stream = through(function () { this.push(null) })
     // log.info('reading file', file)
     fs.readFile(file, 'utf8', lessParser)
