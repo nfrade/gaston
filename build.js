@@ -5,6 +5,7 @@ var fs = require('graceful-fs')
 	, path = require('path')
 
 function findJS (filename) {
+	log.info('replace',filename)
 	return new RegExp('<script[\\s\\S]{0,}'
 		+ filename.replace(/\./g,'\\.')
 		+'[\\s\\S]{0,}>([\\s\\S]*?)<\\/script>','i')
