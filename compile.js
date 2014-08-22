@@ -7,11 +7,11 @@ var fs = require('graceful-fs')
   , _server = require('./server')
   , _build = require('./build')
   , cleanCSS = require('clean-css')
-
+  , noparse = require('./noparse.json')
   , leaveAlone = []
 
 module.exports = function (index, res, close, debug, build) {
-  
+
   if (~leaveAlone.indexOf(index)) return true
   if (!close) leaveAlone.push(index)
 
@@ -23,7 +23,7 @@ module.exports = function (index, res, close, debug, build) {
     , outputCSS = path.join(dirname, 'bundle.css')
     , outputHTML = path.join(dirname, 'index.html')
     , buildFile = path.join(dirname, 'build.html')
-    , w = watchify(index)
+    , w = watchify(index, { noparse: noparse })
 
     , cssReady = true
     , jsReady
