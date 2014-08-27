@@ -28,6 +28,8 @@ Install gaston globally by navigating to the root folder of the repository and d
 
 `-less` / `-css` Only compile less and css (except if `-js` is also given)
 
+`-nocss` Skips css
+
 
 *Mix and match commands and params as you wish:*
 
