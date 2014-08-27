@@ -50,7 +50,7 @@ module.exports = function (index, res, close, debug, build, nocss) {
 
     if (msg) log.info('compile msg', msg)
 
-    if (!firstCompile) {
+    if (!firstCompile && !nocss) {
       refreshDeps([], done)
     } else {
       done()
