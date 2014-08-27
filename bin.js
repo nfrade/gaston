@@ -5,6 +5,7 @@ var gaston = require('./gaston')
 	, debug
 	, close
 	, build
+	, nocss
 
 	, arg
 	, args = process.argv
@@ -18,6 +19,7 @@ while (i--) {
   if (arg === '-debug') debug = true
   if (arg === '-close') close = true
   if (arg === '-build') build = true
+  if (arg === '-nocss') nocss = true
 }
 
-gaston(port || 8080,close,debug,build)
+gaston(port || 8080,close,debug,build,nocss)

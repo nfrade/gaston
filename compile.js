@@ -10,7 +10,7 @@ var fs = require('graceful-fs')
   , noparse = require('./noparse.json')
   , leaveAlone = []
 
-module.exports = function (index, res, close, debug, build) {
+module.exports = function (index, res, close, debug, build, nocss) {
 
   if (~leaveAlone.indexOf(index)) return true
   if (!close) leaveAlone.push(index)
@@ -115,11 +115,19 @@ module.exports = function (index, res, close, debug, build) {
 
   function transformLess (file) {
     if (!/(\.less$)|(\.css$)/.test(file)) return through()
-    cssReady = false
-    var stream = through(function () { this.push(null) })
-    // log.info('reading file', file)
-    fs.readFile(file, 'utf8', lessParser)
-    return stream
+    if (nocss) {
+      var stream = through(function () {
+        this.push(null)
+      })
+      return stream
+    } else {
+      cssReady = false
+      var stream = through(function () { this.push(null) })
+      // log.info('reading file', file)
+      fs.readFile(file, 'utf8', lessParser)
+      return stream
+    }
+    
 
     function lessParser (err, data) {
       var relativeUrl = path.relative(dirname, path.dirname(file))

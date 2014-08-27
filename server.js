@@ -13,10 +13,10 @@ var fs = require('graceful-fs')
   , dialogs = fs.readFileSync(__dirname + '/dialogs.html', 'utf8')
   , gastonUrl = '/gastonReservedUrlHopefullyNobodyNamesADirectoryLikeThis'
 
-function startServer (port, compile, close, debug, build) {
+function startServer (port, compile, close, debug, build, nocss) {
   if (compile) {
     cb = function (index, res) {
-      return _compile(index, res, close, debug, build)
+      return _compile(index, res, close, debug, build, nocss)
     }
   }
   http.createServer(function (req, res) {
