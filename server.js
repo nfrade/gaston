@@ -12,6 +12,7 @@ var fs = require('graceful-fs')
   , jsAsset = fs.readFileSync(__dirname + '/jsText.js', 'utf8')
   , dialogs = fs.readFileSync(__dirname + '/dialogs.html', 'utf8')
   , gastonUrl = '/gastonReservedUrlHopefullyNobodyNamesADirectoryLikeThis'
+  , mime = require('mime')
 
 function startServer (port, compile, close, debug, build, nocss) {
   if (compile) {
@@ -96,10 +97,16 @@ function parseGastonCommand (query, res) {
   else res.end("Gaston says: You want me to do something I've never heard of. Well I don't like it. I don't like it one bit.")
 }
 
+
 function serveFile(url, res){
+
+  res.writeHead(200, {'Content-Type': mime.lookup(url) });
+
   var stream = fs.createReadStream(url)
     .on('open',function(){ stream.pipe(res) })
-    .on('finish',function(){ res.end() })
+    .on('finish',function(){ 
+      res.end() 
+    })
     .on('error',function(err){ 
       res.end()
       log.error(err) 
