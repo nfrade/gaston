@@ -46,14 +46,12 @@ function createWatchify(entry,opts){
 function handleDeps(file){
   var w = this
   var todo
-
+  var end
   if( isCSS(file) ){
     todo = function(){ this.push(null) }
-
     if(!w._cssdeps) w._cssdeps = {}
     if(!w._cssprocessing) w._cssprocessing = 1
     else w._cssprocessing++
-
     fs.readFile(file, 'utf8', function(err,data){
       if(err) w._callback(err)
       rebaseCSS(w,file,data)
@@ -89,14 +87,21 @@ function compile(){
 }
 
 function complete(done){
-  if(done === 'css') this._csscomplete = true
-  if(done === 'js') this._jscomplete = true
+  var w = this
 
-  var everythingDone = this._csscomplete && this._jscomplete
+  if(done === 'css') w._csscomplete = true
+  if(done === 'js') w._jscomplete = true
+
+  var everythingDone = w._csscomplete && w._jscomplete
 
   if(everythingDone){
-    this._compiling = false
-    if(this._callback) this._callback(null,watchifies) 
+    w._compiling = false
+    if(w._imports){
+      w._imports.forEach(function(importedFilename){
+        w.emit('file',importedFilename)
+      })
+    }
+    if(w._callback) w._callback(null,watchifies) 
   }
 
   log.info(done + ' bundle complete')
@@ -104,14 +109,13 @@ function complete(done){
 
 
 function perhapsCompileCSS(dep){
-  var processing = this._cssprocessing
-
+  var w = this
+  var processing = w._cssprocessing
   if(!processing){
-    if(updatedCSS(this) || processing === 0) compileCSS(this)
-    this._cssprocessing = true
+    if(updatedCSS(w) || processing === 0) compileCSS(w)
+    w._cssprocessing = true //done
   }
-
-  this._depscomplete = true
+  w._depscomplete = true
 }
 
 function compileCSS(w){
@@ -124,13 +128,14 @@ function compileCSS(w){
     if(err) w._callback(err)
     var rules = tree.rules
     var i = rules.length - 1
-    var imports = []
+
+    w._imports = []
 
     for (; i >= 0; i--) {
       var importedFilename = rules[i].importedFilename
-      if(importedFilename && !~imports.indexOf(importedFilename)){
+      if(importedFilename && !~w._imports.indexOf(importedFilename)){
+        w._imports.push(importedFilename)
         w.emit('file',importedFilename)
-        imports.push(importedFilename)
       }
     }
 
@@ -156,7 +161,7 @@ function concatCSS(w){
 }
 
 function updatedCSS(w){
-  var arr = []
+  var arr = w._imports || []
   var prevarr = w._cssarr
   for(var file in w._mdeps.visited){
     if( isCSS(file) ) arr.push(file)
