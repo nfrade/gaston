@@ -38,7 +38,7 @@ module.exports = function(entry, opts, cb) {
     w.on('dep', function(dep){
       var processing = w._cssprocessing
       if(!processing){
-        if(cssDepsChanged(w) || processing === 0){
+        if(updatedCSS(w) || processing === 0){
           compileCSS(w)
         }
         w._cssprocessing = true //complete
@@ -89,7 +89,7 @@ function compileCSS(w){
 //concatenates css
 function concatCSS(w){
   var merge = ''
-  var cssarr = w._cssarr
+  var cssarr = w._cssarr || updatedCSS(w)
   for (var i = 0; i < cssarr.length; i++) {
     var css = w._cssdeps[cssarr[i]]
     if(css) merge += css + '\n'
@@ -98,17 +98,12 @@ function concatCSS(w){
 }
 
 //check if there is a change in css dependencies
-function cssDepsChanged(w){
+function updatedCSS(w){
   var arr = []
   for(var file in w._mdeps.visited){
     if( isCSS(file) ) arr.push(file)
   }
-  if(w._cssarr !== arr){
-    w._cssarr = arr
-    return true 
-  }else{
-    w._cssprocessing = true //complete
-  }
+  if(w._cssarr !== arr) return w._cssarr = arr
 }
 
 //checks if file is css or less
