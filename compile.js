@@ -14,7 +14,6 @@ module.exports = function(entry, opts, cb) {
 
   if(!w){
     var basedir = path.dirname(entry)
-    var output = path.join(basedir,'bundle.js')
     var bundleOptions = watchify.args   
     
     if(opts){
@@ -26,60 +25,80 @@ module.exports = function(entry, opts, cb) {
     w = watchifies[index] = watchify(b)
 
     w.transform({global:opts && opts.global || true},function(file){ return handleDeps(w,file) })
-    
     w._basedir = basedir
 
-    w.on('done',function(){
-      w._compiling = false
-      if(w.__cb) w.__cb(null,watchifies) 
-    })
     w.on('log', function (msg) { log.info('watchify',msg) })
-    w.on('update', function(){ compile(w,output) })
-    w.on('dep', function(dep){
-      var processing = w._cssprocessing
-      if(!processing){
-        if(updatedCSS(w) || processing === 0){
-          compileCSS(w)
-        }
-        w._cssprocessing = true //complete
-      }
-      w._depscomplete = true
-    })
-    compile(w,output,cb)
+    w.on('update',compile)
+    w.on('dep',perhapsCompileCSS)
+    w.on('done',fileDone)
+
+    compile.call(w)
   }
 
-  w.__cb = cb
+  w._callback = cb
   if(!w._compiling) cb(null,watchifies)
 }
 
-function compile(w,output){
+function compile(){
+  var w = this
+  var output = path.join(w._basedir,'bundle.js')
+
   w._cssprocessing = false
   w._depscomplete = false
   w._compiling = true
+  w._csscomplete = true
+  w._jscomplete = false
 
   w.bundle(function(err,src){ if(err) w._callback(err) })
     .pipe(fs.createWriteStream(output)
-      .on('finish', function () {
-        log.info('js written:', output)
-        w._jswritten = true
-        if(w._csswritten) w.emit('done')
+      .on('finish', function (err) {
+        if(err) w._callback(err)
+        w.emit('done','js')
       }))
+}
+
+function perhapsCompileCSS(dep){
+  var processing = this._cssprocessing
+  if(!processing){
+    if(updatedCSS(this) || processing === 0){
+      compileCSS(this)
+    }
+    this._cssprocessing = true //complete
+  }
+  this._depscomplete = true
+}
+
+function fileDone(done){
+  if(done === 'css'){
+    log.info('css bundle complete')
+    this._csscomplete = true
+  }
+  if(done === 'js'){
+    log.info('js bundle complete')
+    this._jscomplete = true
+  }
+
+  var everythingDone = this._csscomplete && this._jscomplete
+
+  if(everythingDone){
+    this._compiling = false
+    if(this._callback) this._callback(null,watchifies) 
+  }
 }
 
 //compiles css/less to final bundle.css
 function compileCSS(w){
-  var css = concatCSS(w)
-  if(!css) return
-  var output = path.join(w._basedir,'bundle.css')
+  w._csscomplete = false
 
+  var css = concatCSS(w)
+  if(!css.length) return
+  var output = path.join(w._basedir,'bundle.css')
   less.Parser({paths:[w._basedir]}).parse(css, function (err, tree) {
     if(err) w._callback(err)
     try { 
       fs.writeFile(output,tree.toCSS(),function(err){
         if(err) w._callback(err)
-        w._csswritten = true
-        log.info('css written:', output)
-        if(w._jswritten) w.emit('done')
+        w.emit('done','css')
       })
     }
     catch (ex) { w._callback(ex) }
@@ -88,9 +107,10 @@ function compileCSS(w){
 
 //concatenates css
 function concatCSS(w){
-  var merge = ''
   var cssarr = w._cssarr || updatedCSS(w)
-  for (var i = 0; i < cssarr.length; i++) {
+  var merge = ''
+  var i = 0
+  for (; i < cssarr.length; i++) {
     var css = w._cssdeps[cssarr[i]]
     if(css) merge += css + '\n'
   }
