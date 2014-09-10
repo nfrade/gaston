@@ -62,7 +62,6 @@ function perhapsCompileCSS(dep){
   var processing = this._cssprocessing
   if(!processing){
     if(updatedCSS(this) || processing === 0){
-      console.log('CSS CHANGED',updatedCSS(this),processing === 0)
       compileCSS(this)
     }
     this._cssprocessing = true //complete
@@ -124,8 +123,18 @@ function updatedCSS(w){
   for(var file in w._mdeps.visited){
     if( isCSS(file) ) arr.push(file)
   }
-  var theSame = prevarr && arr.length == prevarr.length && arr.every(function(u, i) { return u === prevarr[i] })
+  var theSame = prevarr && compareArray(prevarr,arr)
   if(!theSame) return w._cssarr = arr
+}
+
+//compareArrayContents only for contents => NOT order
+function compareArray(a,b){
+  if(a.length == b.length){
+    for (var i = a.length - 1; i >= 0; i--) {
+      if(!~b.indexOf(a[i])) return false
+    }
+    return true
+  }
 }
 
 //checks if file is css or less
