@@ -36,6 +36,7 @@ module.exports = function(entry, opts, cb) {
   }
 
   w._callback = cb
+
   if(!w._compiling) cb(null,watchifies)
 }
 
@@ -61,6 +62,7 @@ function perhapsCompileCSS(dep){
   var processing = this._cssprocessing
   if(!processing){
     if(updatedCSS(this) || processing === 0){
+      console.log('CSS CHANGED',updatedCSS(this),processing === 0)
       compileCSS(this)
     }
     this._cssprocessing = true //complete
@@ -120,10 +122,12 @@ function concatCSS(w){
 //check if there is a change in css dependencies
 function updatedCSS(w){
   var arr = []
+  var prevarr = w._cssarr
   for(var file in w._mdeps.visited){
     if( isCSS(file) ) arr.push(file)
   }
-  if(w._cssarr !== arr) return w._cssarr = arr
+  var theSame = prevarr && arr.length == prevarr.length && arr.every(function(u, i) { return u === prevarr[i] })
+  if(!theSame) return w._cssarr = arr
 }
 
 //checks if file is css or less
