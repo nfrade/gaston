@@ -68,6 +68,7 @@ Server.prototype.serve = function (path, res) {
 
 
 Server.prototype.serveFile = function (path, res) {
+  var self = this
   res.writeHead(200, {'Content-Type': mime.lookup(path) });
   var stream = fs.createReadStream(path)
     .on('open', function () {
@@ -78,7 +79,7 @@ Server.prototype.serveFile = function (path, res) {
     })
     .on('error',function (err){
       err.details = "Error event fired from read stream"
-      res.end(err)
+      res.end(self.stringify(err))
       log.error(err) 
     })
 }
@@ -102,8 +103,8 @@ Server.prototype.serveIndex = function (dir, index, res) {
     if (exists) {
       self.bundle(indexjs, self.compilerOpts, function (err, watchifies) {
         if (err) {
-          err.details = "Error bundling index.js"
-          res.end(err)
+          log.error('err', err)
+          res.end(self.stringify(err))
         } else {
           self.serveFile(index, res)
         }
@@ -114,13 +115,24 @@ Server.prototype.serveIndex = function (dir, index, res) {
   })
 }
 
+Server.prototype.stringify = function (val) {
+  var str
+  val.stack = val.stack
+  try {
+    str = JSON.stringify(val, null, " ")
+  } catch (e) {
+    str = "Un stringifyable error (" + e.toString() + "). Check gaston logs."
+  }
+  return str
+}
+
 Server.prototype.serveDirectoryListing = function (dir, res) {
   var self = this
   fs.readdir(dir, function (err, files) {
     if (err) {
       err.details = "readdir error"
       log.error(err)
-      res.end(err)
+      res.end(self.stringify(err))
     } else {
       var havingIndex = []
         , lackingIndex = []
@@ -156,7 +168,7 @@ Server.prototype.serveDirectoryListing = function (dir, res) {
         }
         , function (err) {
           if (err) {
-            res.end(err)
+            res.end(self.stringify(err))
           } else {
             res.end(self.makeUI(dir, havingIndex.concat(lackingIndex).join('')))  
           }
