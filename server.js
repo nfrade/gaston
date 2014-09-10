@@ -6,7 +6,7 @@ var fs = require('graceful-fs')
 	, natify = require('./natify')
   , compiler = require('./compile')
   , util = require('./util')
-
+  , mime = require('mime')
 
 module.exports = exports = Server
 
@@ -66,7 +66,9 @@ Server.prototype.serve = function (path, res) {
   })
 }
 
+
 Server.prototype.serveFile = function (path, res) {
+  res.writeHead(200, {'Content-Type': mime.lookup(path) });
   var stream = fs.createReadStream(path)
     .on('open', function () {
       stream.pipe(res)
