@@ -43,7 +43,8 @@ Server.prototype.serve = function (path, res) {
     if (exists) {
       fs.stat(path, function (err, stats) {
         if (err) {
-          log.error(err)
+          log.error('fs.stats err', err)
+          res.end(self.stringify(err))
         } else if (stats.isFile()) {
           self.serveFile(path, res)
         } else if (stats.isDirectory()) {
@@ -79,8 +80,8 @@ Server.prototype.serveFile = function (path, res) {
     })
     .on('error',function (err){
       err.details = "Error event fired from read stream"
+      log.error('read stream error', err)
       res.end(self.stringify(err))
-      log.error(err) 
     })
 }
 
@@ -103,7 +104,7 @@ Server.prototype.serveIndex = function (dir, index, res) {
     if (exists) {
       self.bundle(indexjs, self.compilerOpts, function (err, watchifies) {
         if (err) {
-          log.error('err', err)
+          log.error('bundle error', err)
           res.end(self.stringify(err))
         } else {
           self.serveFile(index, res)
@@ -130,8 +131,7 @@ Server.prototype.serveDirectoryListing = function (dir, res) {
   var self = this
   fs.readdir(dir, function (err, files) {
     if (err) {
-      err.details = "readdir error"
-      log.error(err)
+      log.error('fs.readdir error', err)
       res.end(self.stringify(err))
     } else {
       var havingIndex = []
@@ -168,6 +168,7 @@ Server.prototype.serveDirectoryListing = function (dir, res) {
         }
         , function (err) {
           if (err) {
+            log.error('directory listing ui creation errors', err)
             res.end(self.stringify(err))
           } else {
             res.end(self.makeUI(dir, havingIndex.concat(lackingIndex).join('')))  
