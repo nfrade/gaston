@@ -1,184 +1,250 @@
-module.exports = exports = startServer
-exports.serveFile = serveFile
+var fs = require('graceful-fs')
+	, http = require('http')
+	, log = require('npmlog')
+	, u = require('url')
+	, p = require('path')
+	, natify = require('./natify')
+  , compiler = require('./compile')
+  , util = require('./util')
 
-var fs = require('graceful-fs')  
-  , http = require('http')
-  , u = require('url')
-  , path = require('path')
-  , log = require('npmlog')
-  , _compile = require('./compile')
-  , _natify = require('./natify')
-  , cssAsset = fs.readFileSync(__dirname + '/cssText.css', 'utf8')
-  , jsAsset = fs.readFileSync(__dirname + '/jsText.js', 'utf8')
-  , dialogs = fs.readFileSync(__dirname + '/dialogs.html', 'utf8')
-  , gastonUrl = '/gastonReservedUrlHopefullyNobodyNamesADirectoryLikeThis'
 
-function startServer (port, compile, close, debug, build, nocss) {
-  if (compile) {
-    cb = function (index, res) {
-      return _compile(index, res, close, debug, build, nocss)
-    }
-  }
-  http.createServer(function (req, res) {
-    var parsedUrl = u.parse(req.url, true)
-      , pathname = parsedUrl.pathname
-      , url = path.join(process.cwd(), pathname)
-    if (pathname.indexOf(gastonUrl) === 0) {
-      parseGastonCommand(parsedUrl.query, res)
-    } else {
-      fs.exists(url, function(exists){
-        if(exists) found(url, pathname, res,cb)
-        else notFound(url,res)
-      })
-    }
-  }).listen(port)
-  log.http("Gaston is at your service at http://localhost:" + port)
+module.exports = exports = Server
+
+function Server (opts) {
+	var self = this
+	this.port = opts.port
+  this.cssAsset = fs.readFileSync(__dirname + '/cssText.css', 'utf8')
+  this.jsAsset = fs.readFileSync(__dirname + '/jsText.js', 'utf8')
+  this.dialogs = fs.readFileSync(__dirname + '/dialogs.html', 'utf8')
+  this.compilerOpts = opts
+	this.server = http.createServer(function (req, res) {
+		var parsedUrl = u.parse(req.url, true)
+			, pathname = parsedUrl.pathname
+		// if (pathname.indexOf(self.commandUrl) === 0) {
+		// 	self.parseCommand(parsedUrl.query, res)
+		// } else {
+			self.serve(p.join(process.cwd(), parsedUrl.pathname), res)
+		// }
+	})
 }
 
-function parseGastonCommand (query, res) {
-  var done = function (error, data) {
-      if (error) {
-        res.end(JSON.stringify({
-          msg: 'failure'
-          , error: error.toString()
-        }))
+Server.prototype.bundle = compiler
+
+Server.prototype.commandUrl = '/gastonReservedUrlHopefullyNobodyNamesADirectoryLikeThis'
+
+Server.prototype.start = function () {
+	this.listener = this.server.listen(this.port)
+  log.http("Gaston is at your service at http://localhost:" + this.port)
+}
+
+Server.prototype.serve = function (path, res) {
+  var self = this
+  fs.exists(path, function (exists) {
+    if (exists) {
+      fs.stat(path, function (err, stats) {
+        if (err) {
+          log.error(err)
+        } else if (stats.isFile()) {
+          self.serveFile(path, res)
+        } else if (stats.isDirectory()) {
+          self.serveDirectory(path, res)
+        }
+      })
+    } else {
+      var msg = "Can't find " + path
+      log.http(msg, path)
+      if (!p.extname(path).length) {
+        res.end(self.makeUI(path, self.button(msg
+          , ''
+          , ''
+          , "Go Back To Top")
+        ))
       } else {
-        res.end(JSON.stringify({
-          msg: 'success'
-          , content: data
-        }))
+        res.end()
       }
     }
-    , cordovaDirectoryName = 'nativeBuildStuff'
-    , cordovaDirectory = query.path + '/' + cordovaDirectoryName
-  if (query.action === 'enable') {
-    _natify.isCreated(query.path
-      , cordovaDirectoryName
-      , done)
-  } else if (query.action === 'create') {
-    _natify.create(query.path
-      , cordovaDirectoryName
-      , query.rdsid
-      , query.displayName
-      , done)
-  } else if (query.action === 'getConfig') {
-    _natify.getConfig(query.path
-      , cordovaDirectoryName
-      , done)
-  } else if (query.action === 'saveConfig') {
-    _natify.saveConfig(query.path
-      , cordovaDirectoryName
-      , query.data
-      , done)
-  } else if (query.action === 'getPlatforms') {
-    _natify.getPlatforms(query.path
-      , cordovaDirectoryName
-      , done)
-  } else if (query.action === 'emulate') {
-    _natify.preparePlatforms(query.path
-      , cordovaDirectoryName
-      , JSON.parse(query.platforms)
-      , '--emulator'
-      , done)
-  } else if (query.action === 'run') {
-    _natify.preparePlatforms(query.path
-      , cordovaDirectoryName
-      , JSON.parse(query.platforms)
-      , '--device'
-      , done)
-  } else if (query.action === 'launch') {
-    _natify.run(query.path
-      , cordovaDirectoryName
-      , JSON.parse(query.targets)
-      , query.ultimateAction
-      , done)
-  }
-  else res.end("Gaston says: You want me to do something I've never heard of. Well I don't like it. I don't like it one bit.")
+  })
 }
 
-function serveFile(url, res){
-  var stream = fs.createReadStream(url)
-    .on('open',function(){ stream.pipe(res) })
-    .on('finish',function(){ res.end() })
-    .on('error',function(err){ 
+Server.prototype.serveFile = function (path, res) {
+  var stream = fs.createReadStream(path)
+    .on('open', function () {
+      stream.pipe(res)
+    })
+    .on('finish', function () {
       res.end()
+    })
+    .on('error',function (err){
+      err.details = "Error event fired from read stream"
+      res.end(err)
       log.error(err) 
     })
 }
 
-function serveIndex (url,res,cb) {
-  var index = path.join(url,'index.html')
-    , exists = fs.existsSync(index)
-  
-  if(exists) checkIndexJS(url,res,cb) && serveFile(index, res)
-  return exists
-}
-
-function checkIndexJS (url,res,cb) {
-  var index = path.join(url,'index.js')
-    , exists = fs.existsSync(index)
-
-  if(exists && cb) return cb(index, res)
-  else return true
-}
-
-function serveDirectory (url, pathname, res){
-  fs.readdir(url, function(err,files){
-    if(err) log.error(err)
-    var buttons = ''
-      , content = ''
-      , stats
-    for (var i = files.length - 1; i >= 0;) {
-      var file = files[i--]
-        , filepath = path.join(url,file)
-        , isDirectory = fs.statSync(filepath).isDirectory()
-      if(isDirectory && !(file.indexOf('.')===0)) {
-        var contentarr = fs.readdirSync(filepath)
-          , contentfiles = contentarr.join(' | ')
-          , containsIndexHtml = ~contentarr.indexOf('index.html')
-          , button = addBtn(file, file, pathname, contentfiles, containsIndexHtml)
-        if(containsIndexHtml) buttons = button + buttons
-        else buttons += button
-      }
+Server.prototype.serveDirectory = function (path, res) {
+  var self = this
+    , index = p.join(path, 'index.html')
+  fs.exists(index, function (exists) {
+    if (exists) {
+      self.serveIndex(path, index, res)
+    } else {
+      self.serveDirectoryListing(path, res)
     }
-    makeUI(url, buttons,res)
   })
 }
 
-function found (url, pathname, res, cb) {
-  fs.stat(url,function(err,stats){
-    if(err) log.error(err)
-    else if(stats.isFile()) serveFile(url,res)
-    else if(stats.isDirectory()) serveIndex (url,res,cb) || serveDirectory(url, pathname, res)
+Server.prototype.serveIndex = function (dir, index, res) {
+  var self = this
+    , indexjs = p.join(dir, 'index.js')
+  fs.exists(indexjs, function (exists) {
+    if (exists) {
+      self.bundle(indexjs, self.compilerOpts, function (err, watchifies) {
+        if (err) {
+          err.details = "Error bundling index.js"
+          res.end(err)
+        } else {
+          self.serveFile(index, res)
+        }
+      })
+    } else {
+      self.serveFile(index, res)
+    }
   })
 }
 
-function notFound (url, res) {
-  log.http("Can't find ",url)
-  if(!path.extname(url).length){
-    var msg = "Can\'t find " + url
-    var button = addBtn(msg,'', '', "Go Back To Top")
-    makeUI(url,button,res)
-  } else res.end()
+Server.prototype.serveDirectoryListing = function (dir, res) {
+  var self = this
+  fs.readdir(dir, function (err, files) {
+    if (err) {
+      err.details = "readdir error"
+      log.error(err)
+      res.end(err)
+    } else {
+      var havingIndex = []
+        , lackingIndex = []
+      util.asyncEach(files
+        , function (file, cb) {
+          var path = p.join(dir, file)
+          fs.stat(path, function (err, stats) {
+            if (err) {
+              err.details = "Error in fs.stats"
+              cb(err)
+            } else {
+              if (stats.isDirectory()) {
+                fs.readdir(path, function (err, entries) {
+                  if (err) {
+                    err.details = "Error in readdir"
+                    cb(err)
+                  } else {
+                    var containsIndex = ~entries.indexOf('index.html')
+                      , btn = self.button(file, file, dir, entries.join(' | '), containsIndex)
+                    if (containsIndex) {
+                      havingIndex.push(btn)
+                    } else {
+                      lackingIndex.push(btn)
+                    }
+                    cb(null)
+                  }
+                })
+              } else {
+                cb(null)
+              }
+            }
+          })
+        }
+        , function (err) {
+          if (err) {
+            res.end(err)
+          } else {
+            res.end(self.makeUI(dir, havingIndex.concat(lackingIndex).join('')))  
+          }
+        })
+      }
+    })
 }
 
-function addBtn (title, val, pathname, subtitle, containsIndexHtml){
+Server.prototype.button = function (title, val, pathname, subtitle, containsIndex) {
   var label = '<h3>' + title + '</h3>'
     , directoryContents = (subtitle) ? '<p>' + subtitle + '</p>' : ''
     , targetPath = pathname.slice(1) + val
-    , enableNative = (containsIndexHtml) ? '<button class="natify">Run natively<input type="hidden" class="natifyTargetPath" value="' + targetPath + '"></button>' : ''
-  return '<button class="gotoButton" onclick="goTo(\'' + val + '/\');">'
+    , className = "gotoButton"
+    , enableNative = ''//(containsIndex) ? '<button class="natify">Run natively<input type="hidden" class="natifyTargetPath" value="' + targetPath + '"></button>' : ''
+  if (containsIndex) {
+    className += " containsIndex"
+  }
+  return '<button class="' + className + '" onclick="goTo(\'' + val + '/\');">'
     + label
     + directoryContents
     + '</button>'
     + enableNative
 }
 
-function makeUI (url, buttons, res) {
-  var head = '<head><meta charset="utf-8"><style type="text/css">' + cssAsset + '</style><script type="text/javascript">' + jsAsset + '</script></head>'
-    , urlpath = url.split(path.sep).join(' > ').slice(3, -3)
+Server.prototype.makeUI = function (url, buttons) {
+  var head = '<head><meta charset="utf-8"><style type="text/css">' + this.cssAsset + '</style><script type="text/javascript">' + this.jsAsset + '</script></head>'
+    , urlpath = url.split(p.sep).join(' > ').slice(3, -3)
     , breadcrumbs = '<h2>' + urlpath + '</h2>'
-    , data = '<input id="gastonUrl" type="hidden" value="' + gastonUrl + '">'
-    , ui = '<!doctype html><html>' + head + '<body>' + data + breadcrumbs + buttons + dialogs + '</body></html>'
-  res.end(ui)  
+    , data = '<input id="gastonUrl" type="hidden" value="' + this.commandUrl + '">'
+    , ui = '<!doctype html><html>' + head + '<body>' + data + breadcrumbs + buttons + this.dialogs + '</body></html>'
+  return ui
 }
+
+// Server.prototype.parseCommand = function (query, res) {
+// 	var done = function (error, data) {
+//       if (error) {
+//         res.end(JSON.stringify({
+//           msg: 'failure'
+//           , error: error.toString()
+//         }))
+//       } else {
+//         res.end(JSON.stringify({
+//           msg: 'success'
+//           , content: data
+//         }))
+//       }
+//     }
+//     , cordovaDirectoryName = 'nativeBuildStuff'
+//     , cordovaDirectory = query.path + '/' + cordovaDirectoryName
+//   if (query.action === 'enable') {
+//     natify.isCreated(query.path
+//       , cordovaDirectoryName
+//       , done)
+//   } else if (query.action === 'create') {
+//     natify.create(query.path
+//       , cordovaDirectoryName
+//       , query.rdsid
+//       , query.displayName
+//       , done)
+//   } else if (query.action === 'getConfig') {
+//     natify.getConfig(query.path
+//       , cordovaDirectoryName
+//       , done)
+//   } else if (query.action === 'saveConfig') {
+//     natify.saveConfig(query.path
+//       , cordovaDirectoryName
+//       , query.data
+//       , done)
+//   } else if (query.action === 'getPlatforms') {
+//     natify.getPlatforms(query.path
+//       , cordovaDirectoryName
+//       , done)
+//   } else if (query.action === 'emulate') {
+//     natify.preparePlatforms(query.path
+//       , cordovaDirectoryName
+//       , JSON.parse(query.platforms)
+//       , '--emulator'
+//       , done)
+//   } else if (query.action === 'run') {
+//     natify.preparePlatforms(query.path
+//       , cordovaDirectoryName
+//       , JSON.parse(query.platforms)
+//       , '--device'
+//       , done)
+//   } else if (query.action === 'launch') {
+//     natify.run(query.path
+//       , cordovaDirectoryName
+//       , JSON.parse(query.targets)
+//       , query.ultimateAction
+//       , done)
+//   }
+//   else res.end("Gaston says: You want me to do something I've never heard of. Well I don't like it. I don't like it one bit.")
+// }

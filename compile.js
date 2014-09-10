@@ -10,7 +10,11 @@ var fs = require('graceful-fs')
   , noparse = require('./noparse.json')
   , leaveAlone = []
 
-module.exports = function (index, res, close, debug, build, nocss) {
+module.exports = function (index, opts, callback) {
+  var close = opts.close
+  var debug = opts.debug
+  var build = opts.build
+  var nocss = opts.nocss
 
   if (~leaveAlone.indexOf(index)) return true
   if (!close) leaveAlone.push(index)
@@ -32,7 +36,7 @@ module.exports = function (index, res, close, debug, build, nocss) {
     , depscount = 0
     , serveIfReady = function () {
         if (cssReady && jsReady) {
-          if(!served) _server.serveFile(outputHTML,res)
+          if(!served) callback(null)
           if (build) _build(outputHTML, outputJS, outputCSS, buildFile)
           served = true
         }

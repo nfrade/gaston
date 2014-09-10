@@ -25,6 +25,10 @@ button.gotoButton {
 	margin-bottom: 0;
 }
 
+button.containsIndex {
+	background: #428bca;
+}
+
 button.natify {
 	width: 100%;
 	margin-top: 0;
