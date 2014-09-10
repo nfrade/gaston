@@ -91,9 +91,7 @@ function fileDone(done){
 //compiles css/less to final bundle.css
 function compileCSS(w){
   w._csscomplete = false
-
   var css = concatCSS(w)
-  if(!css.length) return
   var output = path.join(w._basedir,'bundle.css')
   less.Parser({paths:[w._basedir]}).parse(css, function (err, tree) {
     if(err) w._callback(err)
