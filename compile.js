@@ -1,211 +1,139 @@
+var browserify = require('browserify')
 var fs = require('graceful-fs')
-  , watchify = require('watchify')
-  , through = require('through2')
-  , path = require('path')
-  , log = require('npmlog')
-  , less = require('less')
-  , _server = require('./server')
-  , _build = require('./build')
-  , cleanCSS = require('clean-css')
-  , noparse = require('./noparse.json')
-  , leaveAlone = []
+var less = require('less')
+var log = require('npmlog')
+var path = require('path')
+var through = require('through');
+var watchify = require('watchify')
+var watchifies = {}
+var rebase = require('./rebase.js')
 
-module.exports = function (index, opts, callback) {
-  var close = opts.close
-  var debug = opts.debug
-  var build = opts.build
-  var nocss = opts.nocss
+module.exports = function(entry, opts, cb) {
+  var index = entry || './index.js'
+  var w = watchifies[index] 
 
-  if (~leaveAlone.indexOf(index)) return true
-  if (!close) leaveAlone.push(index)
-
-  var depsarr = []
-    , depsobj = {}
-    , dirname = path.dirname(index)
-    , firstCompile = true
-    , outputJS = path.join(dirname, 'bundle.js')
-    , outputCSS = path.join(dirname, 'bundle.css')
-    , outputHTML = path.join(dirname, 'index.html')
-    , buildFile = path.join(dirname, 'build.html')
-    , w = watchify(index, { noparse: noparse })
-
-    , cssReady = true
-    , jsReady
-    , served
-
-    , depscount = 0
-    , serveIfReady = function () {
-        if (cssReady && jsReady) {
-          if(!served) callback(null)
-          if (build) _build(outputHTML, outputJS, outputCSS, buildFile)
-          served = true
-        }
-      }
-
-  w.transform({ global: true }, transformLess)
-  w.on('log', ready)
-  w.on('update', compile)
-
-  compile()
-
-  function compile (msg) {
-    jsReady = false
-    served = false
-
-    if (msg) log.info('compile msg', msg)
-
-    if (!firstCompile && !nocss) {
-      refreshDeps([], done)
-    } else {
-      done()
-    }
-
-    function done () {
-      w.bundle({ debug: debug })
-        .on('error', handleError)
-        // .on('end', writeCSS)
-        .pipe(fs.createWriteStream(outputJS).on('finish', function () {
-          jsReady = true
-          serveIfReady()
-       }))
-    }
-  }
-
-  function ready (msg) {
-    firstCompile = false
-    if (msg) log.info('ready', msg)
-    if (close) w.close()
-  }
-
-  function writeCSS () {
-    var string = ''
-      , l = depsarr.length
-      , i = 0
-      , fname
-      , cleaned
-
-    for (; i < l;) {
-      fname = depsarr[i++]
-      string += depsobj[fname] || ''
-    }
-    cleaned = new cleanCSS().minify(string);
-    fs.writeFile(outputCSS, cleaned, function (err) {
-      if (err) log.error('cssWrite', err)
-      string = ''
-      cssReady = true
-      serveIfReady()
-    })
-  }
-
-  function refreshDeps (arr, cb) {
-    w.deps()
-      .on('data', function (data) {
-        var deps = data.deps
-          , fname
-        for (dep in deps) {
-          fname = deps[dep]
-          if(/(\.less$)|(\.css$)/.test(fname) && !~arr.indexOf(fname)){
-            cssReady = false
-            arr.push(fname)
-          }
-        }
-      })
-      .on('error', handleError)
-      .on('end', function () {
-        depsarr = arr
-        cb()
-      })
-  }
-
-  function transformLess (file) {
-    if (!/(\.less$)|(\.css$)/.test(file)) return through()
-    if (nocss) {
-      var stream = through(function () {
-        this.push(null)
-      })
-      return stream
-    } else {
-      cssReady = false
-      var stream = through(function () { this.push(null) })
-      // log.info('reading file', file)
-      fs.readFile(file, 'utf8', lessParser)
-      return stream
-    }
+  if(!w){
+    var basedir = path.dirname(entry)
+    var output = path.join(basedir,'bundle.js')
+    var bundleOptions = watchify.args   
     
-
-    function lessParser (err, data) {
-      var relativeUrl = path.relative(dirname, path.dirname(file))
-      
-      if (relativeUrl.length) relativeUrl += '/'
-      depsarr.push(file)
-      depscount++
-
-      less.Parser({
-        filename: file
-        , relativeUrls: true
-      }).parse(data, function (err, tree) {
-        // log.info('parsing file', file)
-        if (err) log.error('lessParse', err)
-        else parseRules(tree.rules)
-        // inspectTree(tree)
-        try { depsobj[file] = tree.toCSS()}
-        catch (ex) { log.error('toCSS',ex) }
-        if(!--depscount) writeCSS()
-      })
-
-      // function inspectTree (value, parent, grandParent) {
-      //   if (value instanceof Array) {
-      //     value.forEach(function (v) {
-      //       inspectTree(v, value, parent)
-      //     })
-      //   } else if (value.value) {
-      //     inspectTree(value.value, value, parent)
-      //   } else if (value.rules) {
-      //     inspectTree(value.rules, value, parent)
-      //   } else if (typeof value === "string" && value === "mtv_play_logo.png") {
-      //     log.info('>>>>>', value)
-      //     log.info('grandParent', grandParent)
-      //   }
-      // }
-
-      function parseRules (rule) {
-        if (rule instanceof Array) {
-          rule.forEach(function (r) {
-            parseRules(r)
-          })
-        } else {
-          importfile = rule.importedFilename
-
-          if (importfile) {
-            stream.emit('file', importfile)
-            depsarr.push(importfile)
-          }
-
-          if (rule.root) {
-            parseRules(rule.root.rules)
-          } else if (rule.rules) {
-            parseRules(rule.rules)
-          } else if (rule.value) {
-            parseRules(rule.value)
-          } else if (rule.currentFileInfo
-              && !rule.currentFileInfo.alreadyManuallyRebased) {
-            rule.currentFileInfo.alreadyManuallyRebased = true
-            if (relativeUrl.length || rule.currentFileInfo.rootpath.length) {
-              rule.currentFileInfo.rootpath = path.join(relativeUrl, rule.currentFileInfo.rootpath)
-            }
-          }
-        }
-      }
+    if(opts){
+      bundleOptions.debug = opts.debug
+      bundleOptions.ignoreMissing = opts.ignoreMissing
     }
+
+    var b = browserify(index,bundleOptions)
+    w = watchifies[index] = watchify(b)
+
+    w.transform({global:opts && opts.global || true},function(file){ return handleDeps(w,file) })
+    
+    w._basedir = basedir
+
+    w.on('done',function(){
+      w._compiling = false
+      if(w.__cb) w.__cb(null,watchifies) 
+    })
+    w.on('log', function (msg) { log.info('watchify',msg) })
+    w.on('update', function(){ compile(w,output) })
+    w.on('dep', function(dep){
+      var processing = w._cssprocessing
+      if(!processing){
+        if(cssDepsChanged(w) || processing === 0){
+          compileCSS(w)
+        }
+        w._cssprocessing = true //complete
+      }
+      w._depscomplete = true
+    })
+    compile(w,output,cb)
   }
 
-  function handleError (error) {
-    log.error(error)
-    error = error.toString('utf8').replace(/('|")/g,'\'')
-    var script = 'function doRetry () {location.reload();}'
-      , html = '<script>' + script +'</script><div style=\'padding:20px;font-family: DIN Next LT Pro Light,Helvetica,Arial,sans-serif;background-color:#34cda7;\'><h1>ERROR:</h1><h2>'+ error +'</h2><button style=\'padding:40px;\'onclick=\'doRetry();\'>RETRY</button></div>'
-      , str = 'document.write("' + html + '");'
-    fs.writeFile(outputJS, str, function (err) { if (err) log.error(err) })
-    ready()
+  w.__cb = cb
+  if(!w._compiling) cb(null,watchifies)
+}
+
+function compile(w,output){
+  w._cssprocessing = false
+  w._depscomplete = false
+  w._compiling = true
+
+  w.bundle(function(err,src){ if(err) w._callback(err) })
+    .pipe(fs.createWriteStream(output)
+      .on('finish', function () {
+        log.info('js written:', output)
+        w._jswritten = true
+        if(w._csswritten) w.emit('done')
+      }))
+}
+
+//compiles css/less to final bundle.css
+function compileCSS(w){
+  var css = concatCSS(w)
+  if(!css) return
+  var output = path.join(w._basedir,'bundle.css')
+
+  less.Parser({paths:[w._basedir]}).parse(css, function (err, tree) {
+    if(err) w._callback(err)
+    try { 
+      fs.writeFile(output,tree.toCSS(),function(err){
+        if(err) w._callback(err)
+        w._csswritten = true
+        log.info('css written:', output)
+        if(w._jswritten) w.emit('done')
+      })
+    }
+    catch (ex) { w._callback(ex) }
+  })
+}
+
+//concatenates css
+function concatCSS(w){
+  var merge = ''
+  var cssarr = w._cssarr
+  for (var i = 0; i < cssarr.length; i++) {
+    var css = w._cssdeps[cssarr[i]]
+    if(css) merge += css + '\n'
   }
+  return merge
+}
+
+//check if there is a change in css dependencies
+function cssDepsChanged(w){
+  var arr = []
+  for(var file in w._mdeps.visited){
+    if( isCSS(file) ) arr.push(file)
+  }
+  if(w._cssarr !== arr){
+    w._cssarr = arr
+    return true 
+  }else{
+    w._cssprocessing = true //complete
+  }
+}
+
+//checks if file is css or less
+function isCSS(file){
+  if(~file.indexOf('.less') || ~file.indexOf('.css')) return true
+}
+
+//handles deps, rejecting css and less, sending them to css parser
+function handleDeps(w,file){
+  if( isCSS(file) ){
+    if(!w._cssdeps) w._cssdeps = {}
+    w._cssprocessing = (w._cssprocessing || 0) + 1
+    fs.readFile(file, 'utf8', function(err,data){
+      if(err) w._callback(err)
+      rebaseCSS(w,file,data)
+    })
+    return through(function(){this.push(null)})
+  }
+  return through()
+}
+
+//rebases css
+function rebaseCSS(w,file, data){
+  var base = path.relative(w._basedir, path.dirname(file))
+  if (base.length) base += '/'
+  w._cssdeps[file] = rebase(data,base)
+  if(!--w._cssprocessing && w._depscomplete) compileCSS(w)
 }

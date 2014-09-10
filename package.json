@@ -7,15 +7,16 @@
     "gaston": "bin.js"
   },
   "dependencies": {
-    "clean-css": "^2.2.8",
     "graceful-fs": "^3.0.2",
-    "less": "^1.7.3",
-    "mime": "^1.2.11",
     "npmlog": "^0.1.1",
-    "through2": "^0.5.1",
-    "uglify-js": "^2.4.15",
-    "watchify": "^0.10.2",
-    "xml2js": "^0.4.4"
+    "xml2js": "^0.4.4",
+    "browserify": "^5.11.1",
+    "less": "^1.7.5",
+    "through": "^2.3.4",
+    "watchify": "^1.0.2",
+    "mime": "^1.2.11",
+    "clean-css": "^2.2.15",
+    "uglify-js": "^2.4.15"
   },
   "directories": {
     "test": "test"
