@@ -162,7 +162,6 @@ function updatedCSS(w){
     if( isCSS(file) ) arr.push(file)
   }
   var theSame = prevarr && compareArray(prevarr,arr)
-  console.log(!theSame,arr.length)
 
   if(!theSame) return w._cssarr = arr
 }
