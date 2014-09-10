@@ -94,6 +94,14 @@ function compileCSS(w){
   var output = path.join(w._basedir,'bundle.css')
   less.Parser({paths:[w._basedir]}).parse(css, function (err, tree) {
     if(err) w._callback(err)
+    var rules = tree.rules
+    for (var i = rules.length - 1; i >= 0; i--) {
+      var importedFilename = rules[i].importedFilename
+      if(importedFilename && !~w._cssarr.indexOf(importedFilename)){
+        w.emit('file',importedFilename)
+        w._cssarr.push(importedFilename)
+      }
+    }
     try { 
       fs.writeFile(output,tree.toCSS(),function(err){
         if(err) w._callback(err)
