@@ -10,6 +10,7 @@ var rebase = require('./rebase.js')
 
 module.exports = function(entry, opts, callback) {
   var w = watchifies[entry]
+
   if(!w) w = createWatchify(entry,opts)
   if(!w._compiling) callback(null,watchifies)
   w._callback = callback
@@ -17,7 +18,9 @@ module.exports = function(entry, opts, callback) {
 
 function createWatchify(entry,opts){
   var basedir = path.dirname(entry)
-  var bundleOptions = watchify.args   
+  var bundleOptions = {
+      cache: {}, packageCache: {}, fullPaths: true
+  }
   
   if(opts){
     bundleOptions.debug = opts.debug
@@ -27,11 +30,11 @@ function createWatchify(entry,opts){
 
   var b = browserify(entry,bundleOptions)
   var w = watchifies[entry] = watchify(b)
-
   var transformOptions = {global:opts && opts.global || true}
 
   w.transform(transformOptions,handleDeps.bind(w))
   w._basedir = basedir
+  w._cssdeps = {}
 
   w.on('log',log.info)
   w.on('update',compile)
@@ -39,7 +42,7 @@ function createWatchify(entry,opts){
   w.on('done',complete)
 
   compile.call(w)
-
+  console.log(w)
   return w
 }
 
@@ -49,7 +52,6 @@ function handleDeps(file){
   var end
   if( isCSS(file) ){
     todo = function(){ this.push(null) }
-    if(!w._cssdeps) w._cssdeps = {}
     if(!w._cssprocessing) w._cssprocessing = 1
     else w._cssprocessing++
     fs.readFile(file, 'utf8', function(err,data){
