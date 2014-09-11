@@ -42,7 +42,6 @@ function createWatchify(entry,opts){
   w.on('done',complete)
 
   compile.call(w)
-  console.log(w)
   return w
 }
 
@@ -126,7 +125,7 @@ function compileCSS(w){
 
   w._csscomplete = false
 
-  less.Parser({paths:[w._basedir]}).parse(css, function (err, tree) {
+  less.Parser({ paths:[w._basedir], relativeUrls:true }).parse(css, function (err, tree) {
     if(err) w._callback(err)
     var rules = tree.rules
     var i = rules.length - 1
