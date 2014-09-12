@@ -104,8 +104,10 @@ Server.prototype.serveIndex = function (dir, index, res) {
     if (exists) {
       self.bundle(indexjs, self.compilerOpts, function (err, watchifies) {
         if (err) {
+          err.stream = null
+          err.stack = null
           log.error('bundle error', err)
-          res.end(self.stringify(err))
+          res.end(err.toString())
         } else {
           self.serveFile(index, res)
         }
@@ -116,9 +118,21 @@ Server.prototype.serveIndex = function (dir, index, res) {
   })
 }
 
+Object.defineProperty(Error.prototype, 'toJSON', {
+    value: function () {
+        var alt = {}
+
+        Object.getOwnPropertyNames(this).forEach(function (key) {
+            alt[key] = this[key]
+        }, this)
+
+        return alt
+    },
+    configurable: true
+})
+
 Server.prototype.stringify = function (val) {
   var str
-  val.stack = val.stack
   try {
     str = JSON.stringify(val, null, " ")
   } catch (e) {
