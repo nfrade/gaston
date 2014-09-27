@@ -70,7 +70,7 @@ Server.prototype.serve = function (path, res) {
 
 Server.prototype.serveFile = function (path, res) {
   var self = this
-  res.writeHead(200, {'Content-Type': mime.lookup(path) });
+  res.writeHead(200, {'Content-Type': mime.lookup(path), 'Access-Control-Allow-Origin':'*' });
   var stream = fs.createReadStream(path)
     .on('open', function () {
       stream.pipe(res)
