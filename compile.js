@@ -24,7 +24,9 @@ function createWatchify(entry,opts){
   
   if(opts){
     bundleOptions.debug = opts.debug
-    bundleOptions.ignoreMissing = opts.ignoreMissing
+    bundleOptions.ignoreMissing = opts.ignoreMissing !== void 0 
+      ? opts.ignoreMissing
+      : true
     bundleOptions.noParse = opts.noParse
   }
 
