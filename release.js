@@ -36,7 +36,7 @@ inReady()
 	})
 
 function inReady () {
-	return Promise.all([jsIn, cssIn].map(function (file) {
+	return Promise.all([jsIn, cssIn, htmlIn].map(function (file) {
 		return new Promise(function (resolve, reject) {
 			fs.exists(file, function (exists) {
 				if (exists) {
@@ -78,6 +78,26 @@ function outReady () {
 						if (answer === 'y'
 							|| answer === ''
 							|| answer === 'yes') {
+							after()
+						} else {
+							reject("Operation canceled")
+						}
+					})
+				} else {
+					after()
+				}
+			})
+		}
+
+		function after () {
+			fs.exists(htmlOut, function (exists) {
+				if (exists) {
+					rl.question(htmlOut + " already exists. Replace? [Y/n]"
+						, function (answer) {
+						answer = answer.toLowerCase()
+						if (answer === 'y'
+							|| answer === ''
+							|| answer === 'yes') {
 							resolve()
 						} else {
 							reject("Operation canceled")
@@ -97,8 +117,13 @@ function uglify () {
 }
 
 function stamp () {
+	var timestamp = "/*" + now() + "*/"
 	console.log("Stamping " + jsOut)
-	return appendFile(jsOut, "/*" + now() + "*/", 'utf8')
+	return appendFile(jsOut, timestamp, 'utf8')
+		.then(function () {
+			console.log("Stamping " + jsIn)
+			return appendFile(jsIn, timestamp, 'utf8')
+		})
 }
 
 function now () {
