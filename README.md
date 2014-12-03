@@ -16,7 +16,7 @@ Install gaston globally by navigating to the root folder of the repository and d
 
 `gaston webserver` Starts a localhost server on port 8080.
 
-`gaston-release` uglifies (and mangles) bundle.js to build.js and minifies bundle.css to build.css. It also bumps the patch number of the version in package.json and stamps build.js with a timestamp. Needs uglifyjs and cleancss to be installed globally:
+`gaston-release` uglifies (and mangles) bundle.js to build.js, minifies bundle.css to build.css and points to these in the index.html inspired build.html it creates. It also bumps the patch number of the version in package.json and stamps build.js with a timestamp. Needs uglifyjs and cleancss to be installed globally:
 `npm install -g uglify-js`, `npm install -g clean-css`
 
 ### Params

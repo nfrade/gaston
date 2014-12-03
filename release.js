@@ -11,6 +11,8 @@ var fs = require('fs')
 	, jsOut = path.join(root, 'build.js')
 	, cssIn = path.join(root, 'bundle.css')
 	, cssOut = path.join(root, 'build.css')
+	, htmlIn = path.join(root, 'index.html')
+	, htmlOut = path.join(root, 'build.html')
 	, pkg = path.join(root, 'package.json')
 	, rl = readline.createInterface({
 		input: process.stdin,
@@ -25,6 +27,7 @@ inReady()
 	.then(uglify)
 	.then(stamp)
 	.then(minify)
+	.then(build)
 	.then(bumpVersion)
 	.then(end)
 	.catch(function (reason) {
@@ -117,6 +120,28 @@ function now () {
 function minify () {
 	console.log("Minifying")
 	return sh("cleancss -o " + cssOut + " " + cssIn)
+}
+
+function build () {
+	return new Promise(function (resolve, reject) {
+		fs.exists(htmlIn, function (exists) {
+			if (exists) {
+				resolve(readFile(htmlIn, 'utf8')
+					.then(function (str) {
+						console.log("Creating build.html")
+						return writeFile(htmlOut
+							, str.replace('<link href="bundle.css" rel="stylesheet" type="text/css">'
+									, '<link href="build.css" rel="stylesheet" type="text/css">')
+								.replace('<script src="bundle.js" type="text/javascript"></script>'
+									, '<script src="build.js" type="text/javascript"></script>')
+							, 'utf8')
+					})
+				)
+			} else {
+				reject("Can't find index.html")
+			}
+		})
+	})
 }
 
 function bumpVersion () {
