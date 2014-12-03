@@ -4,7 +4,9 @@
   "description": "buildtool for vigour-io",
   "main": "gaston.js",
   "bin": {
-    "gaston": "bin.js"
+    "gaston": "bin.js",
+    "gaston-optimize": "optimize.sh",
+    "gaston-o": "optimize.sh"
   },
   "dependencies": {
     "graceful-fs": "^3.0.2",

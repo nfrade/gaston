@@ -16,6 +16,9 @@ Install gaston globally by navigating to the root folder of the repository and d
 
 `gaston webserver` Starts a localhost server on port 8080.
 
+`gaston-optimize` uglifies (and mangles) bundle.js to build.js and minifies bundle.css to build.css. Needs uglifyjs and cleancss to be installed globally:
+`npm install -g uglify-js`, `npm install -g clean-css`
+
 ### Params
 
 `-port:<portvalue>` Uses this port for webserver (shorthand: `-p:<portvalue>`)
