@@ -7,7 +7,7 @@ var fs = require('fs')
 	, Promise = require('promise')
 
 	, root = process.cwd()
-	, jsIn = path.join(root, 'bundle.js')
+	, jsIn = path.join(root, 'index.js')
 	, jsOut = path.join(root, 'build.js')
 	, cssIn = path.join(root, 'bundle.css')
 	, cssOut = path.join(root, 'build.css')
@@ -24,7 +24,7 @@ var fs = require('fs')
 
 inReady()
 	.then(outReady)
-	.then(uglify)
+	.then(bundle)
 	.then(stamp)
 	.then(minify)
 	.then(build)
@@ -111,9 +111,9 @@ function outReady () {
 	})
 }
 
-function uglify () {
-	console.log("Uglifying")
-	return sh("uglifyjs " + jsIn + " -m > " + jsOut)
+function bundle () {
+	console.log("Browserifying and Uglifying")
+	return sh("browserify " + jsIn + " --exclude ./style.less --exclude ../../common.less | uglifyjs -m > " + jsOut)
 }
 
 function stamp () {
