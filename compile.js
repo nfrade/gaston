@@ -8,12 +8,34 @@ var watchify = require('watchify')
 var watchifies = {}
 var rebase = require('./rebase.js')
 
-module.exports = function(entry, opts, callback) {
+module.exports = exports = {}
+
+exports.main = function (entry, opts, callback) {
   var w = watchifies[entry]
 
   if(!w) w = createWatchify(entry,opts)
   if(!w._compiling) callback(null,watchifies)
   w._callback = callback
+}
+
+exports.release = function (entry, opts, callback) {
+  var bundleOptions = {
+      cache: {}, packageCache: {}, fullPaths: false
+    }
+    , b = browserify(entry, bundleOptions)
+
+  b.transform({ global:true }, releaseTransform)
+  b.bundle(callback)
+}
+
+function releaseTransform (file) {
+  var todo
+  if (isCSS(file)) {
+    todo = function () {
+      this.push(null)
+    }
+  }
+  return through(todo)
 }
 
 function createWatchify(entry,opts){

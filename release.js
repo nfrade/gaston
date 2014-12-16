@@ -5,6 +5,10 @@ var fs = require('fs')
 	, proc = require('child_process')
 
 	, Promise = require('promise')
+	, uglifyjs = require('uglify-js')
+	, cleancss = require('clean-css')
+
+	, compile = require('./compile')
 
 	, root = process.cwd()
 	, jsIn = path.join(root, 'index.js')
@@ -25,6 +29,8 @@ var fs = require('fs')
 inReady()
 	.then(outReady)
 	.then(bundle)
+	.then(uglify)
+	.then(save)
 	.then(stamp)
 	.then(minify)
 	.then(build)
@@ -112,18 +118,42 @@ function outReady () {
 }
 
 function bundle () {
-	console.log("Browserifying and Uglifying")
-	return sh("browserify " + jsIn + " --exclude ./style.less --exclude ../../common.less | uglifyjs -m > " + jsOut)
+	return new Promise(function (resolve, reject) {
+		console.log("Browserifying")
+		compile.release(jsIn, {}, function (err, code) {
+			if (err) {
+				reject(err)
+			} else {
+				resolve(code.toString())
+			}
+		})
+	})
+}
+
+function uglify (input) {
+	var ast = uglifyjs.parse(input)
+		, compressor = uglifyjs.Compressor()
+
+	ast.figure_out_scope()
+	ast = ast.transform(compressor)
+
+	// need to figure out scope again so mangler works optimally
+	ast.figure_out_scope()
+	ast.compute_char_frequency()
+	ast.mangle_names()
+
+	// get Ugly code back :)
+	return ast.print_to_string()
+}
+
+function save (code) {
+	return writeFile(jsOut, code, 'utf8')
 }
 
 function stamp () {
 	var timestamp = "/*" + now() + "*/"
 	console.log("Stamping " + jsOut)
 	return appendFile(jsOut, timestamp, 'utf8')
-		.then(function () {
-			console.log("Stamping " + jsIn)
-			return appendFile(jsIn, timestamp, 'utf8')
-		})
 }
 
 function now () {
@@ -144,7 +174,11 @@ function now () {
 
 function minify () {
 	console.log("Minifying")
-	return sh("cleancss -o " + cssOut + " " + cssIn)
+	readFile(cssIn, 'utf8')
+		.then(function (code) {
+			var minimized = new CleanCSS().minify(code).styles
+			return writeFile(cssOut, minimized, 'utf8')
+		})
 }
 
 function build () {
@@ -212,5 +246,6 @@ function sh (command) {
 }
 
 function end () {
+	console.log("END")
 	rl.close()
 }

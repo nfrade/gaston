@@ -1,6 +1,4 @@
 var Server = require('./server')
-  , _build = require('./build')
-  , _compile = require('./compile')
 
 module.exports = function(port, close, debug, build, nocss){
 	var server = new Server({

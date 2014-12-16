@@ -28,7 +28,7 @@ function Server (opts) {
 	})
 }
 
-Server.prototype.bundle = compiler
+Server.prototype.bundle = compiler.main
 
 Server.prototype.commandUrl = '/gastonReservedUrlHopefullyNobodyNamesADirectoryLikeThis'
 
