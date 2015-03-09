@@ -128,8 +128,8 @@ function complete(done){
     }
     if(w._callback) w._callback(null,watchifies) 
   }
-
-  log.info(done + ' bundle complete')
+  var now = new Date()
+  log.info(done + ' bundle complete ' + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds())
 }
 
 
