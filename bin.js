@@ -1,25 +1,22 @@
 #!/usr/bin/env node
 var gaston = require('./gaston')
-	//options
-	, port = 8080
-	, debug
-	, close
-	, build
-	, nocss
+  , program = require('commander')
+  , nocss
 
-	, arg
-	, args = process.argv
-	, i = args.length
+program
+  .version('0.0.1')
+  .option('-p, --port [nb], -port:[nb]', 'Port number on which to run the server [8080]', '8080')
+  .option('-d, --debug', 'Debug')
+  .option('-c, --close', 'Close')
+  .option('-b, --build', 'Build')
+  .option('-C, --no-css', 'CSS')
+  .parse(process.argv)
 
+nocss = !program.css
 
-//check for options
-while (i--) {
-  arg = args[i]
-  if (arg.indexOf('-port:')===0) port = Number(arg.slice(6))
-  if (arg === '-debug') debug = true
-  if (arg === '-close') close = true
-  if (arg === '-build') build = true
-  if (arg === '-nocss') nocss = true
-}
-
-gaston(port || 8080,close,debug,build,nocss)
+// console.log('port', program.port)
+// console.log('debug', program.debug)
+// console.log('close', program.close)
+// console.log('build', program.build)
+// console.log('nocss', nocss)
+gaston(program.port, program.close, program.debug, program.build, nocss)
