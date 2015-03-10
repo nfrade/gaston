@@ -129,7 +129,7 @@ exports.bundle = function (entry, opts, cb) {
   var bundleOptions = {
         cache: {}, packageCache: {}, fullPaths: true
     }
-    , basedir = process.cwd()
+    , basedir = path.dirname(entry)
   pkgPath = path.join(basedir, 'package.json')
   
   if(opts){
@@ -142,7 +142,7 @@ exports.bundle = function (entry, opts, cb) {
 
   log.info('entry',entry)
 
-  var b = browserify(path.join(basedir,entry),bundleOptions)
+  var b = browserify(entry,bundleOptions)
     b._callback = cb
   var transformOptions = {global:opts && opts.global || true}
   b.transform(transformOptions,handleDeps.bind(b))
@@ -282,7 +282,12 @@ function compileCSS(w){
 
   w._csscomplete = false
 
-  less.Parser({ paths:[w._basedir], relativeUrls:true }).parse(css, function (err, tree) {
+  var theRootPath = w._basedir
+  if (theRootPath.indexOf('/') !== theRootPath.legnth - 1) {
+    theRootPath = theRootPath + '/'
+  }
+
+  less.Parser({ paths:[w._basedir],rootpath:theRootPath, relativeUrls:true }).parse(css, function (err, tree) {
     if(err) w._callback(err)
     var rules = tree.rules
     var i = rules.length - 1
@@ -297,13 +302,15 @@ function compileCSS(w){
       }
     }
 
-    try { 
+    try {
       fs.writeFile(output,tree.toCSS(),function(err){
         if(err) w._callback(err)
         w.emit('done','css')
       })
     }
-    catch (ex) { w._callback(ex) }
+    catch (ex) {
+      w._callback(ex)
+    }
   })
 }
 

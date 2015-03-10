@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 var gaston = require('./gaston')
+  , path = require('path')
   , program = require('commander')
   , nocss
-
+  , entry
 program
   .version('0.0.1')
   .option('-p, --port [nb], -port:[nb]', 'Port number on which to run the server [8080]', '8080')
@@ -25,7 +26,8 @@ if (program.act === true) {
 } else if (program.act) {
   switch (program.act) {
     case 'bundle':
-      gaston.bundle('index.js', {}, function (err) {
+      entry = path.join(process.cwd(), 'index.js')
+      gaston.bundle(entry, {}, function (err) {
         if (err) {
           console.error('Error bundling index.js', err)
         } else {
