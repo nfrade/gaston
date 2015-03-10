@@ -28,7 +28,7 @@ function Server (opts) {
 	})
 }
 
-Server.prototype.bundle = compiler.main
+Server.prototype.wbundle = compiler.main
 
 Server.prototype.commandUrl = '/gastonReservedUrlHopefullyNobodyNamesADirectoryLikeThis'
 
@@ -103,7 +103,7 @@ Server.prototype.serveIndex = function (dir, index, res) {
   self.compilerOpts.pkgPath = p.join(dir, 'package.json')
   fs.exists(indexjs, function (exists) {
     if (exists) {
-      self.bundle(indexjs, self.compilerOpts, function (err, watchifies) {
+      self.wbundle(indexjs, self.compilerOpts, function (err, watchifies) {
         if (err) {
           err.stream = null
           err.stack = null
