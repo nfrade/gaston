@@ -7,12 +7,17 @@ var through = require('through');
 var watchify = require('watchify')
 var watchifies = {}
 var rebase = require('./rebase.js')
-
+var vUtil = require('vigour-js/util')
+var vConfig = require('vigour-js/util/config')
+var vConfigUA = require('vigour-js/util/config/ua')
+var stream = require('stream')
+var util = require('util')
+var pkgPath
 module.exports = exports = {}
 
 exports.main = function (entry, opts, callback) {
   var w = watchifies[entry]
-
+  pkgPath = opts.pkgPath
   if(!w) w = createWatchify(entry,opts)
   if(!w._compiling) callback(null,watchifies)
   w._callback = callback
@@ -93,22 +98,95 @@ function rebaseCSS(w,file,data){
   if(!--w._cssprocessing && w._depscomplete) compileCSS(w)
 }
 
+function Inform (pkg, options) {
+  var parsed = JSON.parse(pkg)
+  this.done = false
+  parsed.sha = process.env.SHA || 'unknown SHA'
+  parsed.repository.branch = process.env.BRANCH || 'staging'
+  if (parsed.repository.branch !== "staging") {
+    parsed.version = hNow()
+      + " "
+      + "(" + parsed.sha + ")"
+  }
+  vConfig.parse(parsed.vigour
+    , parsed
+    , [{ 'repository.branch': 'branches' }])
+  var uaSpecific = vUtil.clone(parsed)
+  vConfig.parse(uaSpecific.vigour
+    , uaSpecific
+    , vConfigUA
+    , { ua: 'android'})
+  this.pkg = "window.package=" + JSON.stringify(uaSpecific) + ";"
+  stream.Transform.call(this, options)
+}
+util.inherits(Inform, stream.Transform)
+
+Inform.prototype._transform = function (chunk, enc, cb) {
+
+  if (!this.done) {
+    this.push(this.pkg, "utf8")
+    this.done = true
+  }
+  this.push(chunk.toString())
+  cb()
+}
+
 function compile(){
-  var w = this
-  var output = path.join(w._basedir,'bundle.js')
+  var self = this
+  fs.readFile(pkgPath, function (err, str) {
+    var w = self
+    var output = path.join(w._basedir,'bundle.js')
+    var transform = true
+    try {
+      var inform = new Inform(str)
+    } catch (e) {
+      log.error("Can't prepare package", e)
+      transform = false
+    }
+    w._cssprocessing = false
+    w._depscomplete = false
+    w._compiling = true
+    w._csscomplete = true
+    w._jscomplete = false
 
-  w._cssprocessing = false
-  w._depscomplete = false
-  w._compiling = true
-  w._csscomplete = true
-  w._jscomplete = false
-
-  w.bundle(function(err,src){ if(err) w._callback(err) })
-    .pipe(fs.createWriteStream(output)
+    var bundle = w.bundle(function(err,src){ if(err) w._callback(err) })
+    if (transform) {
+      bundle = bundle.pipe(inform)
+    }
+    bundle = bundle.pipe(fs.createWriteStream(output)
       .on('finish', function (err) {
         if(err) w._callback(err)
         w.emit('done','js')
       }))
+  })
+  
+  
+}
+
+function hNow () {
+  var date = new Date()
+    , dateTime = date.getUTCFullYear()
+      + "/"
+      + pad(date.getUTCMonth() + 1, 2)
+      + "/"
+      + pad(date.getUTCDate(), 2)
+      + " "
+      + pad(date.getUTCHours(), 2)
+      + ":"
+      + pad(date.getUTCMinutes(), 2)
+      + ":"
+      + pad(date.getUTCSeconds(), 2)
+      + " UTC"
+
+  function pad (val, nbDigits) {
+    var missing = nbDigits - val.toString().length
+    while (missing > 0) {
+      val = "0" + val
+      missing -= 1
+    }
+    return val
+  }
+  return dateTime
 }
 
 function complete(done){

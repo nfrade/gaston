@@ -100,6 +100,7 @@ Server.prototype.serveDirectory = function (path, res) {
 Server.prototype.serveIndex = function (dir, index, res) {
   var self = this
     , indexjs = p.join(dir, 'index.js')
+  self.compilerOpts.pkgPath = p.join(dir, 'package.json')
   fs.exists(indexjs, function (exists) {
     if (exists) {
       self.bundle(indexjs, self.compilerOpts, function (err, watchifies) {

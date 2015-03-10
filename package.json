@@ -19,7 +19,8 @@
     "through": "^2.3.4",
     "uglify-js": "^2.4.15",
     "watchify": "^1.0.2",
-    "xml2js": "^0.4.4"
+    "xml2js": "^0.4.4",
+    "vigour-js": "git+ssh://git@github.com:vigour-io/vigour-js.git#master"
   },
   "directories": {
     "test": "test"
@@ -36,5 +37,6 @@
   "bugs": {
     "url": "https://github.com/vigour-io/gaston/issues"
   },
-  "homepage": "https://github.com/vigour-io/gaston"
+  "homepage": "https://github.com/vigour-io/gaston",
+  "engine": "node 0.10.x"
 }
