@@ -10,6 +10,7 @@ program
   .option('-c, --close', 'Close')
   .option('-b, --build', 'Build')
   .option('-C, --no-css', 'CSS')
+  .option('-a, --act <name>', 'Just perform an action and quit', /^(bundle|build)$/i)
   .parse(process.argv)
 
 nocss = !program.css
@@ -19,4 +20,25 @@ nocss = !program.css
 // console.log('close', program.close)
 // console.log('build', program.build)
 // console.log('nocss', nocss)
-gaston(program.port, program.close, program.debug, program.build, nocss)
+if (program.act === true) {
+  throw new Error("Invalid option `act`. Must be 'bundle' or 'build'")
+} else if (program.act) {
+  switch (program.act) {
+    case 'bundle':
+      gaston.bundle('index.js', {}, function (err) {
+        if (err) {
+          console.error('Error bundling index.js', err)
+        } else {
+          console.log("SUCCESS")
+        }
+      })
+      break;
+    case 'build':
+      break;
+    default:
+      throw new Error("Impossible")
+      break;
+  }
+} else {
+  gaston(program.port, program.close, program.debug, program.build, nocss)
+}

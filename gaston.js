@@ -1,6 +1,7 @@
 var Server = require('./server')
+  , compiler = require('./compile')
 
-module.exports = function(port, close, debug, build, nocss){
+module.exports = exports = function(port, close, debug, build, nocss){
 	var server = new Server({
 		port: port
 		, close: close
@@ -10,3 +11,5 @@ module.exports = function(port, close, debug, build, nocss){
 	})
 	server.start()
 }
+
+exports.bundle = compiler.bundle

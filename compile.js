@@ -126,35 +126,94 @@ Inform.prototype._flush = function (err) {
   this.push("window.package=" + JSON.stringify(parsed) + ";", 'utf8')
 }
 
+exports.bundle = function (entry, opts, cb) {
+  var bundleOptions = {
+        cache: {}, packageCache: {}, fullPaths: true
+    }
+    , basedir = process.cwd()
+  pkgPath = path.join(basedir, 'package.json')
+  
+  if(opts){
+    bundleOptions.debug = opts.debug
+    bundleOptions.ignoreMissing = opts.ignoreMissing !== void 0 
+      ? opts.ignoreMissing
+      : true
+    bundleOptions.noParse = opts.noParse
+  }
+  var b = browserify(entry,bundleOptions)
+    b._callback = cb
+  var transformOptions = {global:opts && opts.global || true}
+  b.transform(transformOptions,handleDeps.bind(b))
+  b._basedir = basedir
+  b._cssdeps = {}
+
+  b.on('log',log.info)
+  b.on('update',compile)
+  b.on('dep',perhapsCompileCSS)
+  b.on('done',function (done) {
+    var w = this
+    if(done === 'css') w._csscomplete = true
+    if(done === 'js') w._jscomplete = true
+
+    var everythingDone = w._csscomplete && w._jscomplete
+
+    if(everythingDone){
+      w._compiling = false
+      if(w._imports){
+        w._imports.forEach(function(importedFilename){
+          w.emit('file',importedFilename)
+        })
+      }
+      if(w._callback) w._callback(null) 
+    }
+  })
+
+  compile.call(b)
+}
+
 function compile(){
   var _this = this
     , output = path.join(_this._basedir,'bundle.js')
     , pkgStream
     , bundleStream = fs.createWriteStream( output )
     , inform = new Inform()
-  
-  
+
   pkgStream = fs.createReadStream(pkgPath)
     .on('error', function (err) {
       log.info("Caught", err)
     })
     .on('readable', function () {
-      pkgStream.pipe( inform )
-        .pipe( bundleStream )    
+      pkgStream.pipe( inform.on('error', function (err) {
+          log.error("inform error", err)
+        }) )
+        .pipe( bundleStream.on('error', function (err) {
+          log.error("buildStream error", err)
+        }) ).on('error', function (err) {
+          log.error("pipe error", err)
+        })
     })
-    
+
   _this._cssprocessing = false
   _this._depscomplete = false
   _this._compiling = true
   _this._csscomplete = true
   _this._jscomplete = false
 
-  var bundle = _this.bundle(function(err,src){ if(err) _this._callback(err) })
+  var bundle = _this.bundle(function (err,src) {
+    if(err) _this._callback(err)
+  })
+  bundle.on('error', function (err) {
+    log.error("ERROR BITCH", err)
+  })
   bundle = bundle.pipe( bundleStream
     .on('finish', function (err) {
-      if(err) _this._callback(err)
+      if(err) {
+        _this._callback(err)
+      }
       _this.emit('done','js')
-    }))
+    })).on('error', function (err) {
+      console.error("Another error", err)
+    })
 }
 
 function hNow () {
