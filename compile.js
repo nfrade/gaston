@@ -99,11 +99,10 @@ function rebaseCSS(w,file,data){
 }
 
 function Inform (options) {
-
-  this.fullPkg = ""
-  
+  this.fullPkg = ""  
   stream.Transform.call(this, options)
 }
+
 util.inherits(Inform, stream.Transform)
 
 Inform.prototype._transform = function (chunk, enc, cb) {
@@ -135,12 +134,15 @@ exports.bundle = function (entry, opts, cb) {
   
   if(opts){
     bundleOptions.debug = opts.debug
-    bundleOptions.ignoreMissing = opts.ignoreMissing !== void 0 
-      ? opts.ignoreMissing
-      : true
+    // bundleOptions.ignoreMissing = opts.ignoreMissing !== void 0 
+    //   ? opts.ignoreMissing
+    //   : true
     bundleOptions.noParse = opts.noParse
   }
-  var b = browserify(entry,bundleOptions)
+
+  log.info('entry',entry)
+
+  var b = browserify(path.join(basedir,entry),bundleOptions)
     b._callback = cb
   var transformOptions = {global:opts && opts.global || true}
   b.transform(transformOptions,handleDeps.bind(b))
