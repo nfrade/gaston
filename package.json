@@ -11,6 +11,7 @@
   "dependencies": {
     "browserify": "^5.11.1",
     "clean-css": "^2.2.15",
+    "commander": "^2.7.0",
     "graceful-fs": "^3.0.2",
     "less": "^1.7.5",
     "mime": "^1.2.11",
@@ -18,9 +19,9 @@
     "promise": "^6.0.1",
     "through": "^2.3.4",
     "uglify-js": "^2.4.15",
+    "vigour-js": "git+ssh://git@github.com:vigour-io/vigour-js.git#master",
     "watchify": "^1.0.2",
-    "xml2js": "^0.4.4",
-    "vigour-js": "git+ssh://git@github.com:vigour-io/vigour-js.git#master"
+    "xml2js": "^0.4.4"
   },
   "directories": {
     "test": "test"
