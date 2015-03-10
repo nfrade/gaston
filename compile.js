@@ -66,10 +66,11 @@ function createWatchify(entry,opts){
   w._cssdeps = {}
 
   w.on('log',log.info)
-  w.on('update',compile)
+  w.on('update',function () { log.info("HOOOO"); compile() })
   w.on('dep',perhapsCompileCSS)
   w.on('done',complete)
 
+  log.info('AAAAH')
   compile.call(w)
   return w
 }
