@@ -98,9 +98,21 @@ function rebaseCSS(w,file,data){
   if(!--w._cssprocessing && w._depscomplete) compileCSS(w)
 }
 
-function Inform (pkg, options) {
-  var parsed = JSON.parse(pkg)
-  this.done = false
+function Inform (options) {
+
+  this.fullPkg = ""
+  
+  stream.Transform.call(this, options)
+}
+util.inherits(Inform, stream.Transform)
+
+Inform.prototype._transform = function (chunk, enc, cb) {
+  this.fullPkg += chunk.toString()
+  cb()
+}
+
+Inform.prototype._flush = function (err) {
+  var parsed = JSON.parse(this.fullPkg)
   parsed.sha = process.env.SHA || 'unknown SHA'
   parsed.repository.branch = process.env.BRANCH || 'staging'
   if (parsed.repository.branch !== "staging") {
@@ -111,56 +123,38 @@ function Inform (pkg, options) {
   vConfig.parse(parsed.vigour
     , parsed
     , [{ 'repository.branch': 'branches' }])
-  var uaSpecific = vUtil.clone(parsed)
-  vConfig.parse(uaSpecific.vigour
-    , uaSpecific
-    , vConfigUA
-    , { ua: 'android'})
-  this.pkg = "window.package=" + JSON.stringify(uaSpecific) + ";"
-  stream.Transform.call(this, options)
-}
-util.inherits(Inform, stream.Transform)
-
-Inform.prototype._transform = function (chunk, enc, cb) {
-
-  if (!this.done) {
-    this.push(this.pkg, "utf8")
-    this.done = true
-  }
-  this.push(chunk.toString())
-  cb()
+  this.push("window.package=" + JSON.stringify(parsed) + ";", 'utf8')
 }
 
 function compile(){
-  var self = this
-  fs.readFile(pkgPath, function (err, str) {
-    var w = self
-    var output = path.join(w._basedir,'bundle.js')
-    var transform = true
-    try {
-      var inform = new Inform(str)
-    } catch (e) {
-      log.error("Can't prepare package", e)
-      transform = false
-    }
-    w._cssprocessing = false
-    w._depscomplete = false
-    w._compiling = true
-    w._csscomplete = true
-    w._jscomplete = false
+  var _this = this
+    , output = path.join(_this._basedir,'bundle.js')
+    , pkgStream
+    , bundleStream = fs.createWriteStream( output )
+    , inform = new Inform()
+  
+  
+  pkgStream = fs.createReadStream(pkgPath)
+    .on('error', function (err) {
+      log.info("Caught", err)
+    })
+    .on('readable', function () {
+      pkgStream.pipe( inform )
+        .pipe( bundleStream )    
+    })
+    
+  _this._cssprocessing = false
+  _this._depscomplete = false
+  _this._compiling = true
+  _this._csscomplete = true
+  _this._jscomplete = false
 
-    var bundle = w.bundle(function(err,src){ if(err) w._callback(err) })
-    if (transform) {
-      bundle = bundle.pipe(inform)
-    }
-    bundle = bundle.pipe(fs.createWriteStream(output)
-      .on('finish', function (err) {
-        if(err) w._callback(err)
-        w.emit('done','js')
-      }))
-  })
-  
-  
+  var bundle = _this.bundle(function(err,src){ if(err) _this._callback(err) })
+  bundle = bundle.pipe( bundleStream
+    .on('finish', function (err) {
+      if(err) _this._callback(err)
+      _this.emit('done','js')
+    }))
 }
 
 function hNow () {
