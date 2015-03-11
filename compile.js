@@ -1,25 +1,30 @@
 var browserify = require('browserify')
-var fs = require('graceful-fs')
-var less = require('less')
-var log = require('npmlog')
-var path = require('path')
-var through = require('through');
-var watchify = require('watchify')
-var watchifies = {}
-var rebase = require('./rebase.js')
-var vUtil = require('vigour-js/util')
-var vConfig = require('vigour-js/util/config')
-var vConfigUA = require('vigour-js/util/config/ua')
-var stream = require('stream')
-var util = require('util')
-var pkgPath
+  , fs = require('graceful-fs')
+  , less = require('less')
+  , log = require('npmlog')
+  , path = require('path')
+  , through = require('through')
+  , watchify = require('watchify')
+  , watchifies = {}
+  , rebase = require('./rebase.js')
+  , vUtil = require('vigour-js/util')
+  , vConfig = require('vigour-js/util/config')
+  , vConfigUA = require('vigour-js/util/config/ua')
+  , stream = require('stream')
+  , util = require('util')
+  , Promise = require('promise')
+  , readFile = Promise.denodeify(fs.readFile)
+  , pkgPath
+
 module.exports = exports = {}
 
 exports.main = function (entry, opts, callback) {
   var w = watchifies[entry]
   pkgPath = opts.pkgPath
   if(!w) w = createWatchify(entry,opts)
-  if(!w._compiling) callback(null,watchifies)
+  if(!w._compiling) {
+    callback(null,watchifies)
+  }
   w._callback = callback
 }
 
@@ -84,7 +89,9 @@ function handleDeps(file){
     if(!w._cssprocessing) w._cssprocessing = 1
     else w._cssprocessing++
     fs.readFile(file, 'utf8', function(err,data){
-      if(err) w._callback(err)
+      if(err) {
+        w._callback(err)
+      }
       rebaseCSS(w,file,data)
     })
   }
@@ -116,7 +123,6 @@ Inform.prototype._flush = function (err) {
   var parsed = JSON.parse(this.fullPkg)
   parsed.sha = parsed.version
   parsed.repository.branch = this.branch
-  console.log("BRANCH", parsed.repository.branch)
   if (parsed.repository.branch !== "staging") {
     parsed.version = hNow()
       + " "
@@ -133,6 +139,9 @@ exports.bundle = function (entry, opts, cb) {
         cache: {}, packageCache: {}, fullPaths: true
     }
     , basedir = path.dirname(entry)
+  if (!opts.branch) {
+    opts.branch = '_inherit'
+  }
   pkgPath = path.join(basedir, 'package.json')
   
   if(opts){
@@ -171,36 +180,48 @@ exports.bundle = function (entry, opts, cb) {
           w.emit('file',importedFilename)
         })
       }
-      if(w._callback) w._callback(null) 
+      if(w._callback) {
+        w._callback(null) 
+      }
     }
   })
 
   compile.call(b)
 }
 
+var gitHead
+
+function getGitHead (dir) {
+  var optimize = false
+  return new Promise(function (resolve, reject) {
+    var p
+    if (gitHead && optimize) {
+      resolve(gitHead)
+    } else {
+      p = path.join(dir, '.git')
+      fs.exists(p, function (exists) {
+        if (exists) {
+          resolve(readFile(path.join(p, 'HEAD'), 'utf8')
+            .then(function (data) {
+              var head = parseHEAD(data)
+              gitHead = head
+              return head
+            }))
+        } else {
+          resolve(getGitHead(path.resolve(dir, '..')))
+        }
+      })
+    }
+  })
+}
+
+function parseHEAD (str) {
+  var i = str.lastIndexOf('/')
+  return str.slice(i + 1, str.length - 1)
+}
+
 function compile(){
   var _this = this
-    , output = path.join(_this._basedir,'bundle.js')
-    , pkgStream
-    , bundleStream = fs.createWriteStream( output )
-    , inform = new Inform({
-      branch:_this._branch
-    })
-
-  pkgStream = fs.createReadStream(pkgPath)
-    .on('error', function (err) {
-      log.info("Caught", err)
-    })
-    .on('readable', function () {
-      pkgStream.pipe( inform.on('error', function (err) {
-          log.error("inform error", err)
-        }) )
-        .pipe( bundleStream.on('error', function (err) {
-          log.error("buildStream error", err)
-        }) ).on('error', function (err) {
-          log.error("pipe error", err)
-        })
-    })
 
   _this._cssprocessing = false
   _this._depscomplete = false
@@ -208,21 +229,68 @@ function compile(){
   _this._csscomplete = true
   _this._jscomplete = false
 
-  var bundle = _this.bundle(function (err,src) {
-    if(err) _this._callback(err)
+  var branch = new Promise(function (resolve, reject) {
+    if (_this._branch === '_inherit') {
+      resolve(getGitHead(_this._basedir))
+    } else {
+      resolve(_this._branch)
+    }
   })
-  bundle.on('error', function (err) {
-    log.error("ERROR BITCH", err)
+  .catch(function (reason) {
+    console.error("Can't auto detect branch", reason)
   })
-  bundle = bundle.pipe( bundleStream
-    .on('finish', function (err) {
+  .then(function (branch) {
+    var output = path.join(_this._basedir,'bundle.js')
+      , pkgStream
+      , bundleStream = fs.createWriteStream( output )
+        .on('finish', function (err) {
+          if(err) {
+            _this._callback(err)
+          }
+          _this.emit('done','js')
+        })
+        .on('error', function (err) {
+          log.error("buildStream error", err)
+        })
+      , inform = new Inform({
+        branch:branch
+      })
+
+    inform.on('error', function (err) {
+      log.error("inform error", err)
+    })
+    log.info("Using branch", branch)
+    pkgStream = fs.createReadStream(pkgPath)
+      .on('readable', function () {
+        pkgStream.pipe( inform )
+          .on('error', function (err) {
+            log.error("Yar Matey", err)
+          })
+          .pipe( bundleStream )
+          .on('error', function (err) {
+            log.error("pipe error", err)
+          })
+      })
+      .on('error', function (err) {
+        log.info("Caught", err)
+      })
+
+    
+
+    var bundle = _this.bundle(function (err,src) {
       if(err) {
+        log.error("ount 5", err)
         _this._callback(err)
       }
-      _this.emit('done','js')
-    })).on('error', function (err) {
-      console.error("Another error", err)
     })
+    bundle.on('error', function (err) {
+      log.error("ERROR", err)
+    })
+    bundle.pipe( bundleStream )
+      .on('error', function (err) {
+        console.error("Another pipe error", err)
+      })
+  })
 }
 
 function hNow () {
@@ -266,7 +334,9 @@ function complete(done){
         w.emit('file',importedFilename)
       })
     }
-    if(w._callback) w._callback(null,watchifies) 
+    if(w._callback) {
+      w._callback(null,watchifies) 
+    }
   }
   var now = new Date()
   log.info(done + ' bundle complete ' + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds())
@@ -299,7 +369,9 @@ function compileCSS(w){
   }
 
   less.Parser(obj).parse(css, function (err, tree) {
-    if(err) w._callback(err)
+    if(err) {
+      w._callback(err)
+    }
     var rules = tree.rules
     var i = rules.length - 1
 
@@ -315,7 +387,9 @@ function compileCSS(w){
 
     try {
       fs.writeFile(output,tree.toCSS(),function(err){
-        if(err) w._callback(err)
+        if(err) {
+          w._callback(err)
+        }
         w.emit('done','css')
       })
     }
