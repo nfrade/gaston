@@ -11,7 +11,7 @@ program
   .option('-c, --close', 'Close')
   .option('-b, --build', 'Build')
   .option('-C, --no-css', 'CSS')
-  .option('-f, --branch <name>', 'Branch [dev]', 'dev')
+  .option('-f, --branch <name>', 'Branch [_inherit]', '_inherit')
   .option('-a, --act <name>', 'Just perform an action and quit', /^(bundle|build)$/i)
   .parse(process.argv)
 
