@@ -99,7 +99,7 @@ function rebaseCSS(w,file,data){
 }
 
 function Inform (options) {
-  this.fullPkg = ""  
+  this.fullPkg = ""
   stream.Transform.call(this, options)
 }
 
@@ -113,7 +113,7 @@ Inform.prototype._transform = function (chunk, enc, cb) {
 Inform.prototype._flush = function (err) {
   var parsed = JSON.parse(this.fullPkg)
   parsed.sha = process.env.SHA || 'unknown SHA'
-  parsed.repository.branch = process.env.BRANCH || 'staging'
+  parsed.repository.branch = process.env.BRANCH || 'dev'
   if (parsed.repository.branch !== "staging") {
     parsed.version = hNow()
       + " "
