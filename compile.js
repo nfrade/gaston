@@ -148,6 +148,7 @@ exports.bundle = function (entry, opts, cb) {
   b.transform(transformOptions,handleDeps.bind(b))
   b._basedir = basedir
   b._cssdeps = {}
+  b._useRootPath = true
 
   b.on('log',log.info)
   b.on('update',compile)
@@ -279,15 +280,19 @@ function perhapsCompileCSS(dep){
 function compileCSS(w){
   var css = concatCSS(w)
   var output = path.join(w._basedir,'bundle.css')
+    , obj = { paths:[w._basedir], relativeUrls:true }
 
   w._csscomplete = false
 
   var theRootPath = w._basedir
-  if (theRootPath.indexOf('/') !== theRootPath.legnth - 1) {
+  if (theRootPath.indexOf('/') !== theRootPath.length - 1) {
     theRootPath = theRootPath + '/'
   }
+  if (w._useRootPath) {
+    obj.rootpath = theRootPath
+  }
 
-  less.Parser({ paths:[w._basedir],rootpath:theRootPath, relativeUrls:true }).parse(css, function (err, tree) {
+  less.Parser(obj).parse(css, function (err, tree) {
     if(err) w._callback(err)
     var rules = tree.rules
     var i = rules.length - 1
