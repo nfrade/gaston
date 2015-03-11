@@ -11,6 +11,7 @@ program
   .option('-c, --close', 'Close')
   .option('-b, --build', 'Build')
   .option('-C, --no-css', 'CSS')
+  .option('-f, --branch <name>', 'Branch [dev]', 'dev')
   .option('-a, --act <name>', 'Just perform an action and quit', /^(bundle|build)$/i)
   .parse(process.argv)
 
@@ -27,7 +28,11 @@ if (program.act === true) {
   switch (program.act) {
     case 'bundle':
       entry = path.join(process.cwd(), 'index.js')
-      gaston.bundle(entry, {}, function (err) {
+      gaston.bundle(entry
+          , {
+            branch: program.branch
+          }
+          , function (err) {
         if (err) {
           console.error('Error bundling index.js', err)
         } else {
@@ -42,5 +47,5 @@ if (program.act === true) {
       break;
   }
 } else {
-  gaston(program.port, program.close, program.debug, program.build, nocss)
+  gaston(program.port, program.close, program.debug, program.build, nocss, program.branch)
 }

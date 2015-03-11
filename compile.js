@@ -64,6 +64,7 @@ function createWatchify(entry,opts){
   w.transform(transformOptions,handleDeps.bind(w))
   w._basedir = basedir
   w._cssdeps = {}
+  w._branch = opts.branch
 
   w.on('log',log.info)
   w.on('update',compile)
@@ -100,6 +101,7 @@ function rebaseCSS(w,file,data){
 
 function Inform (options) {
   this.fullPkg = ""
+  this.branch = options.branch
   stream.Transform.call(this, options)
 }
 
@@ -113,7 +115,8 @@ Inform.prototype._transform = function (chunk, enc, cb) {
 Inform.prototype._flush = function (err) {
   var parsed = JSON.parse(this.fullPkg)
   parsed.sha = parsed.version
-  parsed.repository.branch = process.env.BRANCH || 'dev'
+  parsed.repository.branch = this.branch
+  console.log("BRANCH", parsed.repository.branch)
   if (parsed.repository.branch !== "staging") {
     parsed.version = hNow()
       + " "
@@ -149,6 +152,7 @@ exports.bundle = function (entry, opts, cb) {
   b._basedir = basedir
   b._cssdeps = {}
   b._useRootPath = true
+  b._branch = opts.branch
 
   b.on('log',log.info)
   b.on('update',compile)
@@ -179,7 +183,9 @@ function compile(){
     , output = path.join(_this._basedir,'bundle.js')
     , pkgStream
     , bundleStream = fs.createWriteStream( output )
-    , inform = new Inform()
+    , inform = new Inform({
+      branch:_this._branch
+    })
 
   pkgStream = fs.createReadStream(pkgPath)
     .on('error', function (err) {
