@@ -112,7 +112,7 @@ Inform.prototype._transform = function (chunk, enc, cb) {
 
 Inform.prototype._flush = function (err) {
   var parsed = JSON.parse(this.fullPkg)
-  parsed.sha = process.env.SHA || 'unknown SHA'
+  parsed.sha = parsed.version
   parsed.repository.branch = process.env.BRANCH || 'dev'
   if (parsed.repository.branch !== "staging") {
     parsed.version = hNow()
