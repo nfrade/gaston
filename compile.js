@@ -143,7 +143,26 @@ exports.bundle = function (entry, opts, cb) {
     opts.branch = '_inherit'
   }
   pkgPath = path.join(basedir, 'package.json')
-  
+
+  //pkgPath
+
+  //fs.existsSync(path)
+  var tries = 0
+  function findPkg() {
+    tries++
+    var existst = fs.existsSync(pkgPath)
+    if(!existst) {
+      pkgPath = path.join( '../', pkgPath )
+      if( tries === 10 ) {
+        log.error('cannot find package.json tried 10 directories up')
+      } else {
+        findPkg()
+      } 
+    }
+  }
+
+  findPkg()
+
   if(opts){
     bundleOptions.debug = opts.debug
     // bundleOptions.ignoreMissing = opts.ignoreMissing !== void 0 
