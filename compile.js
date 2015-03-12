@@ -33,6 +33,7 @@ exports.main = function (entry, opts, callback) {
 }
 
 exports.release = function (entry, opts, callback) {
+  //option ignring
   var bundleOptions = {
       cache: {}, packageCache: {}, fullPaths: false
     }
@@ -88,7 +89,11 @@ function handleDeps(file){
   var w = this
   var todo
   var end
-  if( file.indexOf('node_modules/mocha') !== -1 ){
+  if( file.indexOf('node_modules/chai') !== -1 
+   || file.indexOf('node_modules/mocha') !== -1 
+   || file.indexOf('node_modules/browserify') !== -1 
+   || file.indexOf('node_modules/trough') !== -1 ) 
+  {
     todo = function(){ this.push(null) }
   }else if( isCSS(file) ){
     todo = function(){ this.push(null) }
@@ -296,6 +301,8 @@ function compile(){
       })
 
     var bundle = _this.bundle(function (err,src) {
+
+      npm.error('what this???', src)
       if(err) {
         log.error("ount 5", err)
         _this._callback(err)
