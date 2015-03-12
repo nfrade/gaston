@@ -126,22 +126,26 @@ Inform.prototype._transform = function (chunk, enc, cb) {
 }
 
 Inform.prototype._flush = function (err) {
-  var parsed = JSON.parse(this.fullPkg)
-  parsed.sha = parsed.version
-  parsed.repository.branch = this.branch
-  if (parsed.repository.branch !== "staging") {
-    parsed.version = hNow()
-      + " "
-      + "(" + parsed.sha + ")"
+  var parsed
+
+  try {
+    parsed = JSON.parse(this.fullPkg)
+    parsed.sha = parsed.version
+    parsed.repository.branch = this.branch
+    if (parsed.repository.branch !== "staging") {
+      parsed.version = hNow()
+        + " "
+        + "(" + parsed.sha + ")"
+    }
+    vConfig.parse(parsed.vigour
+      , parsed
+      , [{ 'repository.branch': 'branches' }])
+    this.push("window.package=" + JSON.stringify(parsed) + ";", 'utf8')
+  } catch(e) {
+    log.error('cannot parse json file!')
+    console.log(this.fullPkg)
   }
 
-
-  console.log(parsed)
-
-  vConfig.parse(parsed.vigour
-    , parsed
-    , [{ 'repository.branch': 'branches' }])
-  this.push("window.package=" + JSON.stringify(parsed) + ";", 'utf8')
 }
 
 exports.bundle = function (entry, opts, cb) {

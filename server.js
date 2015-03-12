@@ -13,8 +13,8 @@ module.exports = exports = Server
 function Server (opts) {
 	var self = this
 	this.port = opts.port
-  // this.cssAsset = fs.readFileSync(__dirname + '/cssText.css', 'utf8')
-  // this.jsAsset = fs.readFileSync(__dirname + '/jsText.js', 'utf8')
+  this.cssAsset = fs.readFileSync(__dirname + '/cssText.css', 'utf8')
+  this.jsAsset = fs.readFileSync(__dirname + '/jsText.js', 'utf8')
   // this.dialogs = fs.readFileSync(__dirname + '/dialogs.html', 'utf8')
   this.compilerOpts = opts
 	this.server = http.createServer(function (req, res) {
