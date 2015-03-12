@@ -155,8 +155,6 @@ exports.bundle = function (entry, opts, cb) {
     opts.branch = '_inherit'
   }
 
-
-
   pkgPath = path.join(basedir, 'package.json')
 
   //verifyPath
