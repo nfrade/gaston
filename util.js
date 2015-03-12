@@ -1,4 +1,7 @@
-module.exports = exports = {}
+var log = require('npmlog')
+	, fs = require('fs')
+	, path = require('path')
+
 exports.asyncEach = function (arr, action, cb) {
 	var l = arr.length
 		, nbLeft = l
@@ -25,4 +28,44 @@ exports.asyncEach = function (arr, action, cb) {
 			}
 		}
 	}
+}
+
+var tries = 0
+
+exports.findPackage = function( pck, orig, start ) {
+
+	log.info( pck )
+
+  if( !orig ) {
+  	var arr = pck.split('/')
+  	arr.pop()
+  	orig = arr.join('/')
+  }
+
+  if( !start ) {
+  	start = path.basename( pck )
+  }
+
+  var existst = fs.existsSync( pck )
+
+  if(pck && !existst) {
+  	tries++
+  	var base = path.dirname(pck)
+  		, seg = ''
+
+  	for(var i = 0; i < tries; i++) {
+  		seg+='../'
+  	}
+
+    pck = path.join( orig, path.join( seg, start ) )
+
+    if( tries === 10 ) {
+      log.error('cannot find package.json tried 10 directories up')
+    } else {
+      return exports.findPackage( pck, orig, start )
+    } 
+  }
+  
+  return pck
+
 }
