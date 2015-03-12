@@ -3,13 +3,11 @@ var fs = require('fs')
 	, path = require('path')
 	, readline = require('readline')
 	, proc = require('child_process')
-
+  , log = require('npmlog')
 	, Promise = require('promise')
 	, uglifyjs = require('uglify-js')
-	, cleancss = require('clean-css')
-
+	, CleanCSS = require('clean-css')
 	, compile = require('./compile')
-
 	, root = process.cwd()
 	, jsIn = path.join(root, 'index.js')
 	, jsOut = path.join(root, 'build.js')
@@ -174,10 +172,10 @@ function now () {
 
 function minify () {
 	console.log("Minifying")
-	readFile(cssIn, 'utf8')
-		.then(function (code) {
-			var minimized = new CleanCSS().minify(code).styles
-			return writeFile(cssOut, minimized, 'utf8')
+	readFile( cssIn, 'utf8' )
+		.then(function ( source ) {
+			var minified = new CleanCSS().minify( source );
+			return writeFile(cssOut, minified, 'utf8')
 		})
 }
 
