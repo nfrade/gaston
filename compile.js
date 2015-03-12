@@ -12,6 +12,7 @@ var browserify = require('browserify')
   , vConfigUA = require('vigour-js/util/config/ua')
   , stream = require('stream')
   , util = require('util')
+  , myUtils = require('./util')
   , Promise = require('promise')
   , readFile = Promise.denodeify(fs.readFile)
   , pkgPath
@@ -21,6 +22,9 @@ module.exports = exports = {}
 exports.main = function (entry, opts, callback) {
   var w = watchifies[entry]
   pkgPath = opts.pkgPath
+
+  pkgPath = myUtils.findPackage( pkgPath )
+
   if(!w) w = createWatchify(entry,opts)
   if(!w._compiling) {
     callback(null,watchifies)
@@ -128,6 +132,10 @@ Inform.prototype._flush = function (err) {
       + " "
       + "(" + parsed.sha + ")"
   }
+
+
+  console.log(parsed)
+
   vConfig.parse(parsed.vigour
     , parsed
     , [{ 'repository.branch': 'branches' }])
@@ -142,8 +150,14 @@ exports.bundle = function (entry, opts, cb) {
   if (!opts.branch) {
     opts.branch = '_inherit'
   }
+
+
+
   pkgPath = path.join(basedir, 'package.json')
-  
+
+  //verifyPath
+  pkgPath = myUtils.findPackage( pkgPath )
+
   if(opts){
     bundleOptions.debug = opts.debug
     // bundleOptions.ignoreMissing = opts.ignoreMissing !== void 0 
@@ -274,8 +288,6 @@ function compile(){
       .on('error', function (err) {
         log.info("Caught", err)
       })
-
-    
 
     var bundle = _this.bundle(function (err,src) {
       if(err) {
