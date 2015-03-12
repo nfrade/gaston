@@ -88,7 +88,9 @@ function handleDeps(file){
   var w = this
   var todo
   var end
-  if( isCSS(file) ){
+  if( file.indexOf('node_modules/mocha') !== -1 ){
+    todo = function(){ this.push(null) }
+  }else if( isCSS(file) ){
     todo = function(){ this.push(null) }
     if(!w._cssprocessing) w._cssprocessing = 1
     else w._cssprocessing++
