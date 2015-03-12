@@ -128,7 +128,7 @@ Inform.prototype._flush = function (err) {
 
   try {
     parsed = JSON.parse(this.fullPkg)
-     parsed.sha = parsed.version
+    parsed.sha = parsed.version
     parsed.repository.branch = this.branch
     if (parsed.repository.branch !== "staging") {
       parsed.version = hNow()
@@ -140,7 +140,8 @@ Inform.prototype._flush = function (err) {
       , [{ 'repository.branch': 'branches' }])
     this.push("window.package=" + JSON.stringify(parsed) + ";", 'utf8')
   } catch(e) {
-    parsed = log.error('cannot parse json file!', this.fullPkg)
+    log.error('cannot parse json file!')
+    console.log(this.fullPkg)
   }
 
 }
