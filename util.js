@@ -34,15 +34,17 @@ var tries = 0
 
 exports.findPackage = function( pck, orig, start ) {
 
-	log.info( pck )
+	log.info( 'search for package.json', pck )
 
   if( !orig ) {
+
   	var arr = pck.split('/')
   	arr.pop()
   	orig = arr.join('/')
   }
 
   if( !start ) {
+  	tries = 0
   	start = path.basename( pck )
   }
 

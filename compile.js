@@ -132,6 +132,10 @@ Inform.prototype._flush = function (err) {
       + " "
       + "(" + parsed.sha + ")"
   }
+
+
+  console.log(parsed)
+
   vConfig.parse(parsed.vigour
     , parsed
     , [{ 'repository.branch': 'branches' }])
@@ -146,6 +150,9 @@ exports.bundle = function (entry, opts, cb) {
   if (!opts.branch) {
     opts.branch = '_inherit'
   }
+
+
+
   pkgPath = path.join(basedir, 'package.json')
 
   //verifyPath
