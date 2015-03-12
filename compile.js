@@ -137,9 +137,11 @@ Inform.prototype._flush = function (err) {
         + " "
         + "(" + parsed.sha + ")"
     }
+    if( parsed.vigour ) {
     vConfig.parse(parsed.vigour
       , parsed
       , [{ 'repository.branch': 'branches' }])
+    }
     this.push("window.package=" + JSON.stringify(parsed) + ";", 'utf8')
   } catch(e) {
     log.error('cannot parse json file!')
