@@ -302,9 +302,9 @@ function compile(){
 
     var bundle = _this.bundle(function (err,src) {
 
-      npm.error('what this???', src)
+      console.error('what this???', src)
       if(err) {
-        log.error("ount 5", err)
+        log.error("count 5", err)
         _this._callback(err)
       }
     })
