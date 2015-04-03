@@ -58,7 +58,8 @@ function createWatchify(entry,opts){
   var bundleOptions = {
       cache: {}, packageCache: {}, fullPaths: true
   }
-  
+
+
   if(opts){
     bundleOptions.debug = opts.debug
     // bundleOptions.ignoreMissing = opts.ignoreMissing !== void 0 
@@ -68,6 +69,9 @@ function createWatchify(entry,opts){
   }
 
   var b = browserify(entry,bundleOptions)
+
+  b.ignore('vigour-hub')
+
   var w = watchifies[entry] = watchify(b)
   var transformOptions = {global:opts && opts.global || true}
 
@@ -89,10 +93,11 @@ function handleDeps(file){
   var w = this
   var todo
   var end
+
   if( file.indexOf('node_modules/chai') !== -1 
    || file.indexOf('node_modules/mocha') !== -1 
-   || file.indexOf('node_modules/browserify') !== -1 
-   || file.indexOf('node_modules/trough') !== -1 ) 
+   || file.indexOf('vigour-hub') !== -1
+ ) 
   {
     todo = function(){ this.push(null) }
   }else if( isCSS(file) ){
@@ -157,9 +162,10 @@ Inform.prototype._flush = function (err) {
 
 exports.bundle = function (entry, opts, cb) {
   var bundleOptions = {
-        cache: {}, packageCache: {}, fullPaths: true
+        cache: {}, packageCache: {}, fullPaths: true, ignoreMissing:true
     }
     , basedir = path.dirname(entry)
+ 
   if (!opts.branch) {
     opts.branch = '_inherit'
   }
