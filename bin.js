@@ -6,7 +6,7 @@ var gaston = require('./gaston')
   , entry
 program
   .version('0.0.1')
-  .option('-p, --port [nb], -port:[nb]', 'Port number on which to run the server [8080]', '8080')
+  .option('-p, --port [nb]', 'Port number on which to run the server [8080]', '8080')
   .option('-d, --debug', 'Debug')
   .option('-c, --close', 'Close')
   .option('-b, --build', 'Build')
