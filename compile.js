@@ -97,7 +97,12 @@ function handleDeps(file){
   if( file.indexOf('node_modules/chai') !== -1 
    || file.indexOf('node_modules/mocha') !== -1 
    || file.indexOf('vigour-hub') !== -1
- ) 
+   || ( process.cwd().indexOf('/vigour-js') !== -1 && 
+        ( file.indexOf('vigour-dev-tools/lib/build/index') !== -1
+    // || file.indexOf('any/other/path/that/breaks') !== -1
+        )
+      )
+    ) 
   {
     todo = function(){ this.push(null) }
   }else if( isCSS(file) ){
