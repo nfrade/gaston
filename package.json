@@ -1,0 +1,36 @@
+{
+  "name": "gaston",
+  "version": "0.5.0",
+  "preferGlobal": true,
+  "description": "buildtool for vigour-io",
+  "main": "gaston.js",
+  "author": {
+    "name": "Vigour.io",
+    "email": "dev@vigour.io"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vigour-io/gaston.git"
+  },
+  "bin": {
+    "gaston": "bin/gaston.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "browserify": "^9.0.8",
+    "express": "^4.12.3",
+    "graceful-fs": "^3.0.6",
+    "less": "^2.5.0",
+    "npmlog": "^1.2.0",
+    "serve-index": "^1.6.3",
+    "serve-static": "^1.9.2"
+  }, 
+  "bugs": {
+    "url": "https://github.com/vigour-io/gaston/issues"
+  },
+  "homepage": "https://github.com/vigour-io/gaston",
+  "engine": "node 0.12.x"
+}
