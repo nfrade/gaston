@@ -2,7 +2,7 @@
 (check the README in the master branch for feature list and roadmap)
 
 ##### Installing
-```
+```shell
 $ git clone git@github.com:vigour-io/gaston.git
 $ cd gaston
 $ git checkout new-gaston
@@ -11,7 +11,7 @@ $ npm install
 $ npm install -g .
 ```
 ##### Usage
-```
+```shell
 # go to any folder, for example:
 $ cd development/vigour-js
 # run it
