@@ -25,10 +25,11 @@
     "graceful-fs": "^3.0.6",
     "less": "^2.5.0",
     "npmlog": "^1.2.0",
+    "promise": "6.x.x",
     "serve-index": "^1.6.3",
     "serve-static": "^1.9.2",
-    "promise":"6.x.x"
-  }, 
+    "through2": "^0.6.5"
+  },
   "bugs": {
     "url": "https://github.com/vigour-io/gaston/issues"
   },
