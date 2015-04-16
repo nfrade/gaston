@@ -26,7 +26,8 @@
     "less": "^2.5.0",
     "npmlog": "^1.2.0",
     "serve-index": "^1.6.3",
-    "serve-static": "^1.9.2"
+    "serve-static": "^1.9.2",
+    "promise":"6.x.x"
   }, 
   "bugs": {
     "url": "https://github.com/vigour-io/gaston/issues"
