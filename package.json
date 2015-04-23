@@ -30,7 +30,8 @@
     "promise": "6.x.x",
     "serve-index": "^1.6.3",
     "serve-static": "^1.9.2",
-    "through2": "^0.6.5"
+    "through2": "^0.6.5",
+    "watchify": "^3.1.2"
   },
   "bugs": {
     "url": "https://github.com/vigour-io/gaston/issues"
