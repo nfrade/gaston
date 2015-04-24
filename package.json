@@ -31,7 +31,8 @@
     "serve-index": "^1.6.3",
     "serve-static": "^1.9.2",
     "through2": "^0.6.5",
-    "watchify": "^3.1.2"
+    "watchify": "^3.1.2",
+    "vigour-js": "git+ssh://git@github.com:vigour-io/vigour-js.git#flux"
   },
   "bugs": {
     "url": "https://github.com/vigour-io/gaston/issues"
