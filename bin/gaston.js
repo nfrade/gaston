@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 
-var log = require('npmlog')
-  , gaston = require('../lib/');
+var program = require('commander')
 
-gaston.start( {}, function(){ 
-  log.info('gaston started successfully'); 
-} );
+program
+  .version('0.5.0')
+  .command('dev', 'run development environment')
+  .command('build', 'build target')
+  .parse(process.argv);
+
+
+
+
