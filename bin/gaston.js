@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-var commander = require('commander');
+var program = require('commander');
 
 if (process.argv.indexOf('dev') === -1 && process.argv.indexOf('build') === -1) {
   process.argv.push('dev');
 }
 
-commander
+program
   .version('0.5.0')
   .command('dev', 'run development environment')
   .command('build', 'build target')
@@ -27,10 +27,13 @@ if( ~process.argv.indexOf('dev') ){
       args.push('build');
       args.push('-k');
 
-      commander.parse(args);
+      program.parse(args);
 
-    } else {
-      console.log('command not supported: ' + command);
     }
   });
 }
+
+process.on('SIGINT', function() {  
+  console.log('Gaston, out!');
+  process.exit(0);
+});

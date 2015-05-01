@@ -11,8 +11,6 @@ program
   .option( '-k, --keepalive [keepalive]', 'keep process running')
   .parse(process.argv);
 
-console.error('do it!',program.keepalive)
-
 var options = {
   port: program.port || 8080,
   path: program.path || process.cwd(),
