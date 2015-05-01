@@ -12,5 +12,3 @@ var options = {
 }
 
 gaston.dev(options);
-
-
