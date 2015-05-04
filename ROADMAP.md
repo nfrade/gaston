@@ -1,6 +1,6 @@
 ##Gaston, the new vigour-dev-tools
 
-####package.json
+####package
 * git info parsing
 
 ####bundler
