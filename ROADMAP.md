@@ -17,6 +17,7 @@
 ####hub
 * start
 * stop
+* dev ( defaults to true )
 * view ( sets and retrieves all data )
 * scraper ( sets the scraper to use as a data source )
 * port (optional)
@@ -45,7 +46,7 @@ Later we can add extra test options as well in the native dir
 html field for browser sepcifies the html where the folders has to go to
 there are differnt types allready specified `common, browser, node`
 
-defaults
+`defaults`
 ```javascript
 { common: { 
    dir: 'test/common',
