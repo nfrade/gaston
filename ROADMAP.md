@@ -1,7 +1,7 @@
 ##Gaston, the new vigour-dev-tools
 
-####package parser
-* parse pckg 
+####package.json
+* git info parsing
 
 ####bundler
 * less
