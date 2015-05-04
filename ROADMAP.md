@@ -182,11 +182,25 @@ client marcus
 ```javascript
 gaston.socket.id = 'marcus'
 
+//works by stringifiying the function and sending it
 gaston.socket.exec('jim', function() {
   app.rotate.val = 20  
 })
 
+//supports reg exp
+gaston.socket.exec(/jim$/i, function() {
+  app.rotate.val = 20  
+})
+
+//supports functions
+//works by executing the function client side 
+gaston.socket.exec(function() { return true }, function() {
+  app.rotate.val = 20  
+})
+
+//arrays are supported
 gaston.socket.exec([ 'self', 'jim' ], function() {
+  gaston.log('omg totatly executed')
   app.rotate.val = 20  
 })
 
