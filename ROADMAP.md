@@ -54,7 +54,7 @@
 ####start
 * path (optional uses CWD as default)
 * by default starts a hub, bundler, watcher, socket-server
-
+* configurable and callbale from node, usefull as entry point for `test.js` for npm test 
 
 ---
 ##For later
