@@ -27,6 +27,22 @@
 ####test
 * phantomjs
 * mocha
+* run
+  * create combined html (all tests)
+  * enviroment and test options
+
+**run**
+```
+tools.test.run({
+	node: {
+		dir:'test/common'
+	}
+, browser: {
+		dir:'test/common'
+	, html: 'test/test.html'
+	}
+})
+```
 
 ---
 ####web-server
