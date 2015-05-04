@@ -210,9 +210,27 @@ gaston.socket.exec([ 'self', 'jim' ], function() {
   app.rotate.val = 20  
 })
 
+//execs everywhere
+gaston.socket.exec(function() {
+
+})
+
 ```
 use something like node-eval to do stuff on node
+-
+**listen on events**
 
+listen on events
+```javascript 
+//listens to all error events
+gaston.socket.on('error', function(){}) 
+
+//listens to error events by jim
+gaston.socket.on('error', 'jim', function(){})
+
+//arrays are supported
+gaston.socket.on('error', [ 'jim', 'self' ], function(){})
+```
 
 ---
 ##log
