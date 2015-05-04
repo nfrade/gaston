@@ -36,15 +36,31 @@
 Specefies different test environments and entry points
 Later we can add extra test options as well in the native dir
 html field for browser sepcifies the html where the folders has to go to
+there are differnt types allready specified `common, browser, node`
 
-common is tested in both browser and node
+defaults
+```
+{ common: { 
+   dir: 'test/common',
+   type:[ 'node', 'browser' ],
+   html: 'test/test.html' 
+ }, 
+ browser: { 
+   dir: 'test/browser',
+	  html: 'test/test.html' 
+	}, 
+	node: { dir: 'test/node' }
+}
+```
+
+`both` is run browser and node
 ```
 tools.test.run({
   node: {
-    dir:'test/common'
+    dir:'test/both'
   },
   browser: {
-    dir:'test/common',
+    dir:'test/both',
     html: 'test/test.html'
   }
 })
