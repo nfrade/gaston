@@ -96,6 +96,7 @@ tools.test.run({
 ---
 ####cli
 * connect all other apis to cli 
+* ignores promises callbacks
 
 ---
 ####socket-server
