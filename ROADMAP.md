@@ -2,6 +2,11 @@
 all api function are promises 
 
 ---
+##sourcemaps
+* find a good way to handle sourcemaps especialy challenging for mocha tests
+
+---
+
 ##package
 * git info parsing
 
@@ -14,6 +19,7 @@ all api function are promises
 * bump version
 * compresses css 
 * uglify js
+* accepts native platform later as well (extended in native)
 
 ---
 ##hub
@@ -137,8 +143,32 @@ tools.test.run({
 * connect all other apis to cli 
 * ignores promises callbacks
 
+##log
+* special way of logging hooks into the socket server to do multi-client logging
+
+```javascript
+gaston.log('lets logs something')
+```
+
+```javascript
+//only logs self
+gaston.log.clients = 'self'
+
+//only log self and 'jim'
+gaston.log.clients = [ 'self', 'jim' ]
+
+//also accepts `reg exp`
+gaston.log.clients = /$jim/i
+
+//or a `function`
+gaston.log.clients = function() {
+
+}
+//sets my client id in the output to name
+gaston.log.id = 'jim'
+
 ---
-####socket-server
+###socket-server
 * port (optional, has to be handled client side as well) 
 * can be used in node and the browser
 * connect all other apis (exposes apis as promises)
@@ -146,6 +176,18 @@ tools.test.run({
 * reset - restarts all connected clients
   * restarts node clients
   * reloads browser clients
+-
+
+-
+**acts as a browser api shim**
+
+enables you to do stuff like this in the browser
+```javascript
+ gaston.build().done(function() {
+ 
+ })
+ gaston.hub.start()
+```
 
 ---
 ####start
