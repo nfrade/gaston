@@ -7,7 +7,7 @@
 
 **vocabulary**
 
-`'self'` is used to indicate that your talking about your self in the context of multiple clients
+`self` is used to indicate that your talking about your self in the context of multiple clients
 
 ---
 ##sourcemaps
