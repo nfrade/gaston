@@ -66,6 +66,21 @@ Now run is only defined as a node api, this has to change just when it runs in a
 
 -
 
+**tests should be runnable by node in travis ci
+
+example .yml
+```
+language: node_js
+node_js:
+  - "0.12"
+  - "iojs-v1.0.4" 
+```
+this automaticly spins up node on the machine (we can also try io-js) or multiple versions
+
+then it runs `npm test`
+
+-
+
 **types** 
 
 Specify test-types simple by adding them to the types field
