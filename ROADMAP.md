@@ -1,5 +1,7 @@
 ##Gaston, the new vigour-dev-tools
+all api function are internaly promises 
 
+---
 ####package
 * git info parsing
 
