@@ -1,7 +1,7 @@
 #Gaston, the new vigour-dev-tools
 * all api functions are promises 
 * most things like ports , defaults are configurable in the `package.json`
-* has a socketserver that is used as a layer to expose node apis in the browser
+* has a socketserver that is used as a layer to expose node capabilities in a browser or on a different device
 
 ---
 ##sourcemaps
