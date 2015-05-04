@@ -32,8 +32,12 @@
   * enviroment and test options
 
 **run**
+
 Specefies different test environments and entry points
 Later we can add extra test options as well in the native dir
+html field for browser sepcifies the html where the folders has to go to
+
+common is tested in both browser and node
 ```
 tools.test.run({
   node: {
@@ -42,6 +46,14 @@ tools.test.run({
   browser: {
     dir:'test/common',
     html: 'test/test.html'
+  }
+})
+```
+also accepts `arrays`
+```
+tools.test.run({
+  node: {
+    dir:[ 'test/common', 'test/node' ]
   }
 })
 ```
