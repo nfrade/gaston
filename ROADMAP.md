@@ -137,6 +137,9 @@ tools.test.run({
   }
 })
 ```
+-
+**todo**
+change name of dir to path also add option to run on a single file or folder
 
 ---
 ##web-server
