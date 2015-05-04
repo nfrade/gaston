@@ -10,7 +10,7 @@
 ---
 ####build
 * bump version
-* compresses css
+* compresses css 
 * uglify js
 
 ---
