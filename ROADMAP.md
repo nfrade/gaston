@@ -10,6 +10,8 @@
 ---
 ####build
 * bump version
+* compresses css
+* uglify js
 
 ---
 ####hub
