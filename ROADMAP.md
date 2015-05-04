@@ -22,6 +22,13 @@
 * port (optional)
 * get ( get data by path e.g. mtvData.NL.en.shows.0 )
 
+```javascript
+tools.hub.start({port:10008})
+  .done(function() { 
+     //callback 
+   })
+```
+
 ---
 
 ####test
@@ -39,7 +46,7 @@ html field for browser sepcifies the html where the folders has to go to
 there are differnt types allready specified `common, browser, node`
 
 defaults
-```
+```javascript
 { common: { 
    dir: 'test/common',
    type:[ 'node', 'browser' ],
@@ -54,7 +61,7 @@ defaults
 ```
 
 `both` is run browser and node
-```
+```javascript
 tools.test.run({
   node: {
     dir:'test/both'
@@ -65,8 +72,9 @@ tools.test.run({
   }
 })
 ```
+
 also accepts `arrays`
-```
+```javascript
 tools.test.run({
   node: {
     dir:[ 'test/common', 'test/node' ]
