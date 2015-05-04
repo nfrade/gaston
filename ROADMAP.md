@@ -15,12 +15,15 @@
 
 ---
 ####hub
-* api
+* start
+* stop
+* view ( sets and retrieves all data )
+* scraper ( sets the scraper to use as a data source )
+* port
+* get ( get data by path e.g. mtvData.NL.en.shows.0 )
 
 ---
-####native
 
----
 ####test
 * phantomjs
 * mocha
@@ -45,6 +48,7 @@
 
 ---
 ##For later
+####native
 ####swarm
 ####packer-server
 ####img-server
