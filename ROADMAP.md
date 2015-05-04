@@ -323,7 +323,9 @@ gaston.perf(function() {
 
 })
 ```
-outputs to the gaston.log
+default output to `gaston.log()` event type is 'performance'
+
+debug modules for indivudual things can be excluded by using build ignoreDeps 
 
 * js debugging tools server and client
 
