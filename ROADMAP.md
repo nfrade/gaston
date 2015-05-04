@@ -146,7 +146,7 @@ tools.test.run({
 * ignores promises done callbacks
 
 ---
-###socket-server
+##socket-server
 * port (optional, has to be handled client side as well) 
 * can be used in node and the browser
 * connect all other apis (exposes apis as promises)
@@ -155,8 +155,8 @@ tools.test.run({
   * restarts node clients
   * reloads browser clients
 
--
-**log**
+---
+##log
 * special way of logging hooks into the socket server to do multi-client logging
 
 ```javascript
@@ -193,7 +193,7 @@ enables you to do stuff like this in the browser
 ```
 
 ---
-####start
+##start
 * path (optional uses CWD as default)
 * by default starts a hub, bundler, watcher, socket-server
 * configurable and callbale from node, usefull as entry point for `test.js` for npm test 
