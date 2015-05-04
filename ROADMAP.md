@@ -177,7 +177,6 @@ enables you to do stuff like this in the browser
 ```
 -
 **cross-client js exec**
-
 eval is evil but this enables you to do
 
 client jim
@@ -218,9 +217,7 @@ gaston.socket.exec(function() {})
 use something like node-eval to do stuff on node
 
 -
-**on and emit**
-
-basic on and emit implementation 
+**on**
 
 ```javascript
 //listens on all error events
@@ -234,15 +231,11 @@ gaston.socket.on('error','jim',function(){})
 //supports arrays
 gaston.socket.on('error, ['jim', 'self' ], function(){})
 
+//emit
+gaston.socket.id = 'myId'
+gaston.socket.emit('error, 'my error')
+
 ```
-
-emit
-```javascript
-gaston.socket.id = 'jim'
-//event name and value 
-gaston.socket.emit('blabla', 23123123)
-``
-
 
 ---
 ##log
