@@ -34,6 +34,7 @@
 
 ---
 ####socket-server
+* can be used in node and the browser
 * connect all other apis (exposes apis as promises)
 * send and facilitates messages from and to clients for tests and debugging
  
