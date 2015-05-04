@@ -313,6 +313,20 @@ jim: 'hey what up'  file: blurgh.js  line: 230:2
 * configurable and callbale from node, usefull as entry point for `test.js` for npm test 
 * when used in the browser will just try to connect to servers on certain ports etc 
   when you dont use start in a browser file will just asume defaults or `package.json` settings
+
+##Debug
+
+Moving the debug module from [vjs](https://github.com/vigour-io/vigour-js/tree/dev/util/debug) to gaston, or at least most of it e.g.
+
+```
+gaston.perf(function() {
+
+})
+```
+outputs to the gaston.log
+
+* js debugging tools server and client
+
   
 ---
 ##For later
@@ -320,3 +334,5 @@ jim: 'hey what up'  file: blurgh.js  line: 230:2
 ####swarm
 ####packer-server
 ####img-server
+
+
