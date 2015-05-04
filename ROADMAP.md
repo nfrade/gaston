@@ -34,7 +34,7 @@
 
 ---
 ####socket-server
-* connect all other apis (exposes apis as pormises)
+* connect all other apis (exposes apis as promises)
 * send and facilitates messages from and to clients for tests and debugging
  
 ---
