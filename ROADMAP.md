@@ -66,7 +66,9 @@ Now run is only defined as a node api, this has to change just when it runs in a
 
 -
 
-**tests should be runnable by node in travis ci
+**travis-ci**
+
+tests should be runnable by node on [travis ci](https://travis-ci.org/)
 
 example .yml
 ```
