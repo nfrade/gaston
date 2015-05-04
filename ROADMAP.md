@@ -1,5 +1,6 @@
 #Gaston, the new vigour-dev-tools
-all api function are promises 
+* all api functions are promises 
+* most things like ports , defaults are configurable in the package.json
 
 ---
 ##sourcemaps
@@ -194,6 +195,8 @@ enables you to do stuff like this in the browser
 * path (optional uses CWD as default)
 * by default starts a hub, bundler, watcher, socket-server
 * configurable and callbale from node, usefull as entry point for `test.js` for npm test 
+* when used in the browser will just try to connect to servers on certain ports etc 
+  when you dont use start in a browser file will just asume defaults or `package.json` settings
 
 ---
 ##For later
