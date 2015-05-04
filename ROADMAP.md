@@ -67,7 +67,7 @@ when no parameters are passed `defaults`
 ```
 
 -
-in this example `both` is run browser and node
+in this example `both` is run in browser and node
 ```javascript
 tools.test.run({
   node: {
