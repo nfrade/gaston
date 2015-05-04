@@ -314,7 +314,7 @@ jim: 'hey what up'  file: blurgh.js  line: 230:2
 * when used in the browser will just try to connect to servers on certain ports etc 
   when you dont use start in a browser file will just asume defaults or `package.json` settings
 
-##Debug
+##debug
 
 Moving the debug module from [vjs](https://github.com/vigour-io/vigour-js/tree/dev/util/debug) to gaston, or at least most of it e.g.
 
