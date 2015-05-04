@@ -11,7 +11,7 @@
 
 ---
 ##sourcemaps
-* find a good way to handle sourcemaps especialy challenging for mocha tests
+* find a good way to handle sourcemaps especialy challenging for mocha tests and cross client logging
 
 ---
 
