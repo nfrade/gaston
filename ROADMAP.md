@@ -48,7 +48,7 @@ Later we can add extra test options as well in the native dir
 html field for browser sepcifies the html where the folders has to go to
 there are differnt types allready specified `common, browser, node`
 
-now run is only defined as a node api, this has to change just when it runs in a node environment it should do all the fancy cli stuff
+Now run is only defined as a node api, this has to change just when it runs in a node environment it should do all the fancy cli stuff
 
 `defaults`
 ```javascript
