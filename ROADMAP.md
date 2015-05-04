@@ -32,15 +32,17 @@
   * enviroment and test options
 
 **run**
+Specefies different test environments and entry points
+Later we can add extra test options as well in the native dir
 ```
 tools.test.run({
-	node: {
-		dir:'test/common'
-	}
-, browser: {
-		dir:'test/common'
-	, html: 'test/test.html'
-	}
+  node: {
+    dir:'test/common'
+  },
+  browser: {
+    dir:'test/common',
+    html: 'test/test.html'
+  }
 })
 ```
 
