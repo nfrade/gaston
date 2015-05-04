@@ -143,9 +143,20 @@ tools.test.run({
 ---
 ##cli
 * connect all other apis to cli 
-* ignores promises callbacks
+* ignores promises done callbacks
 
-##log
+---
+###socket-server
+* port (optional, has to be handled client side as well) 
+* can be used in node and the browser
+* connect all other apis (exposes apis as promises)
+* send and facilitates messages from and to clients for tests and debugging
+* reset - restarts all connected clients
+  * restarts node clients
+  * reloads browser clients
+
+-
+**log**
 * special way of logging hooks into the socket server to do multi-client logging
 
 ```javascript
@@ -169,16 +180,6 @@ gaston.log.clients = function() {
 //sets my client id in the output to name
 gaston.log.id = 'jim'
 ```
-
----
-###socket-server
-* port (optional, has to be handled client side as well) 
-* can be used in node and the browser
-* connect all other apis (exposes apis as promises)
-* send and facilitates messages from and to clients for tests and debugging
-* reset - restarts all connected clients
-  * restarts node clients
-  * reloads browser clients
 
 -
 **acts as a browser api shim**
