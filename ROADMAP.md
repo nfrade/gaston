@@ -1,22 +1,22 @@
-##Gaston, the new vigour-dev-tools
+#Gaston, the new vigour-dev-tools
 all api function are promises 
 
 ---
-####package
+##package
 * git info parsing
 
-####bundler
+##bundler
 * less
 * ignore 
 
 ---
-####build
+##build
 * bump version
 * compresses css 
 * uglify js
 
 ---
-####hub
+##hub
 * start
 * stop
 * dev ( defaults to true )
@@ -34,7 +34,7 @@ tools.hub.start({port:10008})
 
 ---
 
-####test
+##test
 * phantomjs
 * mocha
 * run
@@ -50,7 +50,8 @@ there are differnt types allready specified `common, browser, node`
 
 Now run is only defined as a node api, this has to change just when it runs in a node environment it should do all the fancy cli stuff
 
-`defaults`
+-
+when no parameters are passed `defaults`
 ```javascript
 { common: { 
    dir: 'test/common',
@@ -65,6 +66,7 @@ Now run is only defined as a node api, this has to change just when it runs in a
 }
 ```
 
+-
 `both` is run browser and node
 ```javascript
 tools.test.run({
@@ -78,6 +80,7 @@ tools.test.run({
 })
 ```
 
+-
 also accepts `arrays`
 ```javascript
 tools.test.run({
@@ -88,7 +91,7 @@ tools.test.run({
 ```
 
 ---
-####web-server
+##web-server
 * watcher
   * bundler
 * port (optional)
@@ -96,7 +99,7 @@ tools.test.run({
 * stop
 
 ---
-####cli
+##cli
 * connect all other apis to cli 
 * ignores promises callbacks
 
