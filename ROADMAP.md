@@ -196,7 +196,7 @@ use something like node-eval to do stuff on node
 
 ---
 ##log
-Special way of logging hooks into the socket server if avaulable to do multi-client logging
+Special way of logging hooks into the socket server if available to do multi-client logging
 
 ```javascript
 gaston.log('lets logs something')
