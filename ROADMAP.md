@@ -168,7 +168,7 @@ enables you to do stuff like this in the browser
 
 ---
 ##log
-* special way of logging hooks into the socket server if avaulable to do multi-client logging
+Special way of logging hooks into the socket server if avaulable to do multi-client logging
 
 ```javascript
 gaston.log('lets logs something')
@@ -192,13 +192,20 @@ gaston.log.clients = function() {
 gaston.log.id = 'jim'
 ```
 -
-outputs logs like this, can also use sourcemap module to show lineinfo
+Outputs logs like this, can also use sourcemap module to show lineinfo
 ```
 jim: 'hey what up'  file: blurgh.js  line: 230:2
 ```
 
 -
-brings
+**cross-client js eval**
+eval is evil but this enables you to do
+```javascript
+log.send('jim', function() {
+  app.rotate.val = 20  
+})
+```
+use something like node-eval to do stuff on node
 
 ---
 ##start
