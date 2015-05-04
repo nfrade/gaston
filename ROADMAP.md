@@ -175,7 +175,7 @@ enables you to do stuff like this in the browser
  })
  gaston.hub.start()
 ```
-
+-
 **cross-client js exec**
 eval is evil but this enables you to do
 
@@ -210,26 +210,26 @@ gaston.socket.exec([ 'self', 'jim' ], function() {
   app.rotate.val = 20  
 })
 
-//execs everywhere
-gaston.socket.exec(function() {
-
-})
+//execs functions on everyclient
+gaston.socket.exec(function() {})
 
 ```
 use something like node-eval to do stuff on node
+
 -
-**listen on events**
+**on**
+```javascript
+//listens on all error events
+gaston.socket.on('error', function(e) {
+ //e has a client and id (client id) field
+})
 
-listen on events
-```javascript 
-//listens to all error events
-gaston.socket.on('error', function(){}) 
+//listens on error events by jim
+gaston.socket.on('error','jim',function(){})
 
-//listens to error events by jim
-gaston.socket.on('error', 'jim', function(){})
+//supports arrays
+gaston.socket.on('error, ['jim', 'self' ], function(){})
 
-//arrays are supported
-gaston.socket.on('error', [ 'jim', 'self' ], function(){})
 ```
 
 ---
@@ -268,7 +268,6 @@ jim: 'hey what up'  file: blurgh.js  line: 230:2
 * find out how to do stack traces, the info is available in errors that you log so must be possible to use that, `error.stack`)
 * handle sourcemaps manualy (may be nessecary for mocha anyways)
 
-
 ---
 ##start
 * path (optional uses CWD as default)
@@ -276,7 +275,7 @@ jim: 'hey what up'  file: blurgh.js  line: 230:2
 * configurable and callbale from node, usefull as entry point for `test.js` for npm test 
 * when used in the browser will just try to connect to servers on certain ports etc 
   when you dont use start in a browser file will just asume defaults or `package.json` settings
-
+  
 ---
 ##For later
 ####native
