@@ -154,10 +154,21 @@ tools.test.run({
 * reset - restarts all connected clients
   * restarts node clients
   * reloads browser clients
+  
+-
+**acts as a browser api shim**
+
+enables you to do stuff like this in the browser
+```javascript
+ gaston.build().done(function() {
+ 
+ })
+ gaston.hub.start()
+```
 
 ---
 ##log
-* special way of logging hooks into the socket server to do multi-client logging
+* special way of logging hooks into the socket server if avaulable to do multi-client logging
 
 ```javascript
 gaston.log('lets logs something')
@@ -180,17 +191,14 @@ gaston.log.clients = function() {
 //sets my client id in the output to name
 gaston.log.id = 'jim'
 ```
+-
+outputs logs like this, can also use sourcemap module to show lineinfo
+```
+jim: 'hey what up'  file: blurgh.js  line: 230:2
+```
 
 -
-**acts as a browser api shim**
-
-enables you to do stuff like this in the browser
-```javascript
- gaston.build().done(function() {
- 
- })
- gaston.hub.start()
-```
+brings
 
 ---
 ##start
