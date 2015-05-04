@@ -2,6 +2,8 @@
 * all api functions are promises 
 * most things like ports , defaults are configurable in the `package.json`
 * has a socketserver that is used as a layer to expose node capabilities in a browser or on a different device
+* gaston is always exposed as a global if required in js files
+* try to handle most diffrences in files between browser/node using browserifies `{ browser: }` pckg option
 
 **vocabulary**
 
