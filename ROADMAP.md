@@ -245,6 +245,12 @@ Outputs logs like this, can also use sourcemap module to show lineinfo
 jim: 'hey what up'  file: blurgh.js  line: 230:2
 ```
 
+-
+**challenges**
+* find out how to do stack traces, the info is available in errors that you log so must be possible to use that, `error.stack`)
+* handle sourcemaps manualy (may be nessecary for mocha anyways)
+
+
 ---
 ##start
 * path (optional uses CWD as default)
