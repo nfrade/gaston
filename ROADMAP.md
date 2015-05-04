@@ -1,5 +1,5 @@
 ##Gaston, the new vigour-dev-tools
-all api function are internaly promises 
+all api function are promises 
 
 ---
 ####package
