@@ -182,6 +182,7 @@ change name of `dir` to `path` add option to run on a single file or folder (one
 * reset - restarts all connected clients
   * restarts node clients
   * reloads browser clients
+*connect - replaces your local gaston with the remote one
   
 -
 **acts as a browser api shim**
@@ -193,6 +194,20 @@ enables you to do stuff like this in the browser
  })
  gaston.hub.start()
 ```
+-
+**connect**
+
+```javascript
+  gaston.socket.connect( 'localhost:10005' )
+  //could also become gaston.connect()
+```
+
+to revert
+```javascript
+  gaston.socket.connect( 'self' )
+  //swtich back to your local version (gets defaults , first tries package.json then normal defaults)
+```
+
 -
 **cross-client js exec**
 eval is evil but this enables you to do
