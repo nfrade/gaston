@@ -25,6 +25,7 @@
 ---
 ##build
 * bump version
+* remove console.logs with transforms
 * compresses css 
 * uglify js
 * accepts native platform later as well (extended in native)
