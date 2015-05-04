@@ -166,6 +166,30 @@ enables you to do stuff like this in the browser
  gaston.hub.start()
 ```
 
+**cross-client js exec**
+eval is evil but this enables you to do
+
+client jim
+```javascript
+gaston.socket.id = 'jim'
+```
+
+client marcus
+```javascript
+gaston.socket.id = 'marcus'
+
+gaston.socket.exec('jim', function() {
+  app.rotate.val = 20  
+})
+
+gaston.socket.exec([ 'self', 'jim' ], function() {
+  app.rotate.val = 20  
+})
+
+```
+use something like node-eval to do stuff on node
+
+
 ---
 ##log
 Special way of logging hooks into the socket server if avaulable to do multi-client logging
@@ -188,7 +212,7 @@ gaston.log.clients = /$jim/i
 gaston.log.clients = function() {
 
 }
-//sets my client id in the output to name
+//sets my client id in the output to name, defaults to gaston.socket.id
 gaston.log.id = 'jim'
 ```
 -
@@ -196,16 +220,6 @@ Outputs logs like this, can also use sourcemap module to show lineinfo
 ```
 jim: 'hey what up'  file: blurgh.js  line: 230:2
 ```
-
--
-**cross-client js eval**
-eval is evil but this enables you to do
-```javascript
-log.send('jim', function() {
-  app.rotate.val = 20  
-})
-```
-use something like node-eval to do stuff on node
 
 ---
 ##start
