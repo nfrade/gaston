@@ -168,6 +168,7 @@ gaston.log.clients = function() {
 }
 //sets my client id in the output to name
 gaston.log.id = 'jim'
+```
 
 ---
 ###socket-server
@@ -178,7 +179,6 @@ gaston.log.id = 'jim'
 * reset - restarts all connected clients
   * restarts node clients
   * reloads browser clients
--
 
 -
 **acts as a browser api shim**
