@@ -24,18 +24,19 @@
 * mocha
 
 ---
-####cli
-
-####socket-server
-* doubles as a cli shim (exposes apis as pormises)
-* send and facilitates messages from and to clients for tests and debugging
-* 
-
----
 ####web-server
 * watcher
   * bundler
 
+---
+####cli
+* connect all other apis to cli 
+
+---
+####socket-server
+* connect all other apis (exposes apis as pormises)
+* send and facilitates messages from and to clients for tests and debugging
+ 
 ---
 ##For later
 ####swarm
