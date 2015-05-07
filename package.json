@@ -46,5 +46,8 @@
     "url": "https://github.com/vigour-io/gaston/issues"
   },
   "homepage": "https://github.com/vigour-io/gaston",
-  "engine": "node 0.12.x"
+  "engine": "node 0.12.x",
+  "devDependencies": {
+    "aliasify": "^1.7.2"
+  }
 }
