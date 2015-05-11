@@ -1,0 +1,10 @@
+----------------------------------------------------
+gaston dev command line:
+
+Commands:
+  
+  help - displays help information
+  build - builds the current project
+  launch - launches a new browser window in the root
+
+----------------------------------------------------
