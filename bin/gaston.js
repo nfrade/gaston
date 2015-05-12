@@ -8,6 +8,7 @@ if (process.argv.indexOf('dev') === -1 && process.argv.indexOf('build') === -1) 
 
 program
   .version(pkg.version)
+  .command('init', 'bootstrap a project')
   .command('dev', 'run development environment')
   .command('build', 'build target')
   .parse(process.argv);
