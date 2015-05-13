@@ -1,30 +1,82 @@
 var log = require('npmlog')
   , npm = require('npm')
   , fs = require('graceful-fs')
+  , path = require('path')
+  , prompt = require('prompt')
   , denodeify = require('denodeify')
-  , npmLoad = denodeify(npm.load)
-  , npmInit = denodeify(npm.init)
+  , npmLoad = denodeify( npm.load )
+  , npmInit = denodeify( npm.init )
   , readFile = denodeify( fs.readFile )
   , writeFile = denodeify( fs.writeFile )
-  , readdir = denodeify(fs.readdir)
-  , path = require('path')
+  , readdir = denodeify( fs.readdir )
+  , promptGet = denodeify( prompt.get )
   , repo = require('../lib/utils/repo')
+  , backtrackFile = require('../lib/utils/backtrack-file')
   , basePath = process.cwd()
   , filesPath = path.join(__dirname, '../files/')
   , exampleGaston = require('../files/gaston.json')
-  , currentGaston
-  , pkg;
+  , pkg
+  , project;
 
 npmLoad()
-  .then( npmInit )
-  .then( gitInit )
-  .then( createStaticFiles );
+  .then( checkForPackage )
+  .then(function(data){
+    project = data;
+    project.pkg = require( path.join(project.location, 'package.json') );
+    return project;
+  })
+  .then( checkForGitRepo )
+
+function checkForGitRepo(project){
+  var gitExists = fs.existsSync( path.join(project.location, '.git') );
+  if(!gitExists){
+    basePath = process.cwd();
+    log.info('gaston', 'initializing git repo in ' + project.location);
+    return repo.init(project.location)
+      .then(function(){
+        log.info('gaston', 'initted git repository');
+      });
+  } else {
+    log.info('gaston', 'git repository already present');
+  }
+}
+
+function checkForPackage(err, npm){
+  var pkgPath = backtrackFile('package.json');
+  if(pkgPath){
+    var pkgLocation = pkgPath.replace(path.sep + 'package.json', '');
+
+    if(pkgLocation === process.cwd()){
+      log.info('gaston', 'there is already a package.json in this directory');
+      return {
+        isRoot: true,
+        location: pkgLocation
+      };
+    } else {
+      log.info('gaston', 'root of the project is ' + pkgLocation);
+      return {
+        isRoot: false,
+        location: pkgLocation
+      };
+    }
+  } else {
+    log.info('gaston', 'running npm init in the current working directory');
+    return npmInit()
+      .then(function(){
+        return {
+          isRoot: true,
+          location: process.cwd()
+        };
+      });
+  }
+
+}
+
+  // .then( npmInit )
+  // .then( gitInit )
+  // .then( createStaticFiles );
 
 
-function npmInit(err, npm){
-  log.info('gaston', 'running \'npm init\'');
-  return npmInit();
-};
 
 function gitInit(){
   log.info('gaston', 'running \'git init\'');
@@ -34,14 +86,6 @@ function gitInit(){
     });
 };
 
-function writeGastonJson(){
-// console.log(ex)
-  var json = JSON.stringify(exampleGaston, null, 4);
-  return writeFile( path.join(basePath, 'gaston.json') , json, 'utf8')
-    .then(function(){
-      log.info('gaston', 'gaston.json created with default values');
-    });
-}
 
 function createStaticFiles(){
   readdir(filesPath)
