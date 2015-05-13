@@ -13,10 +13,7 @@ var log = require('npmlog')
   , repo = require('../lib/utils/repo')
   , backtrackFile = require('../lib/utils/backtrack-file')
   , basePath = process.cwd()
-  , filesPath = path.join(__dirname, '../files/')
-  , exampleGaston = require('../files/gaston.json')
-  , pkg
-  , project;
+  , filesPath = path.join(__dirname, '../gaston-files/');
 
 npmLoad()
   .then( checkForPackage )
@@ -26,19 +23,28 @@ npmLoad()
     return project;
   })
   .then( checkForGitRepo )
+  .then( copyGastonJson )
+  .then(function(project){
+    console.log(project);
+  })
 
-function checkForGitRepo(project){
-  var gitExists = fs.existsSync( path.join(project.location, '.git') );
-  if(!gitExists){
-    basePath = process.cwd();
-    log.info('gaston', 'initializing git repo in ' + project.location);
-    return repo.init(project.location)
-      .then(function(){
-        log.info('gaston', 'initted git repository');
-      });
-  } else {
-    log.info('gaston', 'git repository already present');
-  }
+function copyGastonJson(project){
+  return new Promise(function(fulfill, reject){
+    var gastonJsonPath = path.join(project.location, 'gaston.json');
+    if( fs.existsSync(gastonJsonPath) ){
+      log.info('gaston', 'gaston.json already exists ');
+      project.gaston = require(gastonJsonPath);
+      return fulfill(project);
+    }
+    var wStream = fs.createWriteStream( gastonJsonPath );
+    wStream.on('close', function(){
+      log.info('gaston', 'created gaston.json configuration file ');
+      project.gaston = require(gastonJsonPath);
+      fulfill(project);
+    })
+    fs.createReadStream( path.join(filesPath, 'gaston.json') )
+      .pipe( wStream );
+    });
 }
 
 function checkForPackage(err, npm){
@@ -69,22 +75,25 @@ function checkForPackage(err, npm){
         };
       });
   }
-
 }
 
-  // .then( npmInit )
-  // .then( gitInit )
-  // .then( createStaticFiles );
+function checkForGitRepo(project){
+  var gitExists = fs.existsSync( path.join(project.location, '.git') );
+  if(!gitExists){
+    basePath = process.cwd();
+    log.info('gaston', 'initializing git repo in ' + project.location);
+    return repo.init(project.location)
+      .then(function(){
+        log.info('gaston', 'initted git repository');
+        return project;
+      });
+  } else {
+    log.info('gaston', 'git repository already present');
+  }
+  return project;
+}
 
 
-
-function gitInit(){
-  log.info('gaston', 'running \'git init\'');
-  return repo.init(basePath)
-    .then(function(){
-      log.info('gaston', 'initted git repository');
-    });
-};
 
 
 function createStaticFiles(){
