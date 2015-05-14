@@ -10,7 +10,7 @@ program
 
 var options = {
   port: program.port || 8080,
-  path: program.path || process.cwd(),
+  path: program.path || process.cwd() + '/',
   autoreload: program.reload === 'false'? false : true,
   injectPackage: program.injectPackage
 };
