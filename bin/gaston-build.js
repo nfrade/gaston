@@ -13,8 +13,5 @@ program
 builder.run()
   .then(function(){
     process.exit(1);
-  })
-  .catch(function(err){
-    log.error('gaston-build', err)
-  })
+  });
 
