@@ -22,7 +22,6 @@
   "dependencies": {
     "aliasify": "^1.7.2",
     "browserify": "^9.0.8",
-    "commander": "^2.8.0",
     "denodeify": "^1.2.1",
     "express": "^4.12.3",
     "graceful-fs": "^3.0.6",
