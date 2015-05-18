@@ -25,7 +25,6 @@
     "denodeify": "^1.2.1",
     "express": "^4.12.3",
     "graceful-fs": "^3.0.6",
-    "json-prettify": "^1.2.0",
     "less": "^2.5.0",
     "lodash": "^3.8.0",
     "mime": "^1.3.4",
