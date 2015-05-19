@@ -2,7 +2,6 @@
   "port": 8080,
   "socket-port": 9000,
   "no-auto-reload": false,
-  "lazy-start": false,
   "no-package": false,
   "bundle": "dist/",
   "build": "dist/",
