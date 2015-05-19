@@ -1,0 +1,18 @@
+Gaston - app runner
+
+usage: gaston bootstrap
+
+* can be run in the root of the project directory or in some other directory
+  ex: project/components/some-component/
+
+* you can have as many apps as you want in different directories inside your project
+
+creates the following files:
+- index.html
+- build.html
+- index.js
+- styles.less || styles.scss
+- dist/ (directory where the bundle and build files will be placed)
+
+* each of these tasks only runs if the file or property doesn't exist yet
+* the last two are configurable in your package.json, gaston section

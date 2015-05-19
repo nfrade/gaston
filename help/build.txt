@@ -1,0 +1,9 @@
+Gaston - app runner
+- builds the current directory for production
+
+usage: gaston build [options]
+
+(no options for now)
+
+* these and other options can be configured in the gaston section in package.json
+

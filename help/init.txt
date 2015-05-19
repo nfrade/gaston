@@ -1,0 +1,13 @@
+Gaston - app runner
+
+usage: gaston init
+
+should be run on the root of your project
+
+- runs git init
+- runs npm init
+- creates a gaston section in package.json with default options
+- creates a .gitignore file with some defaults
+
+* each of these tasks only runs if the file or property doesn't exist yet
+

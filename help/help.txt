@@ -1,0 +1,12 @@
+Gaston - app runner
+
+usage: gaston <command> [options]
+
+available commands:
+
+* help <command> - prints help for given command
+* init - initiates a gaston project (npm init, git init, ...)
+* bootstrap- creates an app inside the project
+* dev - runs a webserver, compiles and watches your files
+* build - builds the app
+

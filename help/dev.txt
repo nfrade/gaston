@@ -1,0 +1,20 @@
+Gaston - app runner
+- starts a server on the root of the project
+
+usage: gaston dev [options]
+
+options:
+  
+  -p, --port : the port express server runs
+  -s, --socket-port : the port used for socket communication (auto-reload, etc)
+  -j, --no-package : no exposing package.json to the browser window
+  -r, --no-auto-reload : no auto-reload when watcher recompiles
+
+* these and other options can be configured in the gaston section in package.json
+* can be run in the root of the project directory or in any subdirectory
+* will compile the project root, if there's an app there
+  - if not, it serves you a directory-index until you reach an app
+* if you want to run multiple apps, you need multiple gaston running
+  - the ports of the server will be managed automatically so they don't clash
+
+
