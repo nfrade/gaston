@@ -21,6 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "aliasify": "^1.7.2",
+    "blessify": "^1.0.0",
     "browserify": "^9.0.8",
     "denodeify": "^1.2.1",
     "express": "^4.12.3",
