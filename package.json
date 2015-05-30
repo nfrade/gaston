@@ -1,6 +1,6 @@
 {
   "name": "gaston",
-  "version": "0.9.18",
+  "version": "0.9.19",
   "preferGlobal": true,
   "description": "buildtool for vigour-io",
   "main": "gaston.js",
@@ -24,6 +24,7 @@
     "blessify": "^1.0.0",
     "browserify": "^9.0.8",
     "chokidar": "^1.0.1",
+    "cssmin": "^0.4.3",
     "denodeify": "^1.2.1",
     "express": "^4.12.3",
     "graceful-fs": "^3.0.6",
@@ -48,7 +49,7 @@
     "socket.io-client": "^1.3.5",
     "stripify": "^3.0.0",
     "through2": "^0.6.5",
-    "uglify-js": "^2.4.20",
+    "uglify-js2": "^2.1.11",
     "vigour-js": "git+ssh://git@github.com:vigour-io/vigour-js.git#flux",
     "watchify": "^3.1.2"
   },
