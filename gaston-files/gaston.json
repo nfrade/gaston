@@ -3,8 +3,8 @@
   "socket-port": 9000,
   "no-auto-reload": false,
   "no-package": false,
-  "bundle": "dist/",
-  "build": "dist/",
+  "bundle": "./",
+  "build": "./",
   "compilers": {
     "js": "browserify",
     "css": "less"
