@@ -7,7 +7,5 @@ Commands:
   build - builds the current project
   launch - launches a new browser window in the root
   npm <command> - runs an npm script from package.json
-    can be used like:
-      npm <command1> <command2> <command3>
 
 ------------------------------------------------------
