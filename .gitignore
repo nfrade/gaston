@@ -15,5 +15,6 @@ build
 node_modules
 .DS_Store
 
+gaston-compiled.js
 bundle.js
 bundle.css
