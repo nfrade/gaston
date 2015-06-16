@@ -25,6 +25,7 @@
     "bluebird": "^2.9.27",
     "browserify": "^9.0.8",
     "chokidar": "^1.0.1",
+    "circular-json": "^0.1.6",
     "cssmin": "^0.4.3",
     "denodeify": "^1.2.1",
     "exorcist": "^0.4.0",
