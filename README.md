@@ -5,6 +5,7 @@
 [installing Gaston](#installing)  
 [quick start](#quick-start)  
 [project requirements](#requirements)  
+[Gaston configuration](#configuration)
 
 ### <a name="what-is-it"></a>what is it?
 - Gaston is meant to replace grunt or gulp for running projects when developing
@@ -92,3 +93,24 @@ $ gaston
 - start developing
 every time you save a file(js, json, less, css, index.html) the browser reloads with the recompiled changes
 
+### <a name="configuration"></a> configuration:
+Gaston exists to make your life easy so it comes ready to use out of the box. However, it also gives you a lot of freedom to do things your way.  
+Here's how a default config looks like, in your project's package.json:
+```json
+{
+ "gaston": {
+   "port": 8080,
+   "socket-port": 9000,
+   "no-auto-reload": false,
+   "no-package": false,
+   "bundle": "./",
+   "build": "./",
+   "compilers": {
+     "js": "browserify",
+     "css": "less"
+   },
+   "require-paths": {
+   }
+ }
+}
+```
