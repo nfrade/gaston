@@ -116,7 +116,7 @@ Here's how a default config looks like, in your project's package.json:
  }
 }
 ```
-- ### <a name="configuration-options"></a>Options
+#### <a name="configuration-options"></a>Options  
 **port** - http server port  
 **socket-port** - websocket server port  
 *(if you run multiple instances, the ports will be incremented by 1 for each new instance)*  
