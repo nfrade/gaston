@@ -3,6 +3,7 @@
 ### what is it?
 - Gaston is meant to replace grunt or gulp for running projects when developing
 - It will save anyone a lot of time and effort with configuration for every project
+- you can run multiple instances on multiple projects, and not worry about clashing ports
 - it also produces build artifacts but you can still use your favourite task runner to make more personalized builds
  - soon, you will be able to configure much more, which will allow you to depend on it for everything
 - if you use **browserify** for common-js modules and **less** for css compiling you should start using it right away
@@ -51,39 +52,12 @@ this can be done in the root of the project or in any subfolder; this way you ca
 ```shell
 $ gaston bootstrap
 ```
-- run Gaston
-```shell
-$ gaston
-```
-fire up a browser tab
-```shell
-> launch
-```
 
-#### Features ready
-* run gaston from any path and you'll get a webserver
-* directory index navigation
-* serves static files
-* opening an .html file will 
-  * render the page
-  * run separate watchers for js and less files
-  
-#### Roadmap
-* set up browserify and less compilation
-* start adding params to configure options
-* create javascript API so it can be used as a module
+###### existing project:
+- you can always follow the steps described for a new project - all the actions are not intrusive (no file is created if it already exists and gaston config is only added if not present in package.json)  
+- To run Gaston for a project, the project should have:
+ - a git repository
+ - a package.json file, with a "gaston" section
+ - index.html + index.js + styles.less in the same path
 
 
-#### Some notes
-###### Convention over Configuration
-Let's not try to get too religious, but there are things that simply work better if we agree upon them;
-This will allow us to get rid of overhead such like the require('style.less') and the hacking we need to add to browserify.
-
-* CSS - Less will compile from the file style.less to bundle.css
-  * style.less can have @imports to files in styles dir, to make it more modular
-  * it can also have Less code in the file
-  * production build will generate bundle.min.css
-* JS - Browserify will compile from the file index.js to bundle.js
-  * index.js is the entry point
-  * can contain all the logic or be split into smaller modules
-  * production build will generate bundle.min.js
