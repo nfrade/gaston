@@ -1,21 +1,28 @@
-# Gaston - the return of the King
-(check the README in the master branch for feature list and roadmap)
+# Gaston - the ultimate dev tool - by vigour.io
 
 ##### Installing
 ```shell
+# you can install from npm, and use the stable branch master:
+$ npm install -g gaston
+
+# or you can keep up with the latest cool features (branch dev):
 $ git clone git@github.com:vigour-io/gaston.git
 $ cd gaston
-$ git checkout new-gaston
+$ git checkout dev
+# you can install it globally
+$ npm link
+# or run it locally
 $ npm install
-# BEWARE - running the next line will replace the current gaston as a system CLI
-$ npm install -g .
+$ 
 ```
 ##### Usage
 ```shell
 # go to any folder, for example:
 $ cd development/vigour-js
 # run it
-$ gaston
+$ gaston // alias for gaston dev
+# if you are running a local copy:
+$ ../path/to/gaston/bin/gaston
 ```
 now you can fire up a browser window and open:
 http://localhost:8080
