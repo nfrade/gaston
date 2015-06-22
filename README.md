@@ -1,11 +1,12 @@
 # Gaston - the ultimate dev tool - by vigour.io
 
 ### index
-[what is it?](#what-is-it)  
-[installing Gaston](#installing)  
-[quick start](#quick-start)  
-[project requirements](#requirements)  
-[Gaston configuration](#configuration)
+- [what is it?](#what-is-it)  
+- [installing Gaston](#installing)  
+- [quick start](#quick-start)  
+- [project requirements](#requirements)  
+- [Gaston configuration](#configuration)
+ - [options](#configuration-options)
 
 ### <a name="what-is-it"></a>what is it?
 - Gaston is meant to replace grunt or gulp for running projects when developing
@@ -116,6 +117,7 @@ Here's how a default config looks like, in your project's package.json:
  }
 }
 ```
+- ### <a name="configuration-options"></a>Options
 **port** - http server port  
 **socket-port** - websocket server port  
 *(if you run multiple instances, the ports will be incremented by 1 for each new instance)*  
