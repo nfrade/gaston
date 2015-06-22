@@ -110,7 +110,6 @@ Here's how a default config looks like, in your project's package.json:
      "js": "browserify",
      "css": "less"
    },
-   "smaps": true,
    "remote-logging": true,
    "require-paths": {
    }
@@ -128,6 +127,6 @@ Here's how a default config looks like, in your project's package.json:
 **compilers**  
  **js** browserify is, for now, the only compiler for javascript  
  **css** "less is, for now, the only compiler for less"  
-**smaps** if set to true, smaps will replace the standard source-maps (give it a go)  
 **remote-logging** this will allow you to receive all the consoles from other devices on your browser console  
+*(if set to true, smaps will replace the standard source-maps - give it a go!)*
 *(should be used with smaps, for awesome magic)*
