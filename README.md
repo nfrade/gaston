@@ -36,18 +36,27 @@ $ npm link
 ### quick start:
 Gaston can be used with new or existing projects
 ###### new project:
+- go to the directory where you want to run the project, for example:
 ```shell
-# go to the directory where you want to run the project, for example:
 $ mkdir my-project
 $ cd my-project
-# make it a gaston project 
-# (runs npm init + creates a git repo + *.gitignore + and adds "gaston" config to package.json) 
+```
+- make it a gaston project 
+```shell
 $ gaston init
-# create application files (index.html + index.js + styles.less')
+```
+now you have a package.json with gaston default configuration and a git repository you can work on
+- create application files - index.html + index.js + styles.less
+this can be done in the root of the project or in any subfolder; this way you can have many apps running inside each project.
+```shell
 $ gaston bootstrap
-# fire up Gaston
+```
+- run Gaston
+```shell
 $ gaston
-# fire up a browser tab
+```
+fire up a browser tab
+```shell
 > launch
 ```
 
