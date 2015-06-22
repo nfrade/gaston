@@ -60,4 +60,12 @@ $ gaston bootstrap
  - a package.json file, with a "gaston" section
  - index.html + index.js + styles.less in the same path
 
-
+- run it
+- from now on, you can run gaston anytime just by
+```shell
+$ gaston
+```
+fire up a browser tab
+```shell
+> launch
+```
