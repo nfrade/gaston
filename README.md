@@ -109,8 +109,23 @@ Here's how a default config looks like, in your project's package.json:
      "js": "browserify",
      "css": "less"
    },
+   "smaps": true,
+   "remote-logging": //not implemented yet
    "require-paths": {
    }
  }
 }
 ```
+**port** - http server port  
+**socket-port** - websocket server port  
+*(if you run multiple instances, the ports will be incremented by 1 for each new instance)*  
+**no-auto-reload** - if true, browsers won't auto-reload after recompiling  
+**no-package** - if false, you will be able to `require('package.json')` in your app  
+**bundle** relative path where bundle.js and bundle.css will be compiled to, relative to index.html  
+**build** relative path where build.js and build.css will be compiled to, relative to index.html  
+**compilers**  
+ **js** browserify is, for now, the only compiler for javascript  
+ **css** "less is, for now, the only compiler for less"  
+**smaps** if set to true, smaps will replace the standard source-maps (give it a go)  
+**remote-logging** this will allow you to receive all the consoles from other devices on your browser console  
+*(should be used with smaps, for awesome magic)*
