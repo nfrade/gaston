@@ -5,10 +5,17 @@
   "no-package": false,
   "bundle": "./",
   "build": "./",
-  "compilers": {
-    "js": "browserify",
-    "css": "less"
+  "browserify": {
+    "transforms": [
+      
+    ] 
   },
+  "less": {
+    "options": {
+
+    }
+  },
+  "remote-logging": true,
   "require-paths": {
   }
 }
