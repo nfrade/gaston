@@ -59,13 +59,31 @@ $ gaston bootstrap
  - a git repository
  - a package.json file, with a "gaston" section
  - index.html + index.js + styles.less in the same path
-
+ - **Vigour.io specific**: 
+  - install *vigour-js* as a dependency for your project
+  - make sure `vigour-js/util/inform-transform` exists in the branch you're using for *vigour-js*
+  - add the following property to *package.json["gaston"]*:
+```json
+"gaston": {
+  "browserify-transforms": [
+   {
+    "path": "vigour-js/util/inform-transform",
+    "options": {
+      "global": "false"
+    }
+  }
+ ],
+}
+```
 - run it
 - from now on, you can run gaston anytime just by
 ```shell
 $ gaston
 ```
-fire up a browser tab
+- fire up a browser tab
 ```shell
 > launch
 ```
+- start developing
+every time you save a file(js, json, less, css, index.html) the browser reloads with the recompiled changes
+
