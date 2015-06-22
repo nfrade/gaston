@@ -110,7 +110,7 @@ Here's how a default config looks like, in your project's package.json:
      "css": "less"
    },
    "smaps": true,
-   "remote-logging": //not implemented yet
+   "remote-logging": false
    "require-paths": {
    }
  }
