@@ -1,6 +1,12 @@
 # Gaston - the ultimate dev tool - by vigour.io
 
-### what is it?
+### index
+[what is it?](#what-is-it)  
+[installing Gaston](#installing)  
+[quick start](#quick-start)  
+[project requirements](#requirements)  
+
+### <a name="what-is-it"></a>what is it?
 - Gaston is meant to replace grunt or gulp for running projects when developing
 - It will save anyone a lot of time and effort with configuration for every project
 - you can run multiple instances on multiple projects, and not worry about clashing ports
@@ -20,8 +26,7 @@
  - no source-maps for css, but we advocate a component approach so you always know which source file to edit
  - there's also something called <a href="#smaps">**smaps**</a> that we're developing here, which brings some magic to the way we work with source mapping, and might replace that overhead completely.
 
-
-### installing
+### <a name="installing"></a> installing:
 ```shell
 # you can install from npm, and use the stable branch master:
 $ npm install -g gaston
@@ -34,7 +39,7 @@ $ git checkout dev
 $ npm link
 ```
 
-### quick start:
+### <a name="quick-start"></a> quick start:
 Gaston can be used with new or existing projects
 ###### new project:
 - go to the directory where you want to run the project, for example:
@@ -55,7 +60,7 @@ $ gaston bootstrap
 
 ###### existing project:
 - you can always follow the steps described for a new project - all the actions are not intrusive (no file is created if it already exists and gaston config is only added if not present in package.json)  
-- To run Gaston for a project, the project should have:
+- ### <a name="requirements"></a>To run Gaston for a project, the project should have:
  - a git repository
  - a package.json file, with a "gaston" section
  - index.html + index.js + styles.less in the same path
