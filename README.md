@@ -31,24 +31,25 @@ $ cd gaston
 $ git checkout dev
 # you can install it globally
 $ npm link
-# or run it locally
-$ npm install
-$ 
 ```
-### usage
-Gaston can be used for new or existing projects
-##### Existing projects:
 
+### quick start:
+Gaston can be used with new or existing projects
+###### new project:
 ```shell
-# go to any folder, for example:
-$ cd development/vigour-js
-# run it
-$ gaston // alias for gaston dev
-# if you are running a local copy:
-$ ../path/to/gaston/bin/gaston
+# go to the directory where you want to run the project, for example:
+$ mkdir my-project
+$ cd my-project
+# make it a gaston project 
+# (runs npm init + creates a git repo + *.gitignore + and adds "gaston" config to package.json) 
+$ gaston init
+# create application files (index.html + index.js + styles.less')
+$ gaston bootstrap
+# fire up Gaston
+$ gaston
+# fire up a browser tab
+> launch
 ```
-now you can fire up a browser window and open:
-http://localhost:8080
 
 #### Features ready
 * run gaston from any path and you'll get a webserver
