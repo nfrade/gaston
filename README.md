@@ -133,3 +133,19 @@ Here's how a default config looks like, in your project's package.json:
 *(should be used with smaps, for awesome magic)*
 
 #### <a name="remote-logging"></a>Remote Logging
+Gaston is meant to help you develop in a multi-device environment. As such, remote logging is here so you can see all the logs, infos, warns, debugs and errors from other devices(be it other desktop or mobile browsers or native builds for mobile, tv, set-top boxes, chromecasts, etc... ) running the same url. It uses our own [smaps](#smaps) to let you see where the error stack traces or where in the code the logs originated. It works as follows:
+- every device is assigned a GastonID which is composed by `<platform>-<device>-<browser>-<random_number>`
+ - examples: mac-desktop-chrome-674, ios-phone-safari-123, samsung-tablet-chrome-789
+- this id is attached to the query string, so in native builds or mobiles it is difficult to check that id.
+ - you may run `gaston.identify()` in the browser console, and all connected devices will show their own id
+- first time you start the browser, you're only listening to that same browser window
+- to start listening to one device:
+ - `gaston.listen('ios')` - this will turn on listening to all ios devices
+ - `gaston.listen('ios', 'chrome')` - this will turn on listening to all ios devices running chrome
+ - `gaston.listen('ios', 'tablet')` - this will listen to all tablets running ios
+ - `gaston.listen('123')` - this will listen to the device with id ending in 123
+ - any combination can be used here, to filter the devices you wish
+- to stop listening to a device:
+ - use `gaston.unlisten(arguments)` using the same approach as with gaston.listen
+- you can also turn on and off your own console, running `gaston.unlisten('self')` or `gaston.listen('self')`
+- you can always check which filters are being applied by running `gaston.config.verbal`
