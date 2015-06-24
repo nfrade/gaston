@@ -7,6 +7,7 @@
 - [project requirements](#requirements)  
 - [Gaston configuration](#configuration)
  - [options](#configuration-options)
+- [remote-logging](#remote-logging)
 
 ### <a name="what-is-it"></a>what is it?
 - Gaston is meant to replace grunt or gulp for running projects when developing
@@ -130,3 +131,5 @@ Here's how a default config looks like, in your project's package.json:
 **remote-logging** this will allow you to receive all the consoles from other devices on your browser console  
 *(if set to true, smaps will replace the standard source-maps - give it a go!)*
 *(should be used with smaps, for awesome magic)*
+
+#### <a name="remote-logging"></a>Remote Logging
