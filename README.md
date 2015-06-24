@@ -7,6 +7,7 @@
 - [project requirements](#requirements)  
 - [Gaston configuration](#configuration)
  - [options](#configuration-options)
+- [remote-logging](#remote-logging)
 
 ### <a name="what-is-it"></a>what is it?
 - Gaston is meant to replace grunt or gulp for running projects when developing
@@ -110,14 +111,13 @@ Here's how a default config looks like, in your project's package.json:
      "js": "browserify",
      "css": "less"
    },
-   "smaps": true,
-   "remote-logging": false,
+   "remote-logging": true,
    "require-paths": {
    }
  }
 }
 ```
-- ### <a name="configuration-options"></a>Options
+#### <a name="configuration-options"></a>Options  
 **port** - http server port  
 **socket-port** - websocket server port  
 *(if you run multiple instances, the ports will be incremented by 1 for each new instance)*  
@@ -128,6 +128,24 @@ Here's how a default config looks like, in your project's package.json:
 **compilers**  
  **js** browserify is, for now, the only compiler for javascript  
  **css** "less is, for now, the only compiler for less"  
-**smaps** if set to true, smaps will replace the standard source-maps (give it a go)  
 **remote-logging** this will allow you to receive all the consoles from other devices on your browser console  
+*(if set to true, smaps will replace the standard source-maps - give it a go!)*
 *(should be used with smaps, for awesome magic)*
+
+#### <a name="remote-logging"></a>Remote Logging
+Gaston is meant to help you develop in a multi-device environment. As such, remote logging is here so you can see all the logs, infos, warns, debugs and errors from other devices(be it other desktop or mobile browsers or native builds for mobile, tv, set-top boxes, chromecasts, etc... ) running the same url. It uses our own [smaps](#smaps) to let you see where the error stack traces or where in the code the logs originated. It works as follows:
+- every device is assigned a GastonID which is composed by `<platform>-<device>-<browser>-<random_number>`
+ - examples: mac-desktop-chrome-674, ios-phone-safari-123, samsung-tablet-chrome-789
+- this id is attached to the query string, so in native builds or mobiles it is difficult to check that id.
+ - you may run `gaston.identify()` in the browser console, and all connected devices will show their own id
+- first time you start the browser, you're only listening to that same browser window
+- to start listening to one device:
+ - `gaston.listen('ios')` - this will turn on listening to all ios devices
+ - `gaston.listen('ios', 'chrome')` - this will turn on listening to all ios devices running chrome
+ - `gaston.listen('ios', 'tablet')` - this will listen to all tablets running ios
+ - `gaston.listen('123')` - this will listen to the device with id ending in 123
+ - any combination can be used here, to filter the devices you wish
+- to stop listening to a device:
+ - use `gaston.unlisten(arguments)` using the same approach as with gaston.listen
+- you can also turn on and off your own console, running `gaston.unlisten('self')` or `gaston.listen('self')`
+- you can always check which filters are being applied by running `gaston.config.verbal`
