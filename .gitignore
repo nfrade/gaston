@@ -19,3 +19,4 @@ gaston-compiled.js
 bundle.js
 bundle.css
 !lib/commands/bundle.js
+vendor/
