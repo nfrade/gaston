@@ -3,9 +3,9 @@ gaston dev command line:
 
 Commands:
   
-  help - displays help information
-  build - builds the current project
-  launch - launches a new browser window in the root
-  npm <command> - runs an npm script from package.json
+  h - displays help information
+  b - builds the current project
+  l - launches a new browser window in the root
+  p - pauses and resumes the time-tracker
 
 ------------------------------------------------------
