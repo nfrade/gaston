@@ -31,9 +31,6 @@
 
 ### <a name="installing"></a> installing:
 ```shell
-# you can install from npm, and use the stable branch master:
-$ npm install -g gaston
-
 # or you can keep up with the latest cool features (branch dev):
 $ git clone git@github.com:vigour-io/gaston.git
 $ cd gaston
