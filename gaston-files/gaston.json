@@ -16,8 +16,8 @@
     }
   },
   "smaps": "true",
-  "source-maps": false,
-  "remote-logging": true,
+  "source-maps": true,
+  "remote-logging": false,
   "require-paths": {
   }
 }
