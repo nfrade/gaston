@@ -31,7 +31,7 @@
     "denodeify": "^1.2.1",
     "exorcist": "^0.4.0",
     "express": "^4.12.3",
-    "gaston-time-tracker": "^0.1.2",
+    "gaston-time-tracker": "git+ssh://git@github.com:vigour-io/gaston-time-tracker.git#master",
     "glob": "^5.0.14",
     "graceful-fs": "^3.0.6",
     "ip": "^0.3.2",
