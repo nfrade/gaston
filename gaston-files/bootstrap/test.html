@@ -12,9 +12,8 @@
 <script type="text/javascript">
   if ( window.mochaPhantomJS ) { 
     mochaPhantomJS.run(); 
-  } else { 
-    var runner = mocha.run()
-    var favicons
+  } else {
+
     var link = document.querySelector("link[rel~='icon']")
     var head = document.getElementsByTagName('head')[0]
     
@@ -26,32 +25,47 @@
       link.type = 'image/x-icon'
       link.setAttribute("rel", "icon")
       link.href = favicon
-      
     }
 
-    var passed = 0
-    var total = 0
-
-    runner.on("pass", function() {
-      passed++
-      total++
-      document.title = passed + '/' + total + ' passed'
-    })
-
-    runner.on("fail", function( test, error ) {
-      total++
-      document.title =  passed + '/' + total + ' passed'
-      setFavicon(favicons.fail)
-    });
-
-    mocha.checkLeaks()
-
-    favicons = {
+    var favicons = {
       fail: 'data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA2ElEQVQ4y62TMQqEQAxFh2FLS9lKxM7Ok4i1laWIJ/AWYuF5xBPsObaSPYDJTmbRUUxcWDfwYWB+3iQko9QmZq098LwHKIWszB15FBdzWd4hjp9ojGciD3mPyUny2hlvN4S6RqgqBK33EONdIbZs5mVKXoIgbCXUDvXFlto0DkBnzmNyFUi9pqkDZBnvMZIBYegAUfQDgDRNH514RIA1DAPCOMr3XwFti9B1FwBBYHUOkMa4VND3h0XajVFcJN93U2CqWBdJWmVrynOEojgmb1f5L5/pynd+A6oy8AKpv8xUAAAAAElFTkSuQmCC',
-      pass: 'data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABc0lEQVQ4y2NgQAP//v0zAuKZV98+eui4sfY/CIPYIDGQHAMu8PfvX66Cw3POmq0p/R+6s+u/2rKs/1ILk8AYxAaJgeRAakBqMTS//PrhpPTCZLgmXBikBqQWxZC33z8trD6xhKBmGAapBekBa24/uyZMY1k2QU0gb7hvboDzQXpAehkqjy8+Tozm0y9v///y6/t/v22tcHGQXoazr+48xqdZZWkmWDMIvPz24b/d+iq4HEgvw77Hl/7CBOQXp/5fd+/4f5+tLSg2Y9MMwiC9DBZry+ECbWfXgBV/+vntf+SuXryaQRikl0FnRR6KC3Y8Ov8fGeDSDMIgvQzbHp5dr7+y4D82Q/BpBukB6QUn3SmXtqJIggxZevMgTs0gDNIDT9q1J5eeJDYRwTBIDzwlBmxvV7FdX/VVcXEaQY0gNSC1ID0Y+eHH719zy48vxKkZJAdSg5GZkMHJF7fsHDbUPDdeXfx72uVtf0EYxAaJgeTQ1QMAMd4yvZEm3GYAAAAASUVORK5CYII='
+      pass: 'data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABc0lEQVQ4y2NgQAP//v0zAuKZV98+eui4sfY/CIPYIDGQHAMu8PfvX66Cw3POmq0p/R+6s+u/2rKs/1ILk8AYxAaJgeRAakBqMTS//PrhpPTCZLgmXBikBqQWxZC33z8trD6xhKBmGAapBekBa24/uyZMY1k2QU0gb7hvboDzQXpAehkqjy8+Tozm0y9v///y6/t/v22tcHGQXoazr+48xqdZZWkmWDMIvPz24b/d+iq4HEgvw77Hl/7CBOQXp/5fd+/4f5+tLSg2Y9MMwiC9DBZry+ECbWfXgBV/+vntf+SuXryaQRikl0FnRR6KC3Y8Ov8fGeDSDMIgvQzbHp5dr7+y4D82Q/BpBukB6QUn3SmXtqJIggxZevMgTs0gDNIDT9q1J5eeJDYRwTBIDzwlBmxvV7FdX/VVcXEaQY0gNSC1ID0Y+eHH719zy48vxKkZJAdSg5GZkMHJF7fsHDbUPDdeXfx72uVtf0EYxAaJgeTQ1QMAMd4yvZEm3GYAAAAASUVORK5CYII=',
+      load: 'data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABHElEQVQ4y2NgQANcXFxsQOo3EP9HxszMzBYMxAAmJiYddM0gzMjImEKUAUCFUTgMmExQMxsQAKmj2AwA4pdAb0gQMmMlVPFNoI0ZQGwHxBFA/n6o+GUWFhYeXE4Pgio6zMrKygWyDSjWDJLj5+dnArKnQr3Sicv27SAFwEBUgwamFpB6iuQ9DiD1HIhf8/LyMmEzACR5Fyk2UAyAgqWw8MBmAEjwNpoBIMU/QRjoLQ1CBuwG4r9AjUogDicnJwvQ2RIwDORzQV30npubG9ML0NAGmb4X6l90+V5oIPbji8aNUEMuAhXGAF1jBKT9gPytsOgFxo4ATt1Af4JsPs2APSG9BWqWYSAEQDYzYE/KUwlqhoa+HgMlmYnU7AwAOPRcA6bnbuAAAAAASUVORK5CYII='
     }
 
-    setFavicon(favicons.pass)
+    setFavicon(favicons.load)
+
+
+    setTimeout(function() {
+      mocha.checkLeaks()
+      var runner = mocha.run()
+      var passed = 0
+      var total = 0
+
+      runner.on("pass", function() {
+        passed++
+        total++
+        document.title = passed + '/' + total + ' passed'
+      })
+
+      runner.on("fail", function( test, error ) {
+        total++
+        document.title =  passed + '/' + total + ' passed'
+        setFavicon(favicons.fail)
+      });
+
+      var timeout
+      runner.on("end", function() {
+        if(passed===total) {
+          if(timeout) {
+            clearTimeout(timeout)
+          }
+          timeout = setTimeout(function() {
+            setFavicon(favicons.pass)
+          },100)
+        }
+      })
+    },200)
 
   }
 </script>
