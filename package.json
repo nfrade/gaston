@@ -20,6 +20,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "chai-spies":"*",
     "aliasify": "^1.7.2",
     "blessify": "^1.0.0",
     "bluebird": "^2.9.27",
