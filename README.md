@@ -121,9 +121,10 @@ just run `gaston test` from the terminal and press `l` to launch a browser windo
 this will work exactly like running `gaston dev` but will include all the mocha and chai stuff you need to run the tests. So you can run two gaston instances, one for developing and one for testing at the same time and be sure that the tests are passing while you add new features or correct bugs. You don't even need to have the tab with the tests open because the favicon will turn from a green tick to a red cross if any test fails.  
 ###### CI tests
 you can choose the way you run CI tests:
-`gaston tests browser` - this will run all the tests that need a browser in phantomjs, in `test/browser/`.
-`gaston tests node` - this will run all the tests without a browser, in `test/node/`.
-`gaston tests common` - this will run all the tests in `test/common` once in node mode and then in browser mode.
+* `gaston tests browser` - this will run all the tests that need a browser in phantomjs, in `test/browser/`.
+* `gaston tests node` - this will run all the tests without a browser, in `test/node/`.
+* `gaston tests common` - this will run all the tests in `test/common` once in node mode and then in browser mode.
+* `gaston tests` will default to browser mode
 You can integrate this with any CI tool, because the exit code will be 0 if all tests pass or an error code if any test fails.
 
 
