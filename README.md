@@ -105,18 +105,27 @@ First, you need to add a `test` dir to your project and make it look something l
   - node    # all the server-side tests that don't require a browser
   - common  # tests that need to be run through node and in a browser
 ```
-any of the sub-directories are optional, depends on what and how you want to test it. 
-
-###### testing while developing:
-just run `gaston test` from the terminal and press `l` to launch a browser window.
+any of the sub-directories are optional, depends on what and how you want to test it.   
 Inside each folder, you can have any structure you want, and every .js file will only need to have the test code itself:
 ```
 #some-component.js
 describe('some component', function(){
- it('should do some stuff', function(){ ... });
+ it('should do some stuff', function(){ 
+  expect(something).to.be.null;
+  assert.equal(1,2);
+ });
 });
 ```
+###### testing while developing:
+just run `gaston test` from the terminal and press `l` to launch a browser window.
 this will work exactly like running `gaston dev` but will include all the mocha and chai stuff you need to run the tests. So you can run two gaston instances, one for developing and one for testing at the same time and be sure that the tests are passing while you add new features or correct bugs. You don't even need to have the tab with the tests open because the favicon will turn from a green tick to a red cross if any test fails.  
+###### CI tests
+you can choose the way you run CI tests:
+`gaston tests browser` - this will run all the tests that need a browser in phantomjs, in `test/browser/`.
+`gaston tests node` - this will run all the tests without a browser, in `test/node/`.
+`gaston tests common` - this will run all the tests in `test/common` once in node mode and then in browser mode.
+You can integrate this with any CI tool, because the exit code will be 0 if all tests pass or an error code if any test fails.
+
 
 ### <a name="configuration"></a> configuration:
 Gaston exists to make your life easy so it comes ready to use out of the box. However, it also gives you a lot of freedom to do things your way.  
