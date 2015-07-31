@@ -4,6 +4,7 @@
 - [what is it?](#what-is-it)  
 - [installing Gaston](#installing)  
 - [quick start](#quick-start)  
+- [testing with gaston](#testing)  
 - [project requirements](#requirements)  
 - [Gaston configuration](#configuration)
  - [options](#configuration-options)
@@ -91,6 +92,31 @@ $ gaston
 ```
 - start developing
 every time you save a file(js, json, less, css, index.html) the browser reloads with the recompiled changes
+
+### <a name="testing"></a> testing with gaston:
+Gaston takes care of all your testing needs - if you're using mocha and chai.  
+You can run tests in the browser, or in the command line, without the need of requiring mocha or chai anywhere.
+##### How does it work?
+First, you need to add a `test` dir to your project and make it look something like:
+```
+- root
+ - test
+  - browser # all the tests to be run in the browser (or phantomjs)
+  - node    # all the server-side tests that don't require a browser
+  - common  # tests that need to be run through node and in a browser
+```
+any of the sub-directories are optional, depends on what and how you want to test it. 
+
+###### testing while developing:
+just run `gaston test` from the terminal and press `l` to launch a browser window.
+Inside each folder, you can have any structure you want, and every .js file will only need to have the test code itself:
+```
+#some-component.js
+describe('some component', function(){
+ it('should do some stuff', function(){ ... });
+});
+```
+this will work exactly like running `gaston dev` but will include all the mocha and chai stuff you need to run the tests. So you can run two gaston instances, one for developing and one for testing at the same time and be sure that the tests are passing while you add new features or correct bugs. You don't even need to have the tab with the tests open because the favicon will turn from a green tick to a red cross if any test fails.  
 
 ### <a name="configuration"></a> configuration:
 Gaston exists to make your life easy so it comes ready to use out of the box. However, it also gives you a lot of freedom to do things your way.  
