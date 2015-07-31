@@ -9,4 +9,6 @@ available commands:
 * bootstrap- creates an app inside the project
 * dev - runs a webserver, compiles and watches your files
 * build - builds the app
+* test - runs a server ready to run tests in the browser
+* tests - runs all the tests in the terminal
 

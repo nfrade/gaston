@@ -1,0 +1,6 @@
+usage: gaston tests <env>
+
+env can be:
+* phantom (default) - runs the tests in test/browser dir, with phantomjs
+* node - runs the tests in test/node dir, without phantomjs
+* common - runs both node and browser tests for test/common dir
