@@ -1,6 +1,8 @@
-var tester = require('../lib/tester');
+var tester = require('../lib/tester')
+  , config;
 
-module.exports = function(config){
+module.exports = function(cfg){
+  config = cfg;
   var testType;
 
   var args = Array.prototype.slice.call(process.argv);

@@ -10,10 +10,11 @@ var log = require('npmlog')
   , pkgPath = path.join(basePath, 'package.json')
   , gitPath = path.join(basePath + '.git')
   , gitignorePath = path.join(basePath, '.gitignore')
+  , config
   , pkg;
   
-module.exports = function(){
-
+module.exports = function(cfg){
+  config = cfg;
   return npm.loadAsync()
     .then( function(){ return fs.existsAsync(pkgPath); } )
     .then( function(exists){ return !exists && npm.initAsync(); })

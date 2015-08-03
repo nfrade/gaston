@@ -3,12 +3,13 @@ var log = require('npmlog')
   , fs = require('graceful-fs')
   , path = require('path')
   , gaston = require('../lib/gaston')
-  , config = require('../lib/config')
   , Bundler = require('../lib/bundler')
   , stdin = process.openStdin()
-  , npmLoaded;
+  , npmLoaded
+  , config;
 
-module.exports = function(){
+module.exports = function(cfg){
+  config = cfg;
   gaston.test()
     .catch( function(err){ log.error('gaston test', err); } );
 
