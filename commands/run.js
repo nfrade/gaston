@@ -3,5 +3,5 @@ var gaston = require('../lib/gaston')
 
 module.exports = function(cfg){
   config = cfg;
-  return gaston.bundle();
+  return gaston.bundle(config);
 }

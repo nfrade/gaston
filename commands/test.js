@@ -10,7 +10,7 @@ var log = require('npmlog')
 
 module.exports = function(cfg){
   config = cfg;
-  gaston.test()
+  gaston.test(config)
     .catch( function(err){ log.error('gaston test', err); } );
 
     npmLoaded = npm.loadAsync();

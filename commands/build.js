@@ -3,7 +3,7 @@ var gaston = require('../lib/gaston')
 
 var build = module.exports = function(cfg){
   config = cfg;
-  return gaston.build()
+  return gaston.build(config)
     .then(function(){
       process.exit(0);
     });
