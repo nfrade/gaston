@@ -4,18 +4,19 @@
     <!-- encoding must be set for mocha's special characters to render properly -->
     <link rel="stylesheet" href="mocha.css" />
   </head>
-  <script>
-  window.console.clear = function(){}
-  </script>
   <body>
     <div id="mocha"></div>
+    <script type="text/javascript">
+      window.console.clear = function(){};
+    </script>
     <script src="mocha.js"></script>
     <script src="bundle.js"></script>
     <script>
-      if (window.mochaPhantomJS) {
-        mochaPhantomJS.run();
+      if (window.mochaPhantomJS) { 
+        mochaPhantomJS.run(); 
+      } else { 
+        mocha.run(); 
       }
-      else { mocha.run(); }
     </script>
   </body>
 </html>
