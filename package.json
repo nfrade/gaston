@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "aliasify": "^1.7.2",
-    "blessify": "^1.0.0",
+    "blessify": "git+ssh://git@github.com:vigour-io/blessify.git#gaston-refactor",
     "bluebird": "^2.9.27",
     "browserify": "^9.0.8",
     "chai": "^3.0.0",
