@@ -10,13 +10,47 @@
 <script type="text/javascript" src="mocha.js"></script>
 <script src="bundle.js" type="text/javascript"></script>
 <script type="text/javascript">
-  if ( window.mochaPhantomJS ) { 
-    mochaPhantomJS.run(); 
+  if ( window.mochaPhantomJS ) {
+    mochaPhantomJS.run();
   } else {
+
+    function notifyMe(str) {
+      // Let's check if the browser supports notifications
+      if (!("Notification" in window)) {
+        // console.warn('no notifications')
+        return
+        // alert("This browser does not support desktop notification");
+      }
+
+      // Let's check whether notification permissions have already been granted
+      else if (Notification.permission === "granted") {
+        // If it's okay let's create a notification
+        var notification = new Notification(str);
+        setTimeout(function(){
+          notification.close();
+        }, 3000);
+      }
+
+      // Otherwise, we need to ask the user for permission
+      else if (Notification.permission !== 'denied') {
+        Notification.requestPermission(function (permission) {
+          // If the user accepts, let's create a notification
+          if (permission === "granted") {
+            var notification = new Notification(str);
+            setTimeout(function(){
+              notification.close();
+            }, 3000);
+          }
+        });
+      }
+      // At last, if the user has denied notifications, and you
+      // want to be respectful there is no need to bother them any more.
+    }
+
 
     var link = document.querySelector("link[rel~='icon']")
     var head = document.getElementsByTagName('head')[0]
-    
+
     function setFavicon(favicon) {
       if (!link) {
         link = document.createElement('link')
@@ -41,6 +75,7 @@
       var runner = mocha.run()
       var passed = 0
       var total = 0
+      var errs = []
 
       runner.on("pass", function() {
         passed++
@@ -49,6 +84,7 @@
       })
 
       runner.on("fail", function( test, error ) {
+        errs.push(error)
         total++
         document.title =  passed + '/' + total + ' passed'
         setFavicon(favicons.fail)
@@ -63,6 +99,12 @@
           timeout = setTimeout(function() {
             setFavicon(favicons.pass)
           },100)
+        } else {
+          console.log(errs)
+          notifyMe(
+            'test failed ' + errs.length + ' exception' +( errs.length > 1 ? 's' : '')
+            +'\n'+ passed + '/' + total + ' passed'
+          )
         }
       })
     },200)
