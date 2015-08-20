@@ -28,7 +28,7 @@
         var notification = new Notification(str);
         setTimeout(function(){
           notification.close();
-        }, 3000);
+        }, 1000);
       }
 
       // Otherwise, we need to ask the user for permission
@@ -39,7 +39,7 @@
             var notification = new Notification(str);
             setTimeout(function(){
               notification.close();
-            }, 3000);
+            }, 1000);
           }
         });
       }
@@ -100,7 +100,7 @@
             setFavicon(favicons.pass)
           },100)
         } else {
-          console.log(errs)
+          // console.log(errs)
           notifyMe(
             'test failed ' + errs.length + ' exception' +( errs.length > 1 ? 's' : '')
             +'\n'+ passed + '/' + total + ' passed'
