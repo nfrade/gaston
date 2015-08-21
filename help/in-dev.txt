@@ -8,4 +8,7 @@ Commands:
   l - launches a new browser window in the root
   p - pauses and resumes the time-tracker
 
+In the Browser:
+  run gaston.stop() in the console to stop running a folder
+
 ------------------------------------------------------

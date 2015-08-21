@@ -5,10 +5,11 @@ var log = require('npmlog')
   , ncp = Promise.promisify( require('ncp').ncp )
   , path = require('path')
   , mkdirp = Promise.promisify( require('mkdirp') )
-  , config = require('../config')
-  , filesPath = path.join(__dirname, '../../gaston-files/bootstrap');
+  , filesPath = path.join(__dirname, '../gaston-files/bootstrap')
+  , config
 
-module.exports = function(){
+module.exports = function(cfg){
+  config = cfg;
   return createAppFiles()
     .then(function(){
       log.info('gaston', 'application bootstrapped successfully');

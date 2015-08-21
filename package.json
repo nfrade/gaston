@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "aliasify": "^1.7.2",
-    "blessify": "^1.0.0",
+    "blessify": "git+ssh://git@github.com:vigour-io/blessify.git#gaston-refactor",
     "bluebird": "^2.9.27",
     "browserify": "^9.0.8",
     "chai": "^3.0.0",
@@ -51,7 +51,7 @@
     "openurl": "^1.1.0",
     "promise": "6.x.x",
     "prompt": "^0.2.14",
-    "serve-index": "git+ssh://git@github.com:andrepadez/serve-index.git#master",
+    "serve-index": "git+ssh://git@github.com:vigour-io/gaston-serve-index.git#master",
     "serve-static": "^1.9.2",
     "shelljs": "^0.5.1",
     "sinon": "^1.15.4",

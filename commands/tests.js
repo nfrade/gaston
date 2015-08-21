@@ -1,8 +1,9 @@
-var tester = require('../tester');
+var tester = require('../lib/tester')
 var parseArgs = require('minimist');
 var args = parseArgs(process.argv);
 
-module.exports = function(config){
+module.exports = function(cfg){
+  config = cfg;
   var testType;
 
   if( ~args._.indexOf('node', 1) ){

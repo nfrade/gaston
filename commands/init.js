@@ -4,16 +4,17 @@ var log = require('npmlog')
   , fs = require('graceful-fs')
   , mkdirp = Promise.promisify( require('mkdirp') )
   , path = require('path')
-  , repo = require('../utils/repo')
+  , repo = require('../lib/utils/repo')
   , basePath = process.cwd()
-  , filesPath = path.join(__dirname, '../../gaston-files/')
+  , filesPath = path.join(__dirname, '../gaston-files/')
   , pkgPath = path.join(basePath, 'package.json')
   , gitPath = path.join(basePath + '.git')
   , gitignorePath = path.join(basePath, '.gitignore')
+  , config
   , pkg;
   
-module.exports = function(){
-
+module.exports = function(cfg){
+  config = cfg;
   return npm.loadAsync()
     .then( function(){ return fs.existsAsync(pkgPath); } )
     .then( function(exists){ return !exists && npm.initAsync(); })
