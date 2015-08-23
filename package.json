@@ -19,6 +19,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "license": "MIT",
+  "optionalDependencies": {
+    "nodegit": "^0.4.1"
+  },
   "dependencies": {
     "aliasify": "^1.7.2",
     "blessify": "git+ssh://git@github.com:vigour-io/blessify.git#gaston-refactor",
@@ -71,6 +74,5 @@
   "homepage": "https://github.com/vigour-io/gaston",
   "engine": "node 0.12.x",
   "devDependencies": {
-    "nodegit": "^0.4.1"
   }
 }
