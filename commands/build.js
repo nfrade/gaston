@@ -7,7 +7,7 @@ var minimist = require('minimist')
 
 var args = minimist(process.argv);
 
-var build = module.exports = function(cfg){
+var build = module.exports = function(cfg){console.log('here');
   var fileToCompile, buildSource, destination, isBase;
   config = cfg;
   if( args.s || args.source ){
@@ -31,6 +31,15 @@ var build = module.exports = function(cfg){
 
   destination = path.join( destination, config.gaston.build || 'build' );
 
+  var destinationHTML;
+  if( path.extname(destination) === '.html' ){
+    destinationHTML = destination;
+    destination = path.dirname( destination );
+  }
+
+  console.log('destinationHTML', destinationHTML);
+  console.log('destination', destination);
+
   return gaston.build(config, fileToCompile, destination, isBase)
     .then(function(){
       var indexPath = path.join( buildSource, 'index.html' );
@@ -40,7 +49,7 @@ var build = module.exports = function(cfg){
       if( !fs.existsSync(indexPath) ){
         indexPath = path.join( __dirname, '../gaston-files/bootstrap/', 'build.html');
       }
-      var targetIndexPath = path.join(destination, 'index.html');
+      var targetIndexPath = destinationHTML || path.join(destination, 'index.html');
       var rStream = fs.createReadStream(indexPath);
       var wStream = fs.createWriteStream(targetIndexPath);
 
