@@ -1,19 +1,22 @@
-var log = require('npmlog')
-  , npm = require('npm')
-  , fs = require('graceful-fs')
-  , path = require('path')
-  , gaston = require('../lib/gaston')
-  , Bundler = require('../lib/bundler')
-  , stdin = process.openStdin()
-  , npmLoaded
-  , config;
+var tester = require('../lib/tester')
+var parseArgs = require('minimist');
+var args = parseArgs(process.argv);
 
 module.exports = function(cfg){
   config = cfg;
-  gaston.test(config)
-    .catch( function(err){ log.error('gaston test', err); } );
+  var testType;
 
-    npmLoaded = npm.loadAsync();
+  if( ~args._.indexOf('node', 1) ){
+    testType = 'node';
+  } else if( ~args._.indexOf('common') ) {
+    testType = 'common';
+  } else if( ~args._.indexOf('browser') ){
+    testType = 'browser';
+  } else {
+    testType = 'node';
+  }
+
+  var files = args.f || args.files;
+
+  tester(testType, config, files);
 };
-
-var helpPromise = fs.readFileAsync( path.join(__dirname, '../help', 'in-dev.txt'), 'utf8' );
