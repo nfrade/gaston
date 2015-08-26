@@ -1,10 +1,9 @@
 var log = require('npmlog')
-  , npm = require('npm')
-  , fs = require('graceful-fs')
+  , fs = require('vigour-fs')
   , path = require('path')
   , gaston = require('../lib/gaston')
   , Bundler = require('../lib/bundler')
-  , npmLoaded
+  // , npmLoaded
   , config;
 
 module.exports = function(cfg){
@@ -12,5 +11,5 @@ module.exports = function(cfg){
   gaston.dev(config)
     .catch( function(err){ log.error('gaston dev', err); } );
 
-    npmLoaded = npm.loadAsync();
+    // npmLoaded = npm.loadAsync();
 };

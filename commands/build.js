@@ -1,13 +1,13 @@
 var minimist = require('minimist')
   , path = require('path')
   , through = require('through2')
-  , fs = require('graceful-fs')
+  , fs = require('vigour-fs')
   , gaston = require('../lib/gaston')
   , config;
 
 var args = minimist(process.argv);
 
-var build = module.exports = function(cfg){console.log('here');
+var build = module.exports = function(cfg){
   var fileToCompile, buildSource, destination, isBase;
   config = cfg;
   if( args.s || args.source ){
@@ -36,9 +36,6 @@ var build = module.exports = function(cfg){console.log('here');
     destinationHTML = destination;
     destination = path.dirname( destination );
   }
-
-  console.log('destinationHTML', destinationHTML);
-  console.log('destination', destination);
 
   return gaston.build(config, fileToCompile, destination, isBase)
     .then(function(){
