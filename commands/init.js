@@ -1,28 +1,32 @@
 var log = require('npmlog')
   , Promise = require('bluebird')
   , npm = require('npm')
-  , fs = require('graceful-fs')
+  , fs = require('vigour-fs')
+  , mkdirp = Promise.promisify( require('mkdirp') )
   , path = require('path')
-  , repo = require('../utils/repo')
+  // , repo = require('../lib/utils/repo')
   , basePath = process.cwd()
-  , filesPath = path.join(__dirname, '../../gaston-files/')
-  , pkgPath = path.join(process.cwd(), 'package.json')
-  , gitPath = path.join(process.cwd() + '.git')
-  , gitignorePath = path.join(process.cwd(), '.gitignore')
+  , filesPath = path.join(__dirname, '../gaston-files/')
+  , pkgPath = path.join(basePath, 'package.json')
+  // , gitPath = path.join(basePath + '.git')
+  , gitignorePath = path.join(basePath, '.gitignore')
+  , config
   , pkg;
   
-module.exports = function(){
-
+module.exports = function(cfg){
+  config = cfg;
   return npm.loadAsync()
     .then( function(){ return fs.existsAsync(pkgPath); } )
     .then( function(exists){ return !exists && npm.initAsync(); })
     .then( function(){ pkg = require(pkgPath); } )
-    .then( function(){ return fs.existsAsync( gitPath ) } )
-    .then( function(exists){ return !exists && repo.init( process.cwd() ); } )
+    // .then( function(){ return fs.existsAsync( gitPath ) } )
+    // .then( function(exists){ return !exists && repo.init( basePath ); } )
     .then( function(){ return require( path.join(filesPath, 'gaston.json') ); } )
     .then( function(gaston){ pkg.gaston = pkg.gaston || gaston; } )
     .then( function(){ return fs.writeFileAsync(pkgPath, JSON.stringify(pkg, null, 4), 'utf8'); } )
     .then( function(){ console.log('exists?'); return fs.existsAsync( gitignorePath ); } )
+    .then( function(){ return mkdirp( path.join(basePath, 'src') ); } )
+    .then( function(){ return mkdirp( path.join(basePath, 'test') ); } )
     .then( function(exists){
       if(!exists){
         fs.createReadStream( path.join(filesPath, '.gitignore') )

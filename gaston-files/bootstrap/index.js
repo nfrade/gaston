@@ -1,1 +1,1 @@
-require('./styles.less');
+require('~/global.less');

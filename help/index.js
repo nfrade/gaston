@@ -1,5 +1,5 @@
 var log = require('npmlog')
-  , fs = require('graceful-fs')
+  , fs = require('vigour-fs')
   , path = require('path')
   , topic = process.argv[3];
 

@@ -1,19 +1,15 @@
 var log = require('npmlog')
   , Promise = require('bluebird')
-  , fs = require('graceful-fs')
+  , fs = require('vigour-fs')
   , path = require('path')
-  , ncp = Promise.promisify( require('ncp').ncp )
   , path = require('path')
   , mkdirp = Promise.promisify( require('mkdirp') )
-  , config = require('../config')
-  , filesPath = path.join(__dirname, '../../gaston-files/bootstrap')
-  , isTest;
+  , filesPath = path.join(__dirname, '../gaston-files/bootstrap')
+  , config
 
-module.exports = function(){
-  isTest = ~process.argv.indexOf('test');
-
-  return createDirectories()
-    .then( createAppFiles )
+module.exports = function(cfg){
+  config = cfg;
+  return createAppFiles()
     .then(function(){
       log.info('gaston', 'application bootstrapped successfully');
     })
@@ -22,55 +18,45 @@ module.exports = function(){
     });
 };
 
-var createDirectories = function(){
-  var bundlePath = path.join(process.cwd(), config.bundle);
-  return mkdirp( bundlePath )
-    .then( function(){ return mkdirp( path.join(process.cwd(), config.build) );} );
-}
-
 var createAppFiles = function(){
   var cssExt;
   switch(config.cssCompiler){
-    case 'less':
-      cssExt = '.less';
-      break;
     case 'sass':
       cssExt = '.scss';
       break;
+    default:
+      cssExt = '.less';
+      break;
   }
   
-  var pathCSS = path.join(process.cwd(), 'styles' + cssExt);
+  var pathCSS = path.join(process.cwd(), 'global' + cssExt);
   var pathJS = path.join(process.cwd(), 'index.js');
   var existsCSS, existsJS;
 
   return fs.existsAsync(pathCSS)
     .then( function(exists){
-      if(!exists && !isTest){
-        fs.createReadStream( path.join(filesPath, 'styles.css') )
+      if(!exists){
+        fs.createReadStream( path.join(filesPath, 'global.css') )
           .pipe( fs.createWriteStream(pathCSS) );
       }
     } )
     .then( function(){ return fs.existsAsync(pathJS); })
     .then( function(exists){
       if(!exists){
-        var jsFile = isTest? 'test.js' : 'index.js';
-        fs.createReadStream( path.join(filesPath, jsFile) )
+        fs.createReadStream( path.join(filesPath, 'index.js') )
           .pipe( fs.createWriteStream(pathJS) );
       }
     } )
     .then( function(){
-      var indexFile = isTest? 'test.html' : 'index.html';
       var indexHTML;
-      return fs.readFileAsync( path.join(filesPath, indexFile), 'utf8' )
+      return fs.readFileAsync( path.join(filesPath, 'index.html'), 'utf8' )
         .then( function(data){ indexHTML = data; } )
         .then( function(){ return fs.existsSync(path.join( process.cwd(), 'index.html') ); } )
         .then( function(exists){
           if(!exists){ 
-            var mochaPath = getMochaPath();
             var content = indexHTML.replace('{{title}}', config.pkg.name);
-            content = content.replace( '{{jspath}}', path.join(config.bundle, 'bundle.js') );
-            content = content.replace( '{{csspath}}', path.join(config.bundle, 'bundle.css') );
-            content = content.replace( /\{\{mochapath\}\}/g, mochaPath );
+            content = content.replace( '{{jspath}}', 'bundle.js' );
+            content = content.replace( '{{csspath}}', 'bundle.css' );
             return fs.writeFileAsync( path.join(process.cwd(), 'index.html'), content, 'utf8')
           }
         });
@@ -80,7 +66,7 @@ var createAppFiles = function(){
     });
 };
 
-function getMochaPath(){
+var getMochaPath = module.exports.getMochaPath = function(){
   var mochaPath = '';
   var p = process.cwd().replace(config.basePath, '');
   var deepness = p.split('/').length;
