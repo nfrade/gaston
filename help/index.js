@@ -1,5 +1,5 @@
 var log = require('npmlog')
-  , fs = require('vigour-fs')
+  , fs = require('vigour-fs-promised')
   , path = require('path')
   , topic = process.argv[3];
 

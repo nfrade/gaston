@@ -1,7 +1,7 @@
 var log = require('npmlog')
   , Promise = require('bluebird')
   , npm = require('npm')
-  , fs = require('vigour-fs')
+  , fs = require('vigour-fs-promised')
   , mkdirp = Promise.promisify( require('mkdirp') )
   , path = require('path')
   // , repo = require('../lib/utils/repo')

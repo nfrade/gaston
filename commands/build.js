@@ -1,7 +1,7 @@
 var minimist = require('minimist')
   , path = require('path')
   , through = require('through2')
-  , fs = require('vigour-fs')
+  , fs = require('vigour-fs-promised')
   , gaston = require('../lib/gaston')
   , config;
 

@@ -1,6 +1,6 @@
 var log = require('npmlog')
   , Promise = require('bluebird')
-  , fs = require('vigour-fs')
+  , fs = require('vigour-fs-promised')
   , path = require('path')
   , path = require('path')
   , mkdirp = Promise.promisify( require('mkdirp') )
