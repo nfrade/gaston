@@ -47,22 +47,16 @@ var build = module.exports = function(cfg){
         indexPath = path.join( __dirname, '../gaston-files/bootstrap/', 'build.html');
       }
       var targetIndexPath = destinationHTML || path.join(destination, 'index.html');
-      var rStream = fs.createReadStream(indexPath);
-      var wStream = fs.createWriteStream(targetIndexPath);
 
-      wStream.on('close', function(){
-        process.exit(0);
-      })
-
-      rStream.pipe( through(function(buf, enc, next){
-        var data = buf.toString('utf8');
-        data = data.replace('{{title}}', config.pkg.name);
-        data = data.replace('bundle.js', 'build.js');
-        data = data.replace('bundle.css', 'build.css');
-        this.push(data);
-        return next();
-      }) )
-      .pipe(wStream);
-
+      fs.readFileAsync(indexPath, 'utf8')
+        .then(function(data){
+          data = data.replace('{{title}}', config.pkg.name);
+          data = data.replace('bundle.js', 'build.js');
+          data = data.replace('bundle.css', 'build.css');
+          return fs.writeFileAsync(targetIndexPath, data, 'utf8')
+        })
+        .then(function(){
+          process.exit(0);
+        });
     });
 };
