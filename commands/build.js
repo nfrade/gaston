@@ -11,7 +11,7 @@ var build = module.exports = function(cfg){
   var fileToCompile, buildSource, destination, isBase;
   config = cfg;
   if( args.s || args.source ){
-    buildSource = path.join( config.basePath, (args.s || args.source) );
+    buildSource = path.join( process.cwd(), (args.s || args.source) );
     destination = path.dirname(buildSource) + '/';
   } else {
     isBase = true;
