@@ -2,7 +2,6 @@ var log = require('npmlog')
   , Promise = require('bluebird')
   , http = require('http')
   , SocketIO = require('socket.io')
-  , PORT = 645701
 
 var server = http.createServer();
 var io = SocketIO( server );
@@ -22,11 +21,10 @@ var registry = {
 var API = module.exports = {
   running: false,
   registry: registry,
-  start: function start(port){
-    API.port = port || PORT;
+  start: function start(options){
+    API.port = options.port;
     return new Promise(function(fulfill, reject){
       server.listen(API.port, function(){
-        log.info('API Server is listening on port', API.port);
         API.running = true;
         //registerAPI();
         fulfill();
