@@ -57,6 +57,11 @@ var build = module.exports = function(cfg){
         })
         .then(function(){
           process.exit(0);
-        });
-    });
+        }, exitError);
+    }, exitError);
 };
+
+function exitError(err) {
+  log.error(err.stack);
+  process.exit(1);
+}
