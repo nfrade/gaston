@@ -1,13 +1,12 @@
-var API = require('../../lib/api')
+var API = require('../../daemon/api')
   , PORT = 64000 + Math.floor( Math.random() * 1000)
   , client = require('socket.io-client')
   , io;
 
 describe('testing the api', function(){
 
-
   it('should start the API', function(done){
-    API.start(PORT)
+    API.start( {port: PORT} )
       .then(function(){
         assert.ok( API.running );
       })
@@ -24,10 +23,6 @@ describe('testing the api', function(){
       done();
     });
   });
-
-  // it('should run the callbacks', function(){
-
-  // });
   
   it('should be able to disconnect', function(done){
     io.on('disconnect', function(){
