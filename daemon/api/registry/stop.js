@@ -5,5 +5,8 @@ var stop = module.exports = function stop(options){
   return httpServer.stop()
     .then(function(){
       socket.emit('stopped', httpServer);
+    })
+    .catch(function(err){
+      socket.emit('errored', err.message)
     });
 };

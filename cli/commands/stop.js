@@ -7,6 +7,10 @@ var stop = module.exports = function stop(io, args){
       log.info('gaston', 'http server stopped');
       fulfill();
     });
+
+    io.socket.on('errored', function(err){
+      reject(err);
+    });
     
     io.socket.emit('stop');
   });

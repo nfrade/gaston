@@ -11,22 +11,22 @@ var log = require('npmlog')
   , mime = require('mime')
   // , Middleware = require('./middleware')
   // , socketServer = require('./socket-server')
-  , localIpPromise;
+  , localIpPromise
+  , httpServer;
 
 var Server = module.exports = {
+  app: undefined,
   server: undefined,
   port: undefined,
   inited: false,
   listening: false,
-  initialPath: undefined,
-  injectPackage: undefined,
   init: function(options){
-    if(this.inited){
+    if(Server.inited){
       return;
     }
     options = options || {};
     Server.serverIP = ip.address();
-    Server.server = express();
+    Server.app = express();
 
     // var middleware = Middleware(config, Server);
     var serveIndex = ServeIndex( options.basePath, {
@@ -37,8 +37,8 @@ var Server = module.exports = {
 
     // setupStaticFiles(config);
 
-    // Server.server.use( middleware );
-    Server.server.use( serveIndex );
+    // Server.app.use( middleware );
+    Server.app.use( serveIndex );
 
     // Server.server.get('*', function(req, res){
 
@@ -60,7 +60,7 @@ var Server = module.exports = {
   },
   start: function(options){
     return new Promise(function(fulfill, reject){
-      if(Server.listening){
+      if( Server.listening ){
         return reject( new Error( 'http server already running on port ' +  Server.port ) );
       }
       Server.init(options);
@@ -70,13 +70,18 @@ var Server = module.exports = {
         Server.port = port;
         fulfill();
       };
-      Server.server.listen(port, onServerStart);
+      httpServer = Server.app.listen(port, onServerStart);
     });
   },
 
   stop: function(){
     return new Promise(function(fulfill, reject){
-      Server.server.close(function(){
+      if( !Server.listening ){
+        return reject( new Error( 'http server is not running') )
+      }
+      httpServer.close(function(){
+        Server.listening = false;
+        httpServer = null;
         fulfill();
       })
     });
@@ -93,7 +98,7 @@ var Server = module.exports = {
 };
 
 var setupStaticFiles = function(config){
-  Server.server.get(['bundle*', '*/bundle*'], function(req, res, next){
+  Server.app.get(['bundle*', '*/bundle*'], function(req, res, next){
     var dir = path.dirname(req.url)
     if(dir !== '/'){
       dir += '/';
@@ -113,20 +118,20 @@ var setupStaticFiles = function(config){
       .pipe( res );
   })
 
-  Server.server.get('*/gaston-compiled.js', function(req, res){
+  Server.app.get('*/gaston-compiled.js', function(req, res){
     var gastonPath = path.join(__dirname, '../browser', 'gaston-compiled.js');
       return fs.createReadStream( gastonPath )
         .pipe(res);
   });
 
-  Server.server.get('*/mocha.*', function(req, res){
+  Server.app.get('*/mocha.*', function(req, res){
     var ext = path.extname(req.url);
     res.set( {'Content-Type': mime.lookup(req.url) } )
     fs.createReadStream( path.join(__dirname, '../../node_modules/mocha/mocha' + ext) )
       .pipe(res);
   });
 
-  Server.server.get(['/run/*', '*/run/*'], function(req, res, next){
+  Server.app.get(['/run/*', '*/run/*'], function(req, res, next){
     var rex = /\/(.+)?run\/(\w+)/
     var match = rex.exec(req.url);
     if(!match){
@@ -139,7 +144,7 @@ var setupStaticFiles = function(config){
     res.status(200).send('ok');
   });
 
-  Server.server.get(['/stop-running', '*/stop-running'], function(req, res, next){
+  Server.app.get(['/stop-running', '*/stop-running'], function(req, res, next){
     var appPath = req.url.replace('/stop-running', '/');
     Middleware.unregister(appPath);
     res.status(200).send('ok');

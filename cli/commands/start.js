@@ -15,7 +15,7 @@ var start = module.exports = function start(io, args){
 
     io.socket.on('errored', function(err){
       reject(err);
-    })
+    });
     
     io.socket.emit('start', options);
   });
