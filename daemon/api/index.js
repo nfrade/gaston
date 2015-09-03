@@ -28,7 +28,6 @@ var API = module.exports = {
   stop: function stop(){
     return new Promise(function(fulfill, reject){
       server.close(function(){
-        log.info('API Server closed');
         API.running = false;
         io.close();
         fulfill();

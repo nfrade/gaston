@@ -21,9 +21,9 @@ var Server = module.exports = {
   inited: false,
   listening: false,
   init: function(options){
-    if(Server.inited){
+    if(Server.inited){ 
       return;
-    }
+    } 
     options = options || {};
     Server.serverIP = ip.address();
     Server.app = express();
