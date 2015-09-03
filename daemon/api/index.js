@@ -1,22 +1,17 @@
 var log = require('npmlog')
+  , path = require('path')
+  , fs = require('vigour-fs-promised')
   , Promise = require('bluebird')
   , http = require('http')
   , SocketIO = require('socket.io')
+  , registry = {}
 
 var server = http.createServer();
 var io = SocketIO( server );
 
-var registry = {
-  test: function test(payload){
-    console.log('test', payload);
-  },
-  bundle: function bundle(payload){
-    console.log('bundle', payload);
-  },
-  build: function build(payload){
-    console.log('build', payload);
-  }
-};
+io.on('connect', function(socket){
+  registerAPI(socket);
+});
 
 var API = module.exports = {
   running: false,
@@ -26,7 +21,6 @@ var API = module.exports = {
     return new Promise(function(fulfill, reject){
       server.listen(API.port, function(){
         API.running = true;
-        //registerAPI();
         fulfill();
       });
     });
@@ -44,11 +38,26 @@ var API = module.exports = {
 };
 
 
-var registerAPI = function registerAPI(){
+var registerAPI = function registerAPI(socket){
   var keys = Object.keys( registry );
   for(var i = 0, l = keys.length; i < l; i++){
     var key = keys[i];
-    var callback = registry[key];
-    io.on(key, callback);
+    var callback = registry[key].bind(socket);
+    socket.on(key, callback);
   };
 };
+
+var registryPath = path.join(__dirname, 'registry');
+fs.readdirAsync( registryPath )
+  .then(function(files){
+    for( var i = 0, l = files.length; i < l; i++ ){
+      var file = files[i];
+      if( path.extname(file) !== '.js'){
+        return;
+      }
+      var evName = file.replace('.js', '');
+      var reqPath = path.join( registryPath, file );
+      registry[ evName ] = require( reqPath );
+    }
+  });
+
