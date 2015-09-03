@@ -1,7 +1,7 @@
 var log = require('npmlog')
   , config = require('../../config.json')
 
-var start = module.exports = function(io, args){
+var start = module.exports = function start(io, args){
   return new Promise(function(fulfill, reject){
     var options = {
       basePath: process.cwd(),
@@ -12,6 +12,10 @@ var start = module.exports = function(io, args){
       log.info('gaston', 'http server listening on port', server.port);
       fulfill();
     });
+
+    io.socket.on('errored', function(err){
+      reject(err);
+    })
     
     io.socket.emit('start', options);
   });

@@ -60,20 +60,28 @@ var Server = module.exports = {
   },
   start: function(options){
     return new Promise(function(fulfill, reject){
+      if(Server.listening){
+        return reject( new Error( 'http server already running on port ' +  Server.port ) );
+      }
       Server.init(options);
-
       var port = options.port;
-
       var onServerStart = function(){
+        Server.listening = true;
         Server.port = port;
         fulfill();
       };
-
       Server.server.listen(port, onServerStart);
-
     });
+  },
 
-  }, 
+  stop: function(){
+    return new Promise(function(fulfill, reject){
+      Server.server.close(function(){
+        fulfill();
+      })
+    });
+  },
+
   launch: function(config, path){
     var address = 'http://' + Server.serverIP + ':' + config.port + '/';
     if(Server.isTesting){
