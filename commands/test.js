@@ -13,7 +13,7 @@ module.exports = function(cfg){
   } else if( ~args._.indexOf('browser') ){
     testType = 'browser';
   } else {
-    testType = 'node';
+    testType = 'all';
   }
 
   var files = args.f || args.files;
