@@ -10,7 +10,7 @@ var fs = require('vigour-fs-promised')
 
 var watchifies = {};
 
-module.exports = function middleware(config, Server){
+module.exports = function middleware(options, Server){
   return function(req, res, next){
     var url = req.url.replace(/\?.+$/, '');
     var action, fileToCompile;
@@ -23,12 +23,12 @@ module.exports = function middleware(config, Server){
       return next();
     }
 
-    var dirPath = path.join( config.basePath, url );
+    var dirPath = path.join( options.basePath, url );
 
     switch( action ){
       case 'dev':
         return Bundler.bundle( dirPath, 'dev', fileToCompile ) 
-          .then( getAppIndex(config, dirPath) )
+          .then( getAppIndex(options, dirPath) )
           .then(function(rStream){
             return rStream
               .pipe( res );
@@ -53,7 +53,7 @@ module.exports = function middleware(config, Server){
 //directories running as test or app
 var running = module.exports.running = {};
 
-var getAppIndex = function(config, dirPath){
+var getAppIndex = function(options, dirPath){
   return function(){
     var indexPath,
       exists;
@@ -62,7 +62,7 @@ var getAppIndex = function(config, dirPath){
     exists = fs.existsSync(indexPath);
 
     if(!exists){
-      indexPath = path.join( config.basePath, 'index.html');
+      indexPath = path.join( options.basePath, 'index.html');
       if( !fs.existsSync(indexPath) ){
         indexPath = path.join(gastonFilesPath, 'bootstrap', 'index.html');
       }

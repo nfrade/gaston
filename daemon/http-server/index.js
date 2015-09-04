@@ -9,7 +9,7 @@ var log = require('npmlog')
   , openurl = require('openurl')
   , ServeIndex = require('gaston-serve-index')
   , mime = require('mime')
-  // , Middleware = require('./middleware')
+  , Middleware = require('./middleware')
   // , socketServer = require('./socket-server')
   , localIpPromise
   , httpServer;
@@ -28,33 +28,33 @@ var Server = module.exports = {
     Server.serverIP = ip.address();
     Server.app = express();
 
-    // var middleware = Middleware(config, Server);
+    // var middleware = Middleware(options, Server);
     var serveIndex = ServeIndex( options.basePath, {
       icons: true, 
       view: 'details', 
       trailingSlashes: true
     } );
 
-    // setupStaticFiles(config);
+    setupStaticFiles(options);
 
     // Server.app.use( middleware );
     Server.app.use( serveIndex );
 
-    // Server.server.get('*', function(req, res){
+    Server.server.get('*', function(req, res){
 
-    //   var fullUrl = req.url.split('?').shift();
-    //   var fullPath = path.join(config.basePath, fullUrl);
-    //   res.set( {'Content-Type': mime.lookup(fullPath) } )
+      var fullUrl = req.url.split('?').shift();
+      var fullPath = path.join(options.basePath, fullUrl);
+      res.set( {'Content-Type': mime.lookup(fullPath) } )
       
-    //   fs.existsAsync(fullPath)
-    //     .then(function(exists){
-    //       if(exists){
-    //         fs.createReadStream(fullPath).pipe(res);
-    //       } else {
-    //         res.status(404).send('not found');
-    //       }
-    //     });
-    // });
+      fs.existsAsync(fullPath)
+        .then(function(exists){
+          if(exists){
+            fs.createReadStream(fullPath).pipe(res);
+          } else {
+            res.status(404).send('not found');
+          }
+        });
+    });
 
     Server.inited = true;
   },
@@ -97,7 +97,7 @@ var Server = module.exports = {
   }
 };
 
-var setupStaticFiles = function(config){
+var setupStaticFiles = function(options){
   Server.app.get(['bundle*', '*/bundle*'], function(req, res, next){
     var dir = path.dirname(req.url)
     if(dir !== '/'){
@@ -112,7 +112,7 @@ var setupStaticFiles = function(config){
       .replace(/\//g, '_')
       .replace( /\?.+$/, '');
       
-    var served = path.join(config.basePath, 'bundles', fileName);
+    var served = path.join(options.basePath, 'bundles', fileName);
 
     fs.createReadStream( served )
       .pipe( res );

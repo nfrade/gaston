@@ -51,7 +51,7 @@
     "socket.io-client": "^1.3.6",
     "through2": "^2.0.0",
     "uglify-js": "^2.4.24",
-    "vigour-fs-promised": "^1.0.1",
+    "vigour-fs-promised": "^1.1.0",
     "watchify": "^3.3.1"
   },
   "bugs": {
