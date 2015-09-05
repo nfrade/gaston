@@ -3,7 +3,18 @@ var minimist = require('minimist')
   , through = require('through2')
   , fs = require('vigour-fs-promised')
   , gaston = require('../lib/gaston')
+  , log = require('npmlog')
   , config;
+
+
+process.on('unhandledRejection', function (err) {
+  throw err;
+});
+
+process.on('uncaughtException', function (err) {
+  log.error(config.command, err.stack);
+  process.exit(1);
+});
 
 var args = minimist(process.argv);
 
