@@ -1,4 +1,5 @@
 var log = require('npmlog')
+  , Promise = require('bluebird')
   , config = require('../../config.json')
 
 var start = module.exports = function start(io, args){

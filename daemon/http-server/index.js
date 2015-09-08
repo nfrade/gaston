@@ -40,7 +40,7 @@ var Server = module.exports = {
     // Server.app.use( middleware );
     Server.app.use( serveIndex );
 
-    Server.server.get('*', function(req, res){
+    Server.app.get('*', function(req, res){
 
       var fullUrl = req.url.split('?').shift();
       var fullPath = path.join(options.basePath, fullUrl);
