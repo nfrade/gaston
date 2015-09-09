@@ -1,4 +1,14 @@
 {
   "http-port": 8080,
-  "api-port": 64570
+  "api-port": 64570,
+  "base-path": "./develop",
+  "something": {
+    "la": "hahahaha",
+    "blurf": "blogedkj",
+    "more": {
+      "even": {
+        "here": "hahahaha"
+      }
+    }
+  }
 }
