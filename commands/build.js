@@ -57,7 +57,7 @@ var build = module.exports = function(cfg){
       if( !fs.existsSync(indexPath) ){
         indexPath = path.join( __dirname, '../gaston-files/bootstrap/', 'build.html');
       }
-      var targetIndexPath = destinationHTML || path.join(destination, 'index.html');
+      var targetIndexPath = destinationHTML || path.join(destination, 'build.html');
 
       fs.readFileAsync(indexPath, 'utf8')
         .then(function(data){
