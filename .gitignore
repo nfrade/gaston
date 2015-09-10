@@ -20,3 +20,5 @@ bundle.js
 bundle.css
 !lib/commands/bundle.js
 vendor/
+test/mocha.*
+test/test-runner.html
