@@ -13,7 +13,7 @@
     "url": "https://github.com/vigour-io/gaston.git"
   },
   "bin": {
-    "gold": "bin/gaston.js"
+    "gaston": "bin/gaston.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
