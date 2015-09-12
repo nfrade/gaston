@@ -1,11 +1,20 @@
 #!/usr/bin/env node
 var log = require('npmlog')
-  , minimist = require('minimist')
-  , args = minimist( process.argv )
+  , path = require('path')
+  , fs = require('vigour-fs-promised')
   , daemon = require('../lib/daemon')
-  , config = require('../config.json');
+  , config = require('../config.json')
+  , chokidar = require('chokidar')
+  , configPath = path.join(__dirname, '../config.json');
 
 daemon.start( config )
-  .then(function(){
-    log.info('gaston', 'gaston running as a daemon on port', daemon.port);
-  });
+  .then( onStarted )
+  .catch( onError );
+
+function onStarted(){
+  log.info('gaston', 'gaston running as a daemon on port', daemon.port);
+};
+
+function onError(err){
+  log.error('gaston', err);
+}

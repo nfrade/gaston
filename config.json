@@ -1,6 +1,6 @@
 {
-  "http-port": 8080,
-  "api-port": 64570,
+  "http-port": 8082,
+  "api-port": 64572,
   "base-path": "./develop/vigour-io/gaston/test/to-compile/src/",
   "something": {
     "la": "hahahaha",
