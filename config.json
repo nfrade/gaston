@@ -1,5 +1,5 @@
 {
-  "http-port": 8081,
-  "api-port": 64572,
-  "base-path": "."
+    "http-port": 8080,
+    "api-port": 64571,
+    "base-path": "."
 }
