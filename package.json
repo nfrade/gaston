@@ -43,7 +43,6 @@
     "mocha-phantomjs": "^3.6.0",
     "npmlog": "^1.2.1",
     "openurl": "^1.1.0",
-    "promise": "^7.0.4",
     "shelljs": "^0.5.3",
     "sinon": "^1.16.1",
     "sinon-chai": "^2.8.0",
