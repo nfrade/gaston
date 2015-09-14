@@ -51,6 +51,7 @@
     "socket.io-client": "^1.3.6",
     "through2": "^2.0.0",
     "uglify-js": "^2.4.24",
+    "url": "^0.11.0",
     "vigour-fs-promised": "^1.1.0",
     "vjs": "git+ssh://git@github.com/vigour-io/vjs.git#develop",
     "watchify": "^3.3.1"
