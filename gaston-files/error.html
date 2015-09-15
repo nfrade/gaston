@@ -12,11 +12,59 @@
 </style>
 
 <style type="text/css">
+  html {
+    background: #ECE9E9 -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#ECE9E9));
+    background-repeat: no-repeat;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 10px;
+  }
 
+  body {
+    font-size: 1.4rem;
+    margin: 0 auto;
+    padding: 8rem 10rem;
+  }
+
+  h1 {
+    margin-top: 0;
+  }
+
+  .meta {
+    color: #999;
+    line-height: 1.7;
+  }
+
+  .meta label {
+    /*display: inline-block;
+    width: 8rem;*/
+  }
+
+  .meta span {
+    color: #555;
+  }
+
+  .error-type {
+    margin-bottom: 1rem;
+  }
+
+  .code-block {
+    background: white;
+    margin-top: 2rem;
+    -webkit-box-shadow: 0 0 15px #e5e5e5;
+    box-shadow: 0 0 15px #e5e5e5;
+    border: 1px solid #e5e5e5;
+  }
+
+  .error-line {
+    background: red;
+  }
+
+  /* untouched */
   .code-block > div {
     display: inline-block;
     margin-right: 5px;
   }
+
   pre {
     margin: 0;
     padding: 0;
@@ -29,10 +77,31 @@
     font-family: monospace;
   }
 
-  .error-line {
-    background: red;
+  @media screen and (max-width: 960px) {
+    body {
+      padding: 8rem 6rem;
+    }
   }
 
+  @media screen and (max-width: 768px) {
+    html {
+      font-size: 9px;
+    }
+
+    body {
+      padding: 3rem 0;
+    }
+
+    h1,
+    .meta {
+      padding: 0 3rem;
+    }
+
+    .code-block {
+      border-left: 0;
+      border-right: 0;
+    }
+  }
 </style>
 
 </head>
