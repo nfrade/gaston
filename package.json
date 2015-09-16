@@ -4,7 +4,6 @@
   "preferGlobal": true,
   "description": "buildtool for vigour-io",
   "main": "lib/index.js",
-  "browser": "lib/browser.js",
   "author": {
     "name": "Vigour.io",
     "email": "dev@vigour.io"
