@@ -6,9 +6,12 @@
   "expr": true,
   "laxbreak": true,
   "laxcomma": true,
+  "undef": true,
+  "unused": true,
   "node": true,
-  "maxlen":80,
+  "sub": true,
   "validthis": true,
+  "bitwise": false,
   "globals": {
     "log": true,
     "window": false,
