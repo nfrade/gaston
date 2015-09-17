@@ -3,19 +3,22 @@ var parseArgs = require('minimist');
 var args = parseArgs(process.argv);
 var log = require('npmlog');
 
+var config = require('../lib/config');
+
 
 process.on('unhandledRejection', function (err) {
   throw err;
 });
 
 process.on('uncaughtException', function (err) {
-  log.error(config.command, err.stack);
+  if (err && err.stack) {
+    log.error(config.command, err.stack);
+  }
   process.exit(1);
 });
 
 
-module.exports = function(cfg){
-  config = cfg;
+module.exports = function test () {
   var testType;
 
   if( ~args._.indexOf('node', 1) ){
@@ -24,11 +27,13 @@ module.exports = function(cfg){
     testType = 'common';
   } else if( ~args._.indexOf('browser') ){
     testType = 'browser';
+  } else if( ~args._.indexOf('sauce') ){
+    testType = 'sauce';
   } else {
     testType = 'all';
   }
 
   var files = args.f || args.files;
 
-  tester(testType, config, files);
+  tester(testType, files);
 };
