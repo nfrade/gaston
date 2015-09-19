@@ -1,5 +1,4 @@
-require('module/styles.less'); 
-console.log('required module/styles.less');
+require('./styles.less'); 
 
 console.log('in src/module/index.js');
 
