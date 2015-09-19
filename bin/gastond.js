@@ -1,13 +1,14 @@
 #!/usr/bin/env node
+
+global.Config = require('../lib/config');
+
 var log = require('npmlog')
   , path = require('path')
   , fs = require('vigour-fs-promised')
-  , daemon = require('../lib/daemon')
-  , config = require('../config/gaston.json')
-  , chokidar = require('chokidar')
-  , configPath = path.join(__dirname, '../config/gaston.json');
+  , daemon = require('../lib/daemon');
 
-daemon.start( config )
+Config.init()
+  .then( daemon.start )
   .then( onStarted )
   .catch( onError );
 

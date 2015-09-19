@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-
-var log = require('npmlog')
+var os = require('os')
   , path = require('path')
   , fs = require('vigour-fs-promised')
-  , configPath = path.join(__dirname, '..', 'config/gaston.json')
+  , homedir = os.homedir()
+  , configPath = path.join(homedir, '.gaston', 'config/gaston.json')
   , initialConfig = {
     "http-port": 8080,
     "api-port": 64571,

@@ -6,3 +6,4 @@ console.log('hehehehehehe')
 
 require('~/test/to-compile/src/module/some-file')
 console.log('required ~/test/to-compile/src/module/some-file')
+
