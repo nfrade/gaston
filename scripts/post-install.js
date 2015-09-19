@@ -2,7 +2,7 @@
 var os = require('os')
   , path = require('path')
   , fs = require('vigour-fs-promised')
-  , homedir = os.homedir()
+  , homedir = process.env.USERPROFILE || process.env.HOME
   , configPath = path.join(homedir, '.gaston', 'config/gaston.json')
   , initialConfig = {
     "http-port": 8080,
