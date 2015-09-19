@@ -9,6 +9,7 @@ var log = require('npmlog')
 
 Config.init()
   .then( daemon.start )
+  // .then( gaston.connect )
   .then( onStarted )
   .catch( onError );
 
