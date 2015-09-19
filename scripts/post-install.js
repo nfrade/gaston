@@ -3,14 +3,16 @@
 var log = require('npmlog')
   , path = require('path')
   , fs = require('vigour-fs-promised')
-  , configPath = path.join(__dirname, '..', 'config.json');
+  , configPath = path.join(__dirname, '..', 'config/gaston.json')
+  , initialConfig = {
+    "http-port": 8080,
+    "api-port": 64571,
+    "base-path": process.env.HOME || process.env.USERPROFILE
+  };
 
-fs.editJSONAsync( configPath, editJSON, { space: 4 } )
-  .then(function(){
-    log.info('gaston', 'config[\'base-path\'] set to your home directory');
-  })
-
-function editJSON(obj){
-  obj['base-path'] = process.env.HOME || process.env.USERPROFILE;
-  return obj;
-}
+fs.existsAsync( configPath )
+  .then(function(exists){
+    if(!exists){
+      fs.writeJSONAsync( configPath, initialConfig, { space: 2 } );
+    }
+  });
