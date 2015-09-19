@@ -14,7 +14,7 @@ Config.init()
 
 function onStarted(){
   log.info('gaston', 'gaston running as a daemon on port', daemon.port);
-};
+}
 
 function onError(err){
   log.error('gaston', err);
