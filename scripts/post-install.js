@@ -13,6 +13,6 @@ var log = require('npmlog')
 fs.existsAsync( configPath )
   .then(function(exists){
     if(!exists){
-      fs.writeJSONAsync( configPath, initialConfig, { space: 2 } );
+      fs.writeJSONAsync( configPath, initialConfig, { space: 2, mkdirp: true } );
     }
   });
