@@ -3,9 +3,9 @@ var log = require('npmlog')
   , path = require('path')
   , fs = require('vigour-fs-promised')
   , daemon = require('../lib/daemon')
-  , config = require('../config.json')
+  , config = require('../config/gaston.json')
   , chokidar = require('chokidar')
-  , configPath = path.join(__dirname, '../config.json');
+  , configPath = path.join(__dirname, '../config/gaston.json');
 
 daemon.start( config )
   .then( onStarted )

@@ -15,5 +15,7 @@ build
 node_modules
 .DS_Store
 
-last-config.json
+config/
+!config/gaston.json
+!lib/config/
 
