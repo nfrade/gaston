@@ -9,12 +9,13 @@ var log = require('npmlog')
 
 Config.init()
   .then( daemon.start )
+  // .then( gaston.connect )
   .then( onStarted )
   .catch( onError );
 
 function onStarted(){
   log.info('gaston', 'gaston running as a daemon on port', daemon.port);
-};
+}
 
 function onError(err){
   log.error('gaston', err);
