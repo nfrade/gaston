@@ -14,7 +14,8 @@
   },
   "bin": {
     "gaston": "bin/gaston.js",
-    "gastond": "bin/gastond.js"
+    "gastond": "bin/gastond.js",
+    "gaston-config": "bin/gaston-config.js"
   },
   "scripts": {
     "preinstall": "rm -rf ~/.npm && npm cache clear",
