@@ -13,8 +13,7 @@ var os = require('os')
 
       "push-state": false,
       "index-path": false,
-      "css-compiler": "less",
-      "aliases": {}
+      "css-compiler": "less"
     };
 
 fs.existsAsync( configPath )
