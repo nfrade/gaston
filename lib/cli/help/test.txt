@@ -1,0 +1,43 @@
+
+Usage: gaston test <options>
+runs cli tests in the terminal
+it will always exit with the code = number of tests failed
+it can equally be run in Travis-CI
+
+Available options:
+
+-s --source   source folder where all js files will run
+-f --files    specific file to run the tests (if specified source will not matter)
+-r --runner   type or types of tests to run
+    available runners:
+      - node    runs the tests in a node.js environment
+      - phantom runs the tests in a phantomjs environment
+      - common  runs both node and phantom runners
+
+Examples: 
+  
+  $ gaston test -s ./test -r node
+      runs all the .js files with the node runner
+
+  $ gaston test -r phantom -f ./test/some-file.js
+      runs the specified file with the phantomjs runner
+
+  $ gaston test -r phantom -r node -s ./test
+      runs all the files in the test folder with both runners sequentially
+
+  $ gaston test -r common -s ./test
+    same as the previous example
+
+Special Behaviour: 
+  - if you don't specify a runner, it will use a special runner 'all'
+  - the 'all' runner will run phantom, node, and common tests with the following behaviour
+
+    $ gaston test -s ./test
+      - runs all the tests in ./test/node  with the node runner
+      - runs all the tests in ./test/phantom with the phantomjs runner
+      - runs all the tests in ./test/common with the common runner
+
+  - if any of the specific directories don't exist, the runner will just run 0 tests
+  - this is a good standard if you're writing isomorphic apps or libs, you just need to add 
+    "gaston test -s ./test" to all your npm test scripts for any project
+    
