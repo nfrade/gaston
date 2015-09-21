@@ -1,5 +1,5 @@
 {
-  "name": "gaston",
+  "name": "gold",
   "version": "0.14.0",
   "preferGlobal": true,
   "description": "buildtool for vigour-io",
@@ -13,7 +13,7 @@
     "url": "https://github.com/vigour-io/gaston.git"
   },
   "bin": {
-    "gaston": "bin/gaston.js"
+    "gold": "bin/gaston.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
