@@ -65,5 +65,19 @@
   },
   "homepage": "https://github.com/vigour-io/gaston",
   "engine": "node 0.12.x",
-  "devDependencies": {}
+  "devDependencies": {},
+  "standard": {
+    "globals": [ 
+      "describe", 
+      "it", 
+      "assert",
+      "expect", 
+      "should", 
+      "before",
+      "beforeEach", 
+      "after",
+      "afterEach",
+      "sinon"
+    ]
+  }
 }
