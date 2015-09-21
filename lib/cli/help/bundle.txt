@@ -11,7 +11,7 @@ Available options:
 -g --gaston       if specified, gaston code will be included in the bundle
 
 Example:
-  gaston bundle -s ./index.js -o bundles/ -i ./index.html -p -m
+  gaston bundle -s ./index.js -o bundles/ -i ./index.html -p ./package.json -m
 
     - will generate the following files:
       ./bundles/index.html
@@ -21,9 +21,11 @@ Example:
     - bundle.js will include sourcemaps at the end
 
 Notes:
+- paths can be absolute or relative to where you're running the command from
 - output is optional 
     argument must be a directory and must exist
     you can run gaston bundle without it just to check if there's no compile errors
+    does not generate any files as a result if not specified
 - index-path is optional and 
     it is only accounted for if output is specified
     it should have a script tag pointing to "bundle.js"
