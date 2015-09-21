@@ -1,9 +1,8 @@
-require('./styles.less'); 
+require('./styles.less')
 
-console.log('in src/module/index.js');
+console.log('in src/module/index.js')
 
 console.log('hehehehehehe')
 
 require('~/test/to-compile/src/module/some-file')
 console.log('required ~/test/to-compile/src/module/some-file')
-
