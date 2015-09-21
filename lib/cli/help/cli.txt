@@ -1,3 +1,4 @@
+
 GASTON - the ultimate task runner
 
 Usage: gaston <command> <options>
@@ -8,5 +9,5 @@ Available commands
 - bundle
 - build
 - test
-- restart
+- config
 

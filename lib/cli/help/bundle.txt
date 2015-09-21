@@ -1,3 +1,4 @@
+
 Usage: gaston bundle <options>
 compiles your application into a bundle.js and bundle.css
 

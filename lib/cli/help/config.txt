@@ -1,0 +1,17 @@
+
+Usage: gaston-config
+
+Opens your default editor or vim so you can edit the global configuration for gaston.
+Available configurations:
+
+   http-port:    the port gaston's web server runs from
+   api-port:     the port gaston's socket.io API runs from 
+   base-path:    the path to be served when you open a browser
+  *source-maps:  weather you want to use source-maps in all your projects
+  *smaps:        gaston's cool and lightweight alternative to source-maps
+  *css-compiler: can be 'less' or 'saas'
+  *css-options:  options object to be passed to less or saas compiler
+
+Notes:
+  - for now there is no validation when you alter this config, so you may run into trouble when restarting the server
+  - the options marked with * can be overriden per project in your package.json by adding a "gaston" section

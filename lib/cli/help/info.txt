@@ -1,0 +1,12 @@
+
+Usage: gaston info
+gives you useful information about the gaston daemon
+
+example:
+ip 192.168.1.26
+api-port 64571
+http-port 8080
+base-path /Users/andrepadez/develop
+home http://192.168.1.26:8080/
+
+you can change configuration running "gaston-config"
