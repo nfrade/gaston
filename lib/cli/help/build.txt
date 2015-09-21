@@ -1,0 +1,30 @@
+Usage: gaston bundle <options>
+compiles and minimizes your application into a build.js and build.css
+
+Available options:
+
+-s --source       path to the file being compiled
+-o --output       path to directory where result files are going to be saved
+-i --index-path   path of the index.html file you want to save in the output directory
+-p --package      path to package.json, to be included in the bundle
+
+Example:
+  gaston build -s ./index.js -o builds/ -i ./index.html -p
+
+    - will generate the following files:
+      ./builds/build.html
+      ./builds/build.js
+      ./builds/build.css
+    - the package.json will be available in your code
+
+Notes:
+- output is optional 
+    argument must be a directory and must exist
+    you can run gaston build without it just to check if there's no compile errors
+- index-path is optional and 
+    it is only accounted for if output is specified
+    it should have a script tag pointing to "bundle.js"
+    it should have a link tag pointing to "bundle.css"
+    compilation will replace the references to bundle.* to build.*
+- package if specified 
+    will be available anywhere in your code with "var pkg = require('package.json')"

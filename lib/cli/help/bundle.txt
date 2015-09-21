@@ -1,0 +1,33 @@
+Usage: gaston bundle <options>
+compiles your application into a bundle.js and bundle.css
+
+Available options:
+
+-s --source       path to the file being compiled
+-o --output       path to directory where result files are going to be saved
+-i --index-path   path of the index.html file you want to save in the output directory
+-p --package      path to package.json, to be included in the bundle
+-m --source-maps  if specified will include source-maps in your javascript bundle
+-g --gaston       if specified, gaston code will be included in the bundle
+
+Example:
+  gaston bundle -s ./index.js -o bundles/ -i ./index.html -p -m
+
+    - will generate the following files:
+      ./bundles/index.html
+      ./bundles/bundle.js
+      ./bundles/bundle.css
+    - the package.json will be available in your code
+    - bundle.js will include sourcemaps at the end
+
+Notes:
+- output is optional 
+    argument must be a directory and must exist
+    you can run gaston bundle without it just to check if there's no compile errors
+- index-path is optional and 
+    it is only accounted for if output is specified
+    it should have a script tag pointing to "bundle.js"
+    it should have a link tag pointing to "bundle.css"
+- package if specified 
+    will be available anywhere in your code with "var pkg = require('package.json')"
+

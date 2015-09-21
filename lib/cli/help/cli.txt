@@ -1,0 +1,12 @@
+GASTON - the ultimate task runner
+
+Usage: gaston <command> <options>
+Help:  gaston help <command>
+
+Available commands
+- info
+- bundle
+- build
+- test
+- restart
+
