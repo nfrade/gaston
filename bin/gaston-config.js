@@ -13,12 +13,11 @@ Config.init()
   .then(function () {
     return client.connect()
   })
-  .then(makeBackup)
   .then(function () {
     return openEditor(configPath)
   })
   .then(function (content) {
-    console.log('content', content)
+    log.info('gaston', 'configuration changed')
   })
   // .then(validateNewContent)
   .then(function () {
@@ -28,15 +27,6 @@ Config.init()
     log.error('gaston', 'cannot connect to daemon')
     process.exit(1)
   })
-
-function makeBackup () {
-  return new Promise(function (resolve, reject) {
-    var rs = fs.createReadStream(configPath)
-    var ws = fs.createWriteStream(configPath + '.backup')
-    ws.on('close', resolve)
-    rs.pipe(ws)
-  })
-}
 
 function openEditor (file) {
   return new Promise(function (resolve, reject) {
