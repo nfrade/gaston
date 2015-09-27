@@ -6,28 +6,20 @@ Available options:
 
 -s --source       path to the file being compiled
 -o --output       path to directory where result files are going to be saved
--i --index-path   path of the index.html file you want to save in the output directory
--p --package      path to package.json, to be included in the bundle
+-i --index        wether you want to save an index.html in the output directory
 
 Example:
-  gaston build -s ./index.js -o builds/ -i ./index.html -p ./package.json
+  gaston build -s ./index.js -o builds/ -i
 
     - will generate the following files:
       ./builds/build.html
       ./builds/build.js
       ./builds/build.css
-    - the package.json will be available in your code
 
 Notes:
+- code will be compiled with the options present in the gaston section of the package.json
 - paths can be absolute or relative to where you're running the command from
 - output is optional 
     argument must be a directory and must exist
-    you can run gaston build without it just to check if there's no compile errors
+    you can run gaston bundle without it just to check if there's no compile errors
     does not generate any files as a result if not specified
-- index-path is optional and 
-    it is only accounted for if output is specified
-    it should have a script tag pointing to "bundle.js"
-    it should have a link tag pointing to "bundle.css"
-    compilation will replace the references to bundle.* to build.*
-- package if specified 
-    will be available anywhere in your code with "var pkg = require('package.json')"
