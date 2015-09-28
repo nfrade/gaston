@@ -12,6 +12,7 @@ Config.init()
 
 function onStarted () {
   log.info('gaston', 'gaston running as a daemon on port', daemon.port)
+  log.info('gaston', 'http server running on port', daemon.httpServer.port)
 }
 
 function onError (err) {
