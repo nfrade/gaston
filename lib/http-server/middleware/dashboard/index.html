@@ -31,8 +31,9 @@
   }
 
   .meta label {
-    /*display: inline-block;
-    width: 8rem;*/
+    margin-left: 10px;
+    display: inline-block;
+    width: 20rem;
   }
 
   .meta span {
@@ -68,12 +69,13 @@ function renderProjects (projects){
     var projectPath = keys[i]
     var project = projects[projectPath]
     htmlStr += '<div>'
+    htmlStr += '<button data-role="unregister">unregister</button>'
     if(project.listening){
       htmlStr += '<button data-role="stop">stop</button>'  
     } else {
       htmlStr += '<button data-role="start">start</button>'
     }
-    htmlStr += '<label>' + projectPath + '</label>'
+    htmlStr += '<label>' + project.name + '</label>'
     var href = 'http://' + gaston.server.ip + ':' + project['http-port']
     htmlStr += '<a target="_blank" href="'+href+'">' + href + '</a>' 
     htmlStr += '</div>'
