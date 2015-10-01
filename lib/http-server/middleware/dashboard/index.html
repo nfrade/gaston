@@ -46,6 +46,7 @@
 
 <h1 class="error-type">Gaston Dashboard</h1>
 <div class="meta">
+  <a target="_blank" href="?$findProject=true">register new project</a>
   <div>
     <h3>Registered Projects: </h3>
   </div>
@@ -67,7 +68,11 @@ function renderProjects (projects){
     var projectPath = keys[i]
     var project = projects[projectPath]
     htmlStr += '<div>'
-    htmlStr += '<button>start</button>'
+    if(project.listening){
+      htmlStr += '<button data-role="stop">stop</button>'  
+    } else {
+      htmlStr += '<button data-role="start">start</button>'
+    }
     htmlStr += '<label>' + projectPath + '</label>'
     var href = 'http://' + gaston.server.ip + ':' + project['http-port']
     htmlStr += '<a target="_blank" href="'+href+'">' + href + '</a>' 
