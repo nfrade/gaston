@@ -36,6 +36,10 @@
     width: 20rem;
   }
 
+  .meta label.running{
+    color: green;
+  }
+
   .meta span {
     color: #555;
   }
@@ -69,19 +73,45 @@ function renderProjects (projects){
     var projectPath = keys[i]
     var project = projects[projectPath]
     htmlStr += '<div>'
-    htmlStr += '<button data-role="unregister">unregister</button>'
-    if(project.listening){
-      htmlStr += '<button data-role="stop">stop</button>'  
+    htmlStr += '<button data-role="unregister" data-project="'+projectPath+'">unregister</button>'
+    if(!project.stopped){
+      htmlStr += '<button data-role="stop" data-project="'+projectPath+'">stop</button>'  
     } else {
-      htmlStr += '<button data-role="start">start</button>'
+      htmlStr += '<button data-role="start" data-project="'+projectPath+'">start</button>'
     }
-    htmlStr += '<label>' + project.name + '</label>'
+    var listeningClass = project.stopped? '' : 'running'
+    htmlStr += '<label class="'+listeningClass+'">' + project.name + '</label>'
     var href = 'http://' + gaston.server.ip + ':' + project['http-port']
     htmlStr += '<a target="_blank" href="'+href+'">' + href + '</a>' 
     htmlStr += '</div>'
   }
   document.getElementById('projects').innerHTML = htmlStr
 }
+
+document.getElementById('projects').addEventListener('click', function(ev){
+  var target = ev.target
+
+  switch(target.dataset.role){
+    case 'unregister': 
+      gaston.api.unregisterProject(target.dataset.project)
+        .then(function(project){
+          console.log('stopped', project)
+        })
+        .then(gaston.api.getProjects)
+        .then(renderProjects)
+      break
+    case 'stop':
+      gaston.api.stopProject(target.dataset.project)
+        .then(gaston.api.getProjects)
+        .then(renderProjects)
+      break
+    case 'start': 
+      gaston.api.startProject(target.dataset.project)
+        .then(gaston.api.getProjects)
+        .then(renderProjects)
+      break
+  }
+})
 
 
 </script>
