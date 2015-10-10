@@ -24,6 +24,7 @@
   "license": "MIT",
   "dependencies": {
     "aliasify": "^1.7.2",
+    "babelify": "^6.3.0",
     "browserify": "^11.0.1",
     "chai": "^3.2.0",
     "chokidar": "^1.0.5",
@@ -66,14 +67,14 @@
   "engine": "node 0.12.x",
   "devDependencies": {},
   "standard": {
-    "globals": [ 
-      "describe", 
-      "it", 
+    "globals": [
+      "describe",
+      "it",
       "assert",
-      "expect", 
-      "should", 
+      "expect",
+      "should",
       "before",
-      "beforeEach", 
+      "beforeEach",
       "after",
       "afterEach",
       "sinon"
