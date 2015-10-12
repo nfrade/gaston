@@ -43,6 +43,12 @@
     color: #555;
   }
 
+  .meta span[contentEditable]:focus {
+    outline: none;
+    background: white;
+    display: inline-block;
+  }
+
   .error-type {
     margin-bottom: 1rem;
   }
@@ -53,7 +59,6 @@
     -webkit-box-shadow: 0 0 15px #e5e5e5;
     box-shadow: 0 0 15px #e5e5e5;
     border: 1px solid #e5e5e5;
-    /*width: 100%;*/
   }
 
   .code-block.code-block > div {
@@ -61,7 +66,7 @@
   }
 
   .code-block.code-block > div:last-child {
-    width: 90%;
+    width: 85%;
     width: calc(100% - 65px);
   }
 
@@ -73,7 +78,9 @@
   }
 
   .error-line {
-    background: #fed9dd;
+    background: #fec9ce;
+    display: inline-block;
+    width: 100%;
   }
 
   /* untouched */
@@ -136,7 +143,7 @@
   </div>
   <div>
     <label>File: </label>
-    <span>{{file}}</span>
+    <span contentEditable>{{file}}</span>
   </div>
 </div>
 <div class="code-block">
