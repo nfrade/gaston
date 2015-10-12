@@ -53,30 +53,27 @@
     -webkit-box-shadow: 0 0 15px #e5e5e5;
     box-shadow: 0 0 15px #e5e5e5;
     border: 1px solid #e5e5e5;
-    display: table;
-    width: 100%;
+    /*width: 100%;*/
   }
 
   .code-block.code-block > div {
-    display: table-cell;
+    margin: 0;
   }
 
-  .code-block > .line-numbers {
-    width: 1px;
+  .code-block.code-block > div:last-child {
+    width: 90%;
+    width: calc(100% - 65px);
+  }
+
+  .code-block > div.line-numbers {
     color: #ccc;
     -webkit-user-select: none;
     -moz-user-select: none;
-    -ms-user-select: none;
-    -o-user-select: none;
     user-select: none;
   }
 
-  .code-block pre {
-    margin-left: 5px;
-  }
-
   .error-line {
-    border-bottom: 2px solid #fd0c21;
+    background: #fed9dd;
   }
 
   /* untouched */
