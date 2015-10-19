@@ -1,6 +1,6 @@
 {
   "name": "gaston",
-  "version": "0.20.2",
+  "version": "0.20.3",
   "preferGlobal": true,
   "description": "buildtool for vigour-io",
   "main": "lib/index.js",
@@ -45,6 +45,7 @@
     "mocha": "^2.3.2",
     "mocha-phantomjs": "^3.6.0",
     "npmlog": "^1.2.1",
+    "phantomjs": "1.9.7-15",
     "openurl": "^1.1.0",
     "shelljs": "^0.5.3",
     "sinon": "^1.16.1",
