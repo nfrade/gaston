@@ -138,12 +138,8 @@
     <span>{{message}}</span>
   </div>
   <div>
-    <label>Line: </label>
-    <span id="error-line">{{line}}</span>
-  </div>
-  <div>
-    <label>File: </label>
-    <span contentEditable>{{file}}</span>
+    <label>Location: </label>
+    <span contentEditable>{{file}}:<span id="error-line">{{line}}</span></span>
   </div>
 </div>
 <div class="code-block">

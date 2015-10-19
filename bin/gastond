@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 
+// checks for available update and returns an instance
+var updateNotifier = require('update-notifier')
+var pkg = require('../package.json')
+var notifier = updateNotifier({pkg})
+notifier.notify()
+
 var Config = global.Config = require('../lib/config')
 
 var log = require('npmlog')
@@ -18,9 +24,3 @@ function onStarted () {
 function onError (err) {
   log.error('gaston', err.stack)
 }
-
-// checks for available update and returns an instance
-var updateNotifier = require('update-notifier')
-var pkg = require('../package.json')
-var notifier = updateNotifier({pkg})
-notifier.notify()
