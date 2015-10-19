@@ -6,11 +6,8 @@ var configPath = path.join(homedir, '.gaston', 'config.json')
 var initialConfig = {
   'http-port': 8080,
   'api-port': 64571,
-  'base-path': process.env.HOME || process.env.USERPROFILE,
-  'source-maps': false,
-  'smaps': true,
-
-  'push-state': false,
+  'base-path': homedir,
+  'source-maps': true,
   'index-path': false,
   'css-compiler': 'less'
 }
