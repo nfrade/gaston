@@ -1,6 +1,6 @@
 {
   "name": "gaston",
-  "version": "0.20.7",
+  "version": "0.20.8",
   "preferGlobal": true,
   "description": "buildtool for vigour-io",
   "main": "lib/index.js",

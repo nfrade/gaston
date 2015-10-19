@@ -18,3 +18,9 @@ function onStarted () {
 function onError (err) {
   log.error('gaston', err.stack)
 }
+
+// checks for available update and returns an instance
+var updateNotifier = require('update-notifier')
+var pkg = require('../package.json')
+var notifier = updateNotifier({pkg})
+notifier.notify()
