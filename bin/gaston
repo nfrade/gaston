@@ -2,9 +2,3 @@
 require('../lib/cli')
 
 // [TODO] implement updateWatcher from /usr/local/bin/nodemon
-
-// checks for available update and returns an instance
-var updateNotifier = require('update-notifier')
-var pkg = require('../package.json')
-var notifier = updateNotifier({pkg: pkg})
-notifier.notify()
