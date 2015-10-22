@@ -1,4 +1,7 @@
 #!/usr/bin/env node
 require('../lib/cli')
 
-// [TODO] implement updateWatcher from /usr/local/bin/nodemon
+var updateNotifier = require('update-notifier')    
+var pkg = require('../package.json')   
+var notifier = updateNotifier({pkg: pkg})    
+notifier.notify()
