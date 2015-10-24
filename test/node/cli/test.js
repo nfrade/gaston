@@ -1,6 +1,6 @@
 var exec = require('child_process').exec
 
-describe('gaston test', function(){
+describe('CLI - gaston test', function(){
   this.timeout(20000)
   it('should run all passing tests in meta-tests', function(done){
     exec('gaston test -s ./test/meta-tests -r all', function(err){
@@ -16,4 +16,4 @@ describe('gaston test', function(){
     })
   })
 
-});
+})

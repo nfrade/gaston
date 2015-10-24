@@ -4,7 +4,7 @@ var path = require('path')
 var exec = require('child_process').exec
 var tmpdir = path.join(os.tmpdir(), 'gaston-tests')
 
-describe('CLI - gaston bundle', function(){
+describe('CLI - gaston build', function(){
   this.timeout(20000)
   var error
 
@@ -12,7 +12,7 @@ describe('CLI - gaston bundle', function(){
     fs.removeAsync(tmpdir)
       .then(() => fs.mkdirp(tmpdir))
       .then(function(){
-        var cmd = 'gaston bundle -s ./test/to-compile/src/index.js -i -o ' + tmpdir
+        var cmd = 'gaston build -s ./test/to-compile/src/index.js -i -o ' + tmpdir
         exec(cmd, function(err){
           error = err
           done()
@@ -20,38 +20,38 @@ describe('CLI - gaston bundle', function(){
       })
   })
 
-  it('should bundle without errors', function(){
+  it('should build without errors', function(){
     assert.isNull(error)
   })
 
-  it('should create bundle.js', function(done){
-    var pathToTest = path.join(tmpdir, 'bundle.js')
+  it('should create build.js', function(done){
+    var pathToTest = path.join(tmpdir, 'build.js')
     fs.existsAsync(pathToTest).then(function(exists){
       assert.ok(exists)
       done()
     })
   })
 
-  it('should create bundle.css', function(done){
-    var pathToTest = path.join(tmpdir, 'bundle.css')
+  it('should create build.css', function(done){
+    var pathToTest = path.join(tmpdir, 'build.css')
     fs.existsAsync(pathToTest).then(function(exists){
       assert.ok(exists)
       done()
     })
   })
 
-  it('should create index.html', function(done){
-    var pathToTest = path.join(tmpdir, 'index.html')
+  it('should create build.html', function(done){
+    var pathToTest = path.join(tmpdir, 'build.html')
     fs.existsAsync(pathToTest).then(function(exists){
       assert.ok(exists)
       done()
     })
   })
 
-  describe('index.html should reference the correct files', function(){
+  describe('build.html should reference the correct files', function(){
     var data
     before(function(done){
-      var pathToTest = path.join(tmpdir, 'index.html')
+      var pathToTest = path.join(tmpdir, 'build.html')
       fs.readFileAsync(pathToTest, 'utf8')
         .then(function(d){
           data = d
@@ -59,12 +59,12 @@ describe('CLI - gaston bundle', function(){
         })
     })
 
-    it('should have script tag to bundle.js', function(){
-      assert.ok(~data.indexOf('src="bundle.js"'))
+    it('should have script tag to build.js', function(){
+      assert.ok(~data.indexOf('src="build.js"'))
     })
 
-    it('should have link tag to bundle.css', function(){
-      assert.ok(~data.indexOf('href="bundle.css"'))
+    it('should have link tag to build.css', function(){
+      assert.ok(~data.indexOf('href="build.css"'))
     })
   })
 
