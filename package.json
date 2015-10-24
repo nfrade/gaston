@@ -1,6 +1,6 @@
 {
   "name": "gaston",
-  "version": "0.24.0",
+  "version": "0.24.1",
   "preferGlobal": true,
   "description": "buildtool for vigour-io",
   "main": "lib/index.js",
@@ -64,7 +64,7 @@
     "url": "https://github.com/vigour-io/gaston/issues"
   },
   "homepage": "https://github.com/vigour-io/gaston",
-  "engine": "node 0.12.x",
+  "engine": "node ^4.0.0",
   "devDependencies": {},
   "standard": {
     "globals": [
