@@ -12,7 +12,7 @@ describe('CLI - gaston build', function(){
     fs.removeAsync(tmpdir)
       .then(() => fs.mkdirp(tmpdir))
       .then(function(){
-        var cmd = 'gaston build -s ./test/to-compile/src/index.js -i -o ' + tmpdir
+        var cmd = './bin/gaston build -s ./test/to-compile/src/index.js -i -o ' + tmpdir
         exec(cmd, function(err){
           error = err
           done()
