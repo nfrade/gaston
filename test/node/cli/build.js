@@ -6,22 +6,19 @@ var tmpdir = path.join(os.tmpdir(), 'gaston-tests')
 
 describe('CLI - gaston build', function(){
   this.timeout(20000)
-  var error
 
   before(function(done){
     fs.removeAsync(tmpdir)
       .then(() => fs.mkdirp(tmpdir))
-      .then(function(){
-        var cmd = './bin/gaston build -s ./test/to-compile/src/index.js -i -o ' + tmpdir
-        exec(cmd, function(err){
-          error = err
-          done()
-        })
-      })
+      .then(() => done())
   })
 
-  it('should build without errors', function(){
-    assert.isNull(error)
+  it('should build without errors', function(done){
+    var cmd = './bin/gaston build -s ./test/to-compile/src/index.js -i -o ' + tmpdir
+    exec(cmd, function(err){
+      assert.isNull(err)
+      done()
+    })
   })
 
   it('should create build.js', function(done){

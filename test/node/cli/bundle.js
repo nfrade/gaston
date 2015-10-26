@@ -11,17 +11,15 @@ describe('CLI - gaston bundle', function(){
   before(function(done){
     fs.removeAsync(tmpdir)
       .then(() => fs.mkdirp(tmpdir))
-      .then(function(){
-        var cmd = './bin/gaston bundle -s ./test/to-compile/src/index.js -i -o ' + tmpdir
-        exec(cmd, function(err){
-          error = err
-          done()
-        })
-      })
+      .then(() => done())
   })
 
-  it('should bundle without errors', function(){
-    assert.isNull(error)
+  it('should bundle without errors', function(done){
+    var cmd = './bin/gaston bundle -s ./test/to-compile/src/index.js -i -o ' + tmpdir
+    exec(cmd, function(err){
+      assert.isNull(err)
+      done()
+    })
   })
 
   it('should create bundle.js', function(done){
