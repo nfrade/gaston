@@ -8,10 +8,6 @@ branches:
     - staging
 before_install:
   - npm install -g git+ssh://git@github.com:vigour-io/sentinel.git#develop
-script:
-  - sentinel
-after_failure:
-  - sentinel --notify-fail
 sudo: required
 services:
   - docker
