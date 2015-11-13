@@ -64,7 +64,7 @@
     "url": "https://github.com/vigour-io/gaston/issues"
   },
   "homepage": "https://github.com/vigour-io/gaston",
-  "engine": "node ^4.0.0",
+  "engine": "node ^5.0.0",
   "devDependencies": {},
   "standard": {
     "globals": [
