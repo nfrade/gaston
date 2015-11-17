@@ -1,8 +1,11 @@
 
 GASTON - the ultimate task runner
 
-Usage: gaston <command> <options>
-Help:  gaston help <command>
+To launch a server: $ gastond
+open your browser on port 8080 (can be changed in config)
+
+Usage: $ gaston <command> <options>
+Help:  $ gaston help <command>
 
 Available commands
 - info
