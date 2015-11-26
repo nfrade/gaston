@@ -18,7 +18,8 @@
   },
   "scripts": {
     "postinstall": "scripts/post-install.js",
-    "test": "./bin/gaston test"
+    "test": "./bin/gaston test",
+    "build": "./bin/gaston build -s test/to-compile/src/index.js -i -o ./"
   },
   "license": "MIT",
   "dependencies": {
@@ -78,6 +79,14 @@
       "after",
       "afterEach",
       "sinon"
+    ]
+  },
+  "gaston": {
+    "package": true,
+    "index-path": "test/to-compile/index.html",
+    "source-maps": "true",
+    "dist": [
+
     ]
   }
 }
