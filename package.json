@@ -19,7 +19,8 @@
   "scripts": {
     "postinstall": "scripts/post-install.js",
     "test": "./bin/gaston test",
-    "build": "./bin/gaston build -s test/to-compile/src/index.js -i -o ./"
+    "build": "./bin/gaston build -s test/sample-app/src/index.js -i -o ./test/sample-app/",
+    "dist": "./bin/gaston dist"
   },
   "license": "MIT",
   "dependencies": {
@@ -83,10 +84,14 @@
   },
   "gaston": {
     "package": true,
-    "index-path": "test/to-compile/index.html",
+    "index-path": "test/sample-app/index.html",
     "source-maps": "true",
-    "dist": [
-
-    ]
+    "dist": {
+      "root": "test/sample-app/",
+      "files": [
+        "build.*",
+        "assets/**/*"
+      ]
+    }
   }
 }
