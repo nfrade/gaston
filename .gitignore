@@ -11,11 +11,9 @@ pids
 logs
 results
 build
+build.*
 
 node_modules
 .DS_Store
 
-config/
-!config/gaston.json
-!lib/config/
-
+dist/
