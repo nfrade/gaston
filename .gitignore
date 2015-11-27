@@ -11,7 +11,8 @@ pids
 logs
 results
 build
-build.*
+test/sample-app/build.*
+
 
 node_modules
 .DS_Store
