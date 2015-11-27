@@ -14,7 +14,7 @@ describe('CLI - gaston build', function(){
   })
 
   it('should build without errors', function(done){
-    var cmd = './bin/gaston build -s ./test/to-compile/src/index.js -i -o ' + tmpdir
+    var cmd = './bin/gaston build -s ./test/sample-app/src/index.js -i -o ' + tmpdir
     exec(cmd, function(err){
       assert.isNull(err)
       done()
