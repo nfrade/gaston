@@ -1,6 +1,6 @@
 {
   "name": "gaston",
-  "version": "0.27.2",
+  "version": "0.28.0",
   "preferGlobal": true,
   "description": "buildtool for vigour-io",
   "main": "lib/index.js",
@@ -18,11 +18,14 @@
   },
   "scripts": {
     "postinstall": "scripts/post-install.js",
-    "test": "./bin/gaston test"
+    "test": "./bin/gaston test",
+    "build": "./bin/gaston build -s test/sample-app/src/index.js -i -o ./test/sample-app/",
+    "dist": "./bin/gaston dist"
   },
   "license": "MIT",
   "dependencies": {
     "babelify": "^6.3.0",
+    "bluebird": "^3.0.5",
     "browserify": "^11.0.1",
     "chai": "^3.2.0",
     "chokidar": "^1.0.5",
@@ -43,9 +46,11 @@
     "mkdirp": "^0.5.1",
     "mocha": "^2.3.2",
     "mocha-phantomjs": "^3.6.0",
+    "multi-glob": "^1.0.1",
     "npmlog": "^1.2.1",
     "openurl": "^1.1.0",
     "phantomjs": "1.9.7-15",
+    "rimraf": "^2.4.4",
     "shelljs": "^0.5.3",
     "sinon": "^1.16.1",
     "sinon-chai": "^2.8.0",
@@ -79,5 +84,17 @@
       "afterEach",
       "sinon"
     ]
+  },
+  "gaston": {
+    "package": true,
+    "index-path": "test/sample-app/index.html",
+    "source-maps": "true",
+    "dist": {
+      "root": "test/sample-app/",
+      "files": [
+        "build.*",
+        "assets/**/*.*"
+      ]
+    }
   }
 }
