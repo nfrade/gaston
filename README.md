@@ -1,3 +1,5 @@
+![image](https://travis-ci.org/vigour-io/gaston.svg?branch=develop)
+
 # Gaston - the ultimate dev tool - by vigour.io
 
 ### index
