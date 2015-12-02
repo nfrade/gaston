@@ -9,6 +9,3 @@ CACHE:
 NETWORK:
 *
 
-FALLBACK:
-/index.html /static.html
-images/large/ images/offline.jpg
