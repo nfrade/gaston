@@ -1,0 +1,14 @@
+CACHE MANIFEST
+# {commit-sha}
+
+# Explicitly cached 'master entries'.
+CACHE:
+{cached-files}
+
+# Resources that require the user to be online.
+NETWORK:
+*
+
+FALLBACK:
+/index.html /static.html
+images/large/ images/offline.jpg

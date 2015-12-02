@@ -91,6 +91,7 @@
     "source-maps": "true",
     "dist": {
       "root": "test/sample-app/",
+      "appcache": true,
       "files": [
         "build.*",
         "assets/**/*.*"
