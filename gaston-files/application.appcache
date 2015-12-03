@@ -1,11 +1,12 @@
 CACHE MANIFEST
-# {commit-sha}
+# {version}
 
 # Explicitly cached 'master entries'.
 CACHE:
 {cached-files}
 
-# Resources that require the user to be online.
 NETWORK:
 *
+
+FALLBACK:
 
