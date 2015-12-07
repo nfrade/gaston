@@ -1,0 +1,40 @@
+.register-new-project {
+  margin-left: auto;
+}
+
+.project-row {
+  height: auto;
+  margin-bottom: 1rem;
+  cursor: default;
+
+  .project-name {
+    font-size: @h3;
+  }
+
+  .project-actions {
+    margin-right: 2rem;
+
+    button {
+      margin-left: 0.4rem;
+      padding-left: 3px;
+      padding-right: 3px;
+      vertical-align: middle;
+      margin-bottom: 0;
+
+      &:hover {
+        & span {
+          max-width: 500px;
+        }
+      }
+
+      & span {
+        display: inline-block;
+        max-width: 0px;
+        overflow: hidden;
+        white-space: nowrap;
+        vertical-align: middle;
+        .transition(.5s ease-in-out max-width);
+      }
+    }
+  }
+}
