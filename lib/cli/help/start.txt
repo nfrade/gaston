@@ -1,0 +1,32 @@
+Usage: gaston start <options>
+launches a stand-alone gaston server for the app in current working directory
+launches the browser ready to start working
+
+options:
+
+- isTesting: if you want to run tests instead of dev
+  flags: -t or --test
+
+- source: the path to the file being compiled
+  flags: -s or --source
+  if not set it will read from package.json:
+    gaston.main (for dev) or gaston.test (for test)
+
+- port: the port for the server to run
+  flags: -p or --port
+  if not set it will read from package.json:
+    gaston.port
+  or launch in a random available port
+
+Examples:
+  $ gaston start
+  $ gaston start -t
+  $ gaston start -t -p 8080
+  $ gaston start -s src/index.js
+  $ gaston start -t -s test/browser -p 8081
+  $ gaston start -t -s test/browser/index.js
+
+Notes:
+- the source for dev has to be a single entry js file
+- the source for tests can alternative be the path to a directory, all the js files will be compiled and run
+
