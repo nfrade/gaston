@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+<title>Gaston - Dashboard</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-title" content="Todo app">
+
+<style type="text/css">
+  html {
+    background: #ECE9E9 -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#ECE9E9));
+    background-repeat: no-repeat;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 10px;
+  }
+
+  body {
+    font-size: 1.4rem;
+    margin: 0 auto;
+    padding: 8rem 10rem;
+  }
+
+  h1 {
+    margin-top: 0;
+  }
+
+  .meta {
+    color: #999;
+    line-height: 1.7;
+  }
+
+  .meta label {
+    margin-left: 10px;
+    display: inline-block;
+    width: 20rem;
+  }
+
+  .meta label.running{
+    color: green;
+  }
+
+  .meta span {
+    color: #555;
+  }
+
+</style>
+
+</head>
+<body>
+
+<h1 class="error-type">Gaston Dashboard</h1>
+<div class="meta">
+  <a target="_blank" href="?$findProject=true">register new project</a>
+  <div>
+    <h3>Registered Projects: </h3>
+  </div>
+  <div class="projects" id="projects">
+  
+  </div>
+</div>
+
+<script src="naked-gaston.js" type="text/javascript"></script>
+<script type="text/javascript">
+  gaston.api.getProjects()
+    .then(renderProjects)
+
+function renderProjects (projects){
+  var keys = Object.keys(projects)
+  var htmlStr = ''
+  for (var i = 0, l = keys.length; i < l; i++){
+    var projectPath = keys[i]
+    var project = projects[projectPath]
+    htmlStr += '<div>'
+    htmlStr += '<button data-role="unregister" data-project="'+projectPath+'">unregister</button>'
+    if(!project.stopped){
+      htmlStr += '<button data-role="stop" data-project="'+projectPath+'">stop</button>'  
+    } else {
+      htmlStr += '<button data-role="start" data-project="'+projectPath+'">start</button>'
+    }
+    var listeningClass = project.stopped? '' : 'running'
+    htmlStr += '<label class="'+listeningClass+'">' + project.name + '</label>'
+    var href = 'http://' + gaston.server.ip + ':' + project['http-port']
+    htmlStr += '<a target="_blank" href="'+href+'">' + href + '</a>' 
+    htmlStr += '</div>'
+  }
+  document.getElementById('projects').innerHTML = htmlStr
+}
+
+document.getElementById('projects').addEventListener('click', function(ev){
+  var target = ev.target
+
+  switch(target.dataset.role){
+    case 'unregister': 
+      gaston.api.unregisterProject(target.dataset.project)
+        .then(gaston.api.getProjects)
+        .then(renderProjects)
+      break
+    case 'stop':
+      gaston.api.stopProject(target.dataset.project)
+        .then(gaston.api.getProjects)
+        .then(renderProjects)
+      break
+    case 'start': 
+      gaston.api.startProject(target.dataset.project)
+        .then(gaston.api.getProjects)
+        .then(renderProjects)
+      break
+  }
+})
+
+
+</script>
+
+</body>
+</html>
