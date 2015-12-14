@@ -37,6 +37,7 @@
     "gaston-blessify": "^0.4.5",
     "gaston-serve-index": "1.3.0",
     "gaston-smapify": "^0.2.0",
+    "gaston-web-ui": "git+ssh://git@github.com/nfrade/gaston-web-ui.git#master",
     "glob": "^5.0.15",
     "ip": "^0.3.3",
     "keypress": "^0.2.1",
@@ -66,8 +67,7 @@
     "vigour-element": "0.2.1",
     "vigour-fs-promised": "^1.1.0",
     "vigour-uikit": "0.3.1",
-    "watchify": "^3.3.1",
-    "gaston-web-ui": "git+ssh://git@github.com:nfrade/gaston-web-ui.git#master"
+    "watchify": "^3.3.1"
   },
   "bugs": {
     "url": "https://github.com/vigour-io/gaston/issues"
