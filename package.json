@@ -66,7 +66,8 @@
     "vigour-element": "0.2.1",
     "vigour-fs-promised": "^1.1.0",
     "vigour-uikit": "0.3.1",
-    "watchify": "^3.3.1"
+    "watchify": "^3.3.1",
+    "gaston-web-ui": "git+ssh://git@github.com:nfrade/gaston-web-ui.git#master"
   },
   "bugs": {
     "url": "https://github.com/vigour-io/gaston/issues"
