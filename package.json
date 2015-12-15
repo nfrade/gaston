@@ -48,7 +48,6 @@
     "mocha": "^2.3.2",
     "mocha-phantomjs": "^3.6.0",
     "multi-glob": "^1.0.1",
-    "ncp": "2.0.0",
     "npmlog": "^1.2.1",
     "openurl": "^1.1.0",
     "phantomjs": "1.9.7-15",
